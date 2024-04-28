@@ -28,7 +28,7 @@
         <li><button class="dropdown-item" type="button">Accion mas random todavia</button></li>
         {% if request.user.is_authenticated %}
         <li><hr class="dropdown-divider"></li>
-        <li><button class="dropdown-item" type="button">Cerrar sesión</button></li>
+        <li><a class="dropdown-item" type="button" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a></li>
         {% endif %}
       </ul>
     </div>

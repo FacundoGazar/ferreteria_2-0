@@ -1,20 +1,17 @@
+<!-- templates/base.html -->
 <!DOCTYPE html>
-<html lang="es">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Mi Sitio Web{% endblock %}</title>
+  <meta charset="utf-8">
+  <title>{% block title %}Ferreplus{% endblock %}</title>
 </head>
+
 <body>
-    <header>
-        <h1>{% block header %}Mi Sitio Web{% endblock %}</h1>
-    </header>
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
-    <footer>
-        <p>&copy; {% now "Y" %} Mi Empresa</p>
-    </footer>
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
 </body>
+
 </html>

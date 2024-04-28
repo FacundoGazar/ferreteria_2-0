@@ -1,6 +1,5 @@
-{% extends "base.html" %}
+{% extends "homepage/base.html" %}
 
-{% block content%}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,21 +9,14 @@
 </head>
 <body>
     <header>
-        <h1>Ferreteria</h1>
+        
     </header>
     <main>
+        {% block content %}
         <p>Pagina de inicio</p>
         <p>La hice para poner botones asi hacia lo de iniciar sesion y eso</p>
-        <p>Despues le ponemos estilos y eso, ahora esta re feo</p>
-        {% if request.user.is_authenticated %}
-            <button onclick="window.location.href='{% url 'cerrar_sesion' %}'">Cerrar sesión</button>
-        {% else %}
-            <button onclick="window.location.href='{% url 'iniciar_sesion' %}'">Iniciar Sesión</button>
-        {% endif %}
+        <p>Despues lo hacemos mas lindo ahora esta re feo</p>
+        {% endblock %}
     </main>
-    <footer>
-        <p>&copy; Ferreplus</p>
-    </footer>
 </body>
 </html>
-{%endblock%}

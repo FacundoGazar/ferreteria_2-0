@@ -1,14 +1,30 @@
-<h2>Iniciar sesión</h2>
-<form method="post">
-  {% csrf_token %}
+{% extends "homepage/base.html" %}
 
-    <div class="mb-3">
-      <label for="exampleInputUsername" class="form-label">Nombre de usuario</label>
-      <input type="text" name="username" id="" placeholder="Nombre de usuario">
-    </div>
-    <div class="mb-3">
-      <label for="exampleInputPassword1" class="form-label">Contraseña</label>
-      <input type="password" name="password" id="" placeholder="Contraseña">
-    </div>
-    <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-</form>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Iniciar Sesión{% endblock %}</title>
+</head>
+
+<body>
+  {% block content %}
+  <h2>Iniciar sesión</h2>
+  <form method="post">
+   {% csrf_token %}
+
+     <div class="mb-3">
+        <label for="exampleInputUsername" class="form-label">Nombre de usuario</label>
+        <input type="text" name="username" id="" placeholder="Nombre de usuario">
+     </div>
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Contraseña</label>
+       <input type="password" name="password" id="" placeholder="Contraseña">
+      </div>
+      <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+  </form>
+</body>
+
+</html>
+{% endblock %}

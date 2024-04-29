@@ -13,16 +13,18 @@
   <h2>Iniciar sesión</h2>
   <form method="post">
    {% csrf_token %}
-
-     <div class="mb-3">
-        <label for="exampleInputUsername" class="form-label">Nombre de usuario</label>
-        <input type="text" name="username" id="" placeholder="Nombre de usuario">
-     </div>
+    <form>
       <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">Contraseña</label>
-       <input type="password" name="password" id="" placeholder="Contraseña">
+        <label for="exampleUsername" class="form-label">Nombre de usuario</label>
+        <input type="text" class="form-control" name="username" aria-describedby="emailHelp">
+        <div id="emailHelp" class="form-text">Nunca compartiremos tu e-mail con nadie más.</div>
+      </div>
+      <div class="mb-3">
+        <label for="examplePassword1" class="form-label">Contraseña</label>
+        <input type="password" class="form-control" name="password">
       </div>
       <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+    </form>
   </form>
 </body>
 

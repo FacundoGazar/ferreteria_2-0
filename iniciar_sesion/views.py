@@ -13,11 +13,12 @@ def iniciar_sesion_view(request):
             login(request, user)
             return redirect("homepage")
         else:
-            messages.success(request, ("Hubo un errror al iniciar sesión, intente nuevamente..."))
+            messages.success(request, ("Los datos ingresados son invalidos, intente nuevamente..."))
             return redirect("iniciar_sesion")
     else:
         return render(request, "authenticate/login.html", {})
 
 def cerrar_sesion_view(request):
     logout(request)
+    messages.success(request, ("¡Cerraste sesión!"))
     return redirect("homepage")

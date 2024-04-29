@@ -1,0 +1,7 @@
+Hay que correr el servidor, en gitbash:
+virtualenv venv
+source venv/Scripts/activate
+python manage.py runserver
+Accede a la aplicación en tu navegador: Abre tu navegador web 
+y navega a la dirección que muestra la salida del comando anterior.
+ Por lo general, es http://127.0.0.1:8000/ o http://localhost:8000/.

@@ -12,18 +12,22 @@
     <section class="vh-100 gradient-custom d-flex justify-content-center align-items-center">
         <div class="card text-center" style="width: 300px;">
             <div class="card-header h5 text-white bg-dark">Reinicio de contraseña</div>
-            <div class="card-body px-5 bg-secondary">
-                <p class="card-text py-2 text-white">
+            <div class="card-body px-5 bg-dark">
+                <p class="card-text py-2 bg-dark text-white">
                     Ingresa tu correo electrónico y nosotros te mandaremos un correo con instrucciones para restablecer tu contraseña.
                 </p>
                 <form method="post">
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    <div data-mdb-input-init class="form-outline mb-4">
+                        <input type="email" id="typeEmail" class="form-control my-3" name="email" />
+                        <label class="form-label" for="typeEmail text-white">Correo electrónico</label>
+                    </div>
                     <button type="submit" class="btn w-100" style="background-color: #0041AD;">Reiniciar contraseña</button>
                 </form>
             </div>
         </div>
     </section>
+    
     {% endblock %}
 </body>
 </html>

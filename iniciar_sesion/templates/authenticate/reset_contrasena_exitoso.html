@@ -7,22 +7,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
 </head>
-<body>
+<body class="bg-dark text-white text-center">
     {% block content %}
-    <br>
-    <br>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card bg-dark">
                     <div class="card-body text-white">
-                        <h1 class="display-1 mt-5">¡Mail enviado!</h1>
-                        <h5 class="display-5 mb-4">Se ha mandado a su correo electrónico un token</h5>
+                        <h1 class="display-1 mt-5">¡Contraseña reiniciada!</h1>
+                        <br>
+                        <h5 class="display-5 mb-4">Intente iniciar sesión con su nueva contraseña</h5>
+                        <a class="btn btn-primary btn-lg" href="{% url 'iniciar_sesion' %}">Iniciar sesión</a>
                     </div>
                 </div>
             </div>
         </div>
-    </div>  
-    {% endblock %}  
+    </div>
+    {% endblock %}
 </body>
 </html>

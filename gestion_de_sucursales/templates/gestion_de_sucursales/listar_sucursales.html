@@ -11,15 +11,29 @@
         
     </header>
     <main>
-        {% block content %}
-            {% if lista %}
+{% block content %}
+    {% if lista %}
+        <table class="table table-striped mx-auto table-info" style="width: 300px;">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Ciudad</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for instance in lista %}
-                     <p>{{ instance.nombre }} - {{ instance.ciudad }}</p>
+                    <tr>
+                        <td>{{ instance.nombre }}</td>
+                        <td>{{ instance.ciudad }}</td>
+                    </tr>
                 {% endfor %}
-            {% else %}
-                <p>No hay datos disponibles</p>
-            {% endif %}
-        {% endblock %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay datos disponibles</p>
+    {% endif %}
+{% endblock %}
+
     </main>
 </body>
 </html>

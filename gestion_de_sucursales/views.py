@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import *
+from django.contrib import messages
 
 # Create your views here.
 
@@ -12,19 +13,21 @@ def agregar_sucursal_view (request):
 def insertar_sucursal_view (request):
     if request.method == "POST":
         nombre = request.POST["sucursal"]
-        ciudad = request.POST["ciudad"]
-
-        nueva_sucursal = Sucursal(nombre=nombre, ciudad=ciudad)
-        nueva_sucursal.save()
-
+        if Sucursal.objects.filter(nombre=nombre).exists():
+            messages.success(request, ("Nombre de sucursal ya existente"))
+            return render(request, "gestion_de_sucursales/agregar_sucursal.html") 
+        else:
+            ciudad = request.POST["ciudad"]
+            nueva_sucursal = Sucursal(nombre=nombre, ciudad=ciudad)
+            nueva_sucursal.save()            
+            return render(request, "gestion_de_sucursales/gestion_sucursales.html") 
+    
     return render(request, "gestion_de_sucursales/gestion_sucursales.html") 
+    
 
 def listar_sucursales_view(request):
     queryset = Sucursal.objects.all()
-
-    # Debugging: Print the queryset length
-    print("Number of items in queryset:", len(queryset))
-
+    
     context = {
         "lista": queryset
     }

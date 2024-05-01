@@ -1,8 +1,9 @@
-from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from .forms import CustomUserCreationForm
 
+def registrar(request):
+    return render(request, 'gestion_de_usuarios/registrar.html')
 
+""""
 #funcion para registrar un usuario 
 def register(request):
     data = {
@@ -22,3 +23,4 @@ def register(request):
             data['form'] = user_creation_form
 
     return render(request, 'registration/register.html', data)
+""" 

@@ -15,7 +15,7 @@
         </li>
         {% endif %}
         <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="#">Algo mas?</a>
+          <a class="nav-link" aria-current="page" href="#">Aca iria la busqueda de productos</a>
         </li>
       </ul>
     </div>
@@ -28,6 +28,7 @@
         <li><button class="dropdown-item" type="button">Accion mas random todavia</button></li>
         {% if request.user.is_authenticated %}
         <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" type="button" href="{% url 'gestion_de_sucursales' %}">Gestion de sucursales</a></li>
         <li><a class="dropdown-item" type="button" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a></li>
         {% endif %}
       </ul>

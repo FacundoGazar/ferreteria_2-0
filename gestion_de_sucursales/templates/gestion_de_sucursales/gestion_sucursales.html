@@ -1,0 +1,24 @@
+{% extends "homepage/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <title></title>
+    {% block content %}
+</head>
+<body>
+    <div>
+        <p>papita</p>
+        <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+            <a type="button" class="btn btn-primary" href="{% url 'listar_sucursales' %}" >Listar sucursales</a>
+            <a type="button" class="btn btn-primary" href="{% url 'agregar_sucursal' %}" >Agregar sucursal</a>
+            <a type="button" class="btn btn-primary">Eliminar sucursal</a>
+            <a type="button" class="btn btn-primary">Trasladar empleado</a>
+        </div>
+    </div>    
+</body>
+{% endblock %}
+</html>

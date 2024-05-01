@@ -1,0 +1,35 @@
+{% extends "homepage/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    {% block content %}
+</head>
+<body>
+    <div>
+        <section class="vh-100 gradient-custom d-flex justify-content-center align-items-center">
+            <div class="card text-center" style="width: 300px;">
+                <div class="card-header h5 text-white bg-dark">Agregar una sucursal</div>
+                <div class="card-body px-5 bg-dark">
+                    <p class="card-text py-2 bg-dark text-white">
+                        Ingresa el nombre de la sucursal y la ciudad
+                    </p>
+                    <form action="insertar_sucursal/" method="POST">  
+                        {% csrf_token %} <!-- Agregar token CSRF -->
+                        <div data-mdb-input-init class="form-outline mb-4">
+                            <input type="text" id="sucursal" class="form-control my-3" name="sucursal" placeholder="Sucursal"/>
+                            <input type="text" id="ciudad" class="form-control my-3" name="ciudad" placeholder="Ciudad"/>
+                            <label class="form-label text-white" for="text"></label>
+                        </div>
+                        <button type="submit" class="btn w-100" style="background-color: #0073ad;">Agregar sucursal</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>    
+</body>
+{% endblock %}
+
+</html>

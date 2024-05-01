@@ -1,13 +1,25 @@
 {% extends "homepage/base.html" %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    {% block content %}
-    {% for instance in lista %}
-        <p>{{ instance.nombre }} - {{ instance.ciudad }}</p>
-    {% endfor %}
-    {% endblock %}
+    <title>Página de Inicio</title>
+</head>
+<body>
+    <header>
+        
+    </header>
+    <main>
+        {% block content %}
+            {% if lista %}
+                {% for instance in lista %}
+                     <p>{{ instance.nombre }} - {{ instance.ciudad }}</p>
+                {% endfor %}
+            {% else %}
+                <p>No hay datos disponibles</p>
+            {% endif %}
+        {% endblock %}
+    </main>
+</body>
 </html>

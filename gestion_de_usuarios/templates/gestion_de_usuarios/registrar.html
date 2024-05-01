@@ -1,0 +1,25 @@
+{% extends "homepage/base.html" %}
+
+{% block content %}
+<h3>REGISTRO DE USUARIO</h3>
+
+<br>
+
+<form id="register-form" action="" method="post">
+    {% csrf_token %}
+    <div class="card mx-auto" style="width: 30rem;">
+      <div class="card-body">
+        <h5 class="card-title">Complete todos los campos</h5>
+       
+        <input type="text" name="nombre" placeholder="Nombre" required><br>
+        <input type="text" name="apellido" placeholder="Apellido" required><br>
+        <input type="text" name="edad" placeholder="Edad" required><br>
+        <input type="text" name="usuario" placeholder="Nombre de usuario" required><br>
+        <input type="email" name="email" placeholder="Correo electrónico" required><br>
+        <input type="password" name="ciudad" placeholder="Ciudad" required><br>
+        <input type="password" name="contrasenia" placeholder="Contraseña" required><br>
+        <button class="btn btn-sm btn-primary float-end" type="submit">Registrarse</button>
+      </div>
+    </div>
+</form>
+{% endblock %}

@@ -22,4 +22,6 @@ urlpatterns = [
     path("", include("homepage.urls")),
     path("iniciar_sesion/", include("django.contrib.auth.urls")),
     path("iniciar_sesion/", include("iniciar_sesion.urls")),
+    path("gestion_de_sucursales/", include("gestion_de_sucursales.urls")),
+
 ]

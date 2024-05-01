@@ -19,9 +19,14 @@ def insertar_sucursal_view (request):
 
     return render(request, "gestion_de_sucursales/gestion_sucursales.html") 
 
-def listar_sucursales_view (request):
+def listar_sucursales_view(request):
     queryset = Sucursal.objects.all()
-    context= {
+
+    # Debugging: Print the queryset length
+    print("Number of items in queryset:", len(queryset))
+
+    context = {
         "lista": queryset
     }
-    return render (request, "gestion_de_sucursales/listar_sucursales.html", context)
+
+    return render(request, "gestion_de_sucursales/listar_sucursales.html", context)

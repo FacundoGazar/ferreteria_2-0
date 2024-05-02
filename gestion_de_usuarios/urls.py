@@ -4,4 +4,5 @@ from gestion_de_usuarios import views
 
 urlpatterns = [
     path("", views.registrar, name='registrar'),
+    path("registrar/", views.register, name='register'),
 ]

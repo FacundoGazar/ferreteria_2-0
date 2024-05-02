@@ -2,12 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class PerfilCliente(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     ciudad = models.CharField(max_length=100)
     edad = models.IntegerField()
-    usuario = models.CharField(max_length=100)
-    nombre = models.CharField(max_length=100)
-    apellido = models.CharField(max_length=100)
-    email = models.CharField(max_length=100)
-    contrasenia = models.CharField(max_length=100)
 
-  
+    def __str__(self):
+        return self.user.username

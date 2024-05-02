@@ -7,7 +7,8 @@
                 <div class="card-body text-white">
                     <form method="post">
                         {% csrf_token %}
-                        {{ form }}
+                        <input type="password" name="password" placeholder="Contrasena" required><br>
+                        <input type="password" name="password" placeholder="Contrasena" required><br>
                         <input type="submit" class="btn btn-primary mt-3" value="Actualizar contraseña">
                     </form>
                 </div>

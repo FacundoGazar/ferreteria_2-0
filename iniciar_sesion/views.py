@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .decoradores import unauthenticated_user
+from .decoradores import *
+from django.contrib.auth.forms import PasswordChangeForm
 
 # Create your views here.
 
@@ -24,3 +25,14 @@ def cerrar_sesion_view(request):
     logout(request)
     messages.success(request, ("¡Cerraste sesión!"))
     return redirect("homepage")
+
+@authenticated_user
+def modificar_constrasena_view(request):
+    if request.method == "POST":
+        fm=PasswordChangeForm(user=request.user, data=request.POST)
+        if fm.is_valid():
+            messages.success(request, "Tu contrasena fue modificada correctamente.")
+            return redirect("/")
+    else:
+        fm=PasswordChangeForm(user=request.user)
+    return render (request, "authenticate/modificar_contrasena.html", {"fm":fm})

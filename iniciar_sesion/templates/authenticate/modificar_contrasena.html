@@ -1,0 +1,22 @@
+{% extends "homepage/base.html" %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    {% block content %}
+    <h1>Modificar contrasena</h1>
+    <div class="form-group">
+    <form method="POST">
+        {% csrf_token %}
+        {{fm.as_p}}
+        <button class="submit">Modificar</button>
+    </form>
+    </div>
+    {% endblock %}
+</body>
+</html>

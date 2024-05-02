@@ -21,4 +21,8 @@ urlpatterns = [
     path("reiniciar_contrasena_exitoso", 
          auth_views.PasswordResetCompleteView.as_view(template_name="authenticate/reset_contrasena_exitoso.html"), 
          name="password_reset_complete"),
+    
+    path("modificar_contrasena",
+         views.modificar_constrasena_view,
+         name="modificar_contrasena"),
 ]

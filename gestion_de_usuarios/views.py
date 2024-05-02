@@ -36,7 +36,7 @@ def register(request):
             # Autenticar al usuario recién creado
             user = authenticate(username=usuario,password=contrasenia)
             login(request, user)
-            return render (request, '/')
+            return redirect("homepage")
         else:
-           return render(request, 'gestion_de_usuarios/registrar.html', {'error_message': 'Debe ser mayor de edad para poder registrarse'})
+           return render(request, 'gestion_de_usuarios/registrar.html')
     return render(request, "/")

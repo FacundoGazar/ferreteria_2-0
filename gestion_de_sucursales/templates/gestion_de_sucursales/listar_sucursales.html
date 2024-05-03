@@ -1,18 +1,20 @@
 {% extends "homepage/base.html" %}
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página de Inicio</title>
 </head>
+
 <body>
     <header>
-        
+
     </header>
     <main>
-{% block content %}
-    {% if lista %}
+        {% block content %}
+        {% if lista %}
         <table class="table table-striped mx-auto table-info" style="width: 300px;">
             <thead>
                 <tr>
@@ -22,18 +24,19 @@
             </thead>
             <tbody>
                 {% for instance in lista %}
-                    <tr>
-                        <td>{{ instance.nombre }}</td>
-                        <td>{{ instance.ciudad }}</td>
-                    </tr>
+                <tr>
+                    <td>{{ instance.nombre }}</td>
+                    <td>{{ instance.ciudad }}</td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
-    {% else %}
+        {% else %}
         <p>No hay datos disponibles</p>
-    {% endif %}
-{% endblock %}
+        {% endif %}
+        {% endblock %}
 
     </main>
 </body>
+
 </html>

@@ -33,3 +33,27 @@ def listar_sucursales_view(request):
     }
 
     return render(request, "gestion_de_sucursales/listar_sucursales.html", context)
+
+
+def eliminar_sucursal_view (request):
+    sucursales = Sucursal.objects.all()
+
+    return render (request,"gestion_de_sucursales/eliminar_sucursal.html",{'sucursales': sucursales})
+
+
+def delete_sucursal_view(request):
+    if request.method == 'POST':
+        nombre_sucursal = request.POST.get('sucursal')
+        
+        if nombre_sucursal:
+            try:
+                sucursal = Sucursal.objects.get(nombre=nombre_sucursal)
+                sucursal.delete()
+                return render(request, "gestion_de_sucursales/gestion_sucursales.html")
+            except Sucursal.DoesNotExist:
+                return render(request, 'error.html', {'mensaje': 'La sucursal seleccionada no existe.'})
+        else:
+            return render(request, 'error.html', {'mensaje': 'No se proporcionó una sucursal para eliminar.'})
+    else:
+
+        return render(request, 'error.html', {'mensaje': 'Solicitud no válida.'})

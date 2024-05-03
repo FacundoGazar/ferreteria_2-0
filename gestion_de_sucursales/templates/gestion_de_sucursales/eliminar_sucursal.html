@@ -1,0 +1,20 @@
+{% extends "homepage/base.html" %}
+
+{% block title %}Lista de Sucursales - Ferreplus{% endblock %}
+
+{% block content %}
+<h2>Lista de Sucursales</h2>
+<form action="delete_sucursal/" method="POST">
+    {% csrf_token %}
+    <ul>
+        {% for sucursal in sucursales %}
+        <li>
+            <input type="radio" id="sucursal_{{ forloop.counter }}" name="sucursal" value="{{ sucursal.nombre }}">
+            <label for="sucursal_{{ forloop.counter }}">{{ sucursal.nombre }} - {{ sucursal.ciudad }}</label>
+        </li>
+        {% endfor %}
+    </ul>
+    <br>
+    <input type="submit" value="Eliminar Sucursal">
+</form>
+{% endblock %}

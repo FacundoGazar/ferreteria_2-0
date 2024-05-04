@@ -18,7 +18,7 @@ def insertar_sucursal_view (request):
     if request.method == "POST":
         nombre = request.POST["sucursal"]
         if Sucursal.objects.filter(nombre=nombre).exists():
-            messages.success(request, ("Nombre de sucursal ya existente"))
+            messages.error(request, ("Nombre de sucursal ya existente"))
             return render(request, "gestion_de_sucursales/agregar_sucursal.html") 
         else:
             ciudad = request.POST["ciudad"]

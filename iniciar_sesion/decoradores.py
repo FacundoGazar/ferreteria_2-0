@@ -19,6 +19,15 @@ def authenticated_user(view_func):
         
     return wrapper_func
 
+def super_user(view_func):
+    def wrapper_func(request, *args, **kwargs):
+        if request.user.is_superuser:
+            return view_func(request, *args, **kwargs)
+        else:
+            return redirect("homepage")
+        
+    return wrapper_func
+
 def allowed_users(allowed_roles=[]):
     def decorator(view_func):
         def wrapped_func(request, *args, **kwargs):

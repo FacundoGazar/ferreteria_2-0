@@ -31,7 +31,9 @@
         <li><button class="dropdown-item" type="button">Accion mas random todavia</button></li>
         {% if request.user.is_authenticated %}
         <li><hr class="dropdown-divider"></li>
+        {% if request.user.is_superuser %}
         <li><a class="dropdown-item" type="button" href="{% url 'gestion_de_sucursales' %}">Gestion de sucursales</a></li>
+        {% endif %}
         <li><a class="dropdown-item" type="button" href="{% url 'modificar_contrasena' %}">Modificar contraseña</a></li>
         <li><a class="dropdown-item" onclick="return confirm('¿Estás seguro de cerrar sesión?')" type="button" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a></li>
         {% endif %}

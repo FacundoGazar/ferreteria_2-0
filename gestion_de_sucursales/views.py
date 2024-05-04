@@ -1,15 +1,18 @@
 from django.shortcuts import render
 from .models import *
-from django.contrib import messages
+from .decoradores import super_user
 
 # Create your views here.
 
+@super_user
 def gestion_de_sucursales_view (request):
     return render(request, "gestion_de_sucursales/gestion_sucursales.html")
 
+@super_user
 def agregar_sucursal_view (request):
     return render(request, "gestion_de_sucursales/agregar_sucursal.html")
 
+@super_user
 def insertar_sucursal_view (request):
     if request.method == "POST":
         nombre = request.POST["sucursal"]
@@ -24,7 +27,7 @@ def insertar_sucursal_view (request):
     
     return render(request, "gestion_de_sucursales/gestion_sucursales.html") 
     
-
+@super_user
 def listar_sucursales_view(request):
     queryset = Sucursal.objects.all()
     
@@ -34,13 +37,13 @@ def listar_sucursales_view(request):
 
     return render(request, "gestion_de_sucursales/listar_sucursales.html", context)
 
-
+@super_user
 def eliminar_sucursal_view (request):
     sucursales = Sucursal.objects.all()
 
     return render (request,"gestion_de_sucursales/eliminar_sucursal.html",{'sucursales': sucursales})
 
-
+@super_user
 def delete_sucursal_view(request):
     if request.method == 'POST':
         nombre_sucursal = request.POST.get('sucursal')

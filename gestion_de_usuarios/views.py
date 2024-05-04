@@ -20,10 +20,9 @@ def register(request):
         edad = int(request.POST.get('edad')) 
 
         if User.objects.filter(username=usuario).exists():
-            messages.success(request, "Se registro el usuario")
-            return render(request, 'gestion_de_usuarios/registrar.html')
-            #return render(request, 'gestion_de_usuarios/registrar.html', {'error_message': 'El nombre de usuario ya está en uso'})
-      
+            messages.error(request, "El nombre de usuario ya se encuentra registrado")
+            return render(request, 'gestion_de_usuarios/registrar.html')         
+
         # Verificar que sea mayor de dad
         if edad>= 18:
             # Crear un nuevo usuario en el sistema
@@ -38,5 +37,6 @@ def register(request):
             login(request, user)
             return redirect("homepage")
         else:
+           messages.error(request, "Debe ser mayor de edad para registrarse en este sitio")
            return render(request, 'gestion_de_usuarios/registrar.html')
     return render(request, "/")

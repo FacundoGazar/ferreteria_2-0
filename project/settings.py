@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "iniciar_sesion",
     "gestion_de_sucursales",
     "gestion_de_usuarios",
+    "mis_productos",
 ]
 
 MIDDLEWARE = [

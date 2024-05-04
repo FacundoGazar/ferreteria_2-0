@@ -24,5 +24,6 @@ urlpatterns = [
     path("iniciar_sesion/", include("iniciar_sesion.urls")),
     path("gestion_de_sucursales/", include("gestion_de_sucursales.urls")),
     path("gestion_de_usuarios/", include("gestion_de_usuarios.urls")),
+    path("mis_productos/", include("mis_productos.urls")),
 
 ]

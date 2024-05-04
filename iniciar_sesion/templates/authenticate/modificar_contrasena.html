@@ -9,14 +9,23 @@
 </head>
 <body>
     {% block content %}
-    <h1>Modificar contrasena</h1>
-    <div class="form-group">
-    <form method="POST">
-        {% csrf_token %}
-        {{fm.as_p}}
-        <button class="submit">Modificar</button>
-    </form>
+    <h1>Modificar contraseña</h1>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card bg-dark">
+                    <div class="card-body text-white">
+                    <div class="form-group">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{fm.as_p}}
+                        <button class="submit">Modificar</button>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {% endblock %}
+{% endblock %}
 </body>
 </html>

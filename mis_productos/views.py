@@ -1,6 +1,5 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from iniciar_sesion import not_super_user
 from .forms import ProductoForm
 from .models import Producto
@@ -12,19 +11,17 @@ def mis_productos_view(request):
 
 @not_super_user
 def subir_producto_view(request):
-    subido = False
     if request.method == "POST":
         form = ProductoForm(request.POST, request.FILES)
         if form.is_valid():
             producto = form.save(commit=False)
             producto.cliente = request.user
             producto.save()
-            return HttpResponseRedirect(reverse("subir_producto") + "?subido=True")
+            messages.success(request, ("¡¡ Se ha subido el producto correctamente !!"))
+            return redirect("mis_productos")
     else:
         form = ProductoForm
-        if "subido" in request.GET:
-            subido = True
-    return render (request, "mis_productos/subir_producto.html", {"form": form, "subido": subido})
+    return render (request, "mis_productos/subir_producto.html", {"form": form})
 
 @not_super_user
 def eliminar_producto_view(request):

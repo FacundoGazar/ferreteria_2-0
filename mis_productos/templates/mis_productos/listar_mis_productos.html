@@ -12,28 +12,21 @@
     </head>
     <body>
         {% block content %}
-        {% if lista %}
-            <table class="table table-striped mx-auto table-info" style="width: 300px;">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th>Ciudad</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for instance in lista %}
-                        <tr>
-                            <td>{{ instance.nombre }}</td>
-                            <td>{{ instance.ciudad }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No hay datos disponibles</p>
-        {% endif %}
-    {% endblock %}
-        
+<div class="row">
+    {% for producto in lista %}
+    <div class="col-md-4 mb-4">
+        <div class="card" style="width: 18rem;">
+            <img src="{{ producto.imagen_principal.url }}" class="card-img-top">
+            <div class="card-body">
+                <h5 class="card-title">{{ producto.nombre }}</h5>
+                <p class="card-text">{{ producto.descripcion }}</p>
+                <a href="#" class="btn btn-primary stretched-link">Detalles</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
 
     </body>
 </html>

@@ -4,6 +4,8 @@ from django.db import models
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+
 
 class Producto(models.Model):
     cliente = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -16,6 +18,11 @@ class Producto(models.Model):
     imagen_extra1 = models.ImageField(upload_to='imagenes/', blank=True, null=True)
     imagen_extra2 = models.ImageField(upload_to='imagenes/', blank=True, null=True)
     imagen_extra3 = models.ImageField(upload_to='imagenes/', blank=True, null=True)
+    slug = models.SlugField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.nombre + "-" + str(self.imagen_principal))
+        return super().save(*args , **kwargs)
 
     def __str__(self):
         return self.nombre

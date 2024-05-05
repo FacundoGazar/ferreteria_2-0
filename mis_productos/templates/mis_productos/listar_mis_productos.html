@@ -17,7 +17,7 @@
                 {% for producto in lista %}
                     <div class="col">
                         <div class="card">
-                            <img src="{{ producto.imagen_principal.url }}" class="card-img-top img-thumbnail" alt="{{ producto.nombre }}">
+                            <img src="{{ producto.imagen_principal.url }}" class="card-img-top img-thumbnail" alt="{{ producto.nombre }}" style="height: 300px;">
                             <div class="card-body">
                                 <h5 class="card-title">{{ producto.nombre }}</h5>
                                 <a href="{% url 'ver_detalle' producto.slug %}" class="btn btn-primary stretched-link">Ver más</a>
@@ -30,8 +30,5 @@
             {% endif %}
         </div>
     {% endblock %}
-    
-
-
     </body>
 </html>

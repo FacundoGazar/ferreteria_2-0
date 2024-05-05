@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import *
 from django.contrib import messages
 from iniciar_sesion import super_user
@@ -11,22 +11,21 @@ def gestion_de_sucursales_view (request):
 
 @super_user
 def agregar_sucursal_view (request):
-    return render(request, "gestion_de_sucursales/agregar_sucursal.html")
-
-@super_user
-def insertar_sucursal_view (request):
     if request.method == "POST":
         nombre = request.POST["sucursal"]
+        ciudad = request.POST["ciudad"]
         if Sucursal.objects.filter(nombre=nombre).exists():
             messages.error(request, ("Nombre de sucursal ya existente"))
-            return render(request, "gestion_de_sucursales/agregar_sucursal.html") 
+            return redirect("agregar_sucursal")
+        elif(len(nombre) < 1 or len(ciudad) < 1):
+            messages.error(request, ("Debe completar todos los campos."))
+            return redirect("agregar_sucursal")
         else:
-            ciudad = request.POST["ciudad"]
             nueva_sucursal = Sucursal(nombre=nombre, ciudad=ciudad)
-            nueva_sucursal.save()            
-            return render(request, "gestion_de_sucursales/gestion_sucursales.html") 
-    
-    return render(request, "gestion_de_sucursales/gestion_sucursales.html") 
+            nueva_sucursal.save()
+            return redirect("gestion_de_sucursales")
+        
+    return render(request, "gestion_de_sucursales/agregar_sucursal.html")
     
 @super_user
 def listar_sucursales_view(request):

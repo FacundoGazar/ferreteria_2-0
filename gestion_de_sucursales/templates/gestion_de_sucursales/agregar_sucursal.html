@@ -16,7 +16,7 @@
                     <p class="card-text py-2 bg-dark text-white">
                         Ingresa el nombre de la sucursal y la ciudad
                     </p>
-                    <form action="insertar_sucursal/" method="POST">  
+                    <form method="POST">  
                         {% csrf_token %} <!-- Agregar token CSRF -->
                         <div data-mdb-input-init class="form-outline mb-4">
                             <input type="text" id="sucursal" class="form-control my-3" name="sucursal" placeholder="Sucursal"/>

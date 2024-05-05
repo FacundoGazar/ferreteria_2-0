@@ -14,7 +14,7 @@ class PerfilEmpleado(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=200)
     dni = models.CharField(max_length=8)  
-    sucursal = models.ForeignKey(Sucursal, on_delete=models.CASCADE)
+    sucursal = models.ForeignKey(Sucursal, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.nombre

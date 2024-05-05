@@ -15,6 +15,7 @@
         {% endfor %}
     </ul>
     <br>
-    <input type="submit" value="Eliminar Sucursal">
+    <button type="submit" id="deleteBtn"
+        onclick="return confirm('¿Estás seguro de que deseas eliminar la sucursal seleccionada?')">EliminarSucursal</button>
 </form>
 {% endblock %}

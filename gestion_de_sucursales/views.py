@@ -52,11 +52,14 @@ def delete_sucursal_view(request):
             try:
                 sucursal = Sucursal.objects.get(nombre=nombre_sucursal)
                 sucursal.delete()
-                return render(request, "gestion_de_sucursales/gestion_sucursales.html")
+                messages.error(request, ("Sucursal eliminada con exito"))
             except Sucursal.DoesNotExist:
-                return render(request, 'error.html', {'mensaje': 'La sucursal seleccionada no existe.'})
+                messages.error(request, ("No existe la sucursal"))
+            return redirect('eliminar_sucursal')
         else:
-            return render(request, 'error.html', {'mensaje': 'No se proporcionó una sucursal para eliminar.'})
+            messages.error(request, ("No se selecciono sucursal"))
+            return redirect('eliminar_sucursal')
     else:
 
-        return render(request, 'error.html', {'mensaje': 'Solicitud no válida.'})
+        messages.error(request, ("Solicitud Invalida"))
+        return redirect('eliminar_sucursal')

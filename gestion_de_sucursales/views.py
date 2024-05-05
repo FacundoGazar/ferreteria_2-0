@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import *
 from django.contrib import messages
 from iniciar_sesion import super_user
+import json
 
 # Create your views here.
 
@@ -69,8 +70,10 @@ def gestion_de_empleados_view (request):
     return render(request, "gestion_de_sucursales/gestion_de_empleados.html",{'empleados': empleados})
 
 def dar_de_baja_view(request):
-    return redirect('gestion_de_empleados')
-
+    sucursales = Sucursal.objects.all()
+    empleados = PerfilEmpleado.objects.all()
+    empleados_json = json.dumps(list(empleados.values('dni', 'sucursal')))
+    return render(request, 'gestion_de_sucursales/dar_de_baja.html', {'sucursales': sucursales, 'empleados_json': empleados_json})
 
 def agregar_empleado_view(request):
     sucursales = Sucursal.objects.all()
@@ -93,9 +96,7 @@ def registrar_empleado (request):
             messages.error(request, "El nombre de usuario ya se encuentra registrado")
             return redirect('agregar_empleado')       
 
-            # Crear un nuevo usuario en el sistema
         nuevo_usuario = User.objects.create_user(username=usuario, email=email, password=contrasenia)
-        # Crear un perfil de cliente asociado al nuevo usuario
         perfil_empleado = PerfilEmpleado(usuario=nuevo_usuario, nombre = nombre, dni = dni, sucursal = sucursal  )
         perfil_empleado.save()
         messages.success(request, "Se registro el usuario")

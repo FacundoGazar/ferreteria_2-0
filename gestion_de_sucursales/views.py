@@ -64,18 +64,21 @@ def delete_sucursal_view(request):
         messages.error(request, ("Solicitud Invalida"))
         return redirect('eliminar_sucursal')
     
+@super_user
 def gestion_de_empleados_view (request):
     empleados = PerfilEmpleado.objects.all()
     return render(request, "gestion_de_sucursales/gestion_de_empleados.html",{'empleados': empleados})
 
+@super_user
 def dar_de_baja_view(request):
     return redirect('gestion_de_empleados')
 
-
+@super_user
 def agregar_empleado_view(request):
     sucursales = Sucursal.objects.all()
     return render(request, "gestion_de_sucursales/agregar_empleado.html", {'sucursales': sucursales})
 
+@super_user
 def registrar_empleado (request):
     if request.method == 'POST':
         usuario = request.POST.get('usuario')
@@ -100,4 +103,4 @@ def registrar_empleado (request):
         perfil_empleado.save()
         messages.success(request, "Se registro el usuario")
 
-        return redirect('agregar_empleado')   
+        return redirect('agregar_empleado')

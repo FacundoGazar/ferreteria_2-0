@@ -12,25 +12,26 @@
     </head>
     <body>
         {% block content %}
-<div class="row">
-    {% if lista %}
-    {% for producto in lista %}
-    <div class="col-md-4 mb-4">
-        <div class="card" style="width: 18rem;">
-            <img src="{{ producto.imagen_principal.url }}" class="img-thumbnail">
-            <div class="card-body">
-                <h5 class="card-title">{{ producto.nombre }}</h5>
-                <p class="card-text">{{ producto.descripcion }}</p>
-                <a href="#" class="btn btn-primary stretched-link">Ver más</a>
-            </div>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% if lista %}
+                {% for producto in lista %}
+                    <div class="col">
+                        <div class="card">
+                            <img src="{{ producto.imagen_principal.url }}" class="card-img-top img-thumbnail" alt="{{ producto.nombre }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ producto.nombre }}</h5>
+                                <a href="{% url 'ver_detalle' producto.slug %}" class="btn btn-primary stretched-link">Ver más</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h1>No tienes ningún producto</h1>
+            {% endif %}
         </div>
-    </div>
-    {% endfor %}
-    {% else %}
-        <h1>No tenes ningun producto master</h1>
-    {% endif %}
-</div>
-{% endblock %}
+    {% endblock %}
+    
+
 
     </body>
 </html>

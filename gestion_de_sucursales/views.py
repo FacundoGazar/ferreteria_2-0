@@ -63,3 +63,14 @@ def delete_sucursal_view(request):
 
         messages.error(request, ("Solicitud Invalida"))
         return redirect('eliminar_sucursal')
+    
+def gestion_de_empleados_view (request):
+    empleados = PerfilEmpleado.objects.all()
+    return render(request, "gestion_de_sucursales/gestion_de_empleados.html",{'empleados': empleados})
+
+def dar_de_baja_view(request):
+    return redirect('gestion_de_empleados')
+
+
+def agregar_empleado_view(request):
+    return redirect('gestion_de_empleados')

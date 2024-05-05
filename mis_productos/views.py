@@ -21,7 +21,7 @@ def subir_producto_view(request):
             return redirect("mis_productos")
     else:
         form = ProductoForm
-    return render (request, "mis_productos/subir_producto.html", {"form": form})
+    return render (request, "mis_productos/subir_producto.html", {"form": form}) 
 
 @not_super_user
 def eliminar_producto_view(request):

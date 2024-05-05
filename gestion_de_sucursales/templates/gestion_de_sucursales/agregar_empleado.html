@@ -1,0 +1,44 @@
+{% extends "homepage/base.html" %}
+
+{% block title %}Agregar Empleado - Ferreplus{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container">
+        <h2>Agregar Empleado</h2>
+        <form action="registrar_empleado/" method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre:</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="mb-3">
+                <label for="dni" class="form-label">DNI:</label>
+                <input type="text" class="form-control" id="dni" name="dni" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Nombre de usuario:</label>
+                <input type="text" class="form-control" id="username" name="usuario" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="mb-3">
+                <label for="sucursal" class="form-label">Sucursal:</label>
+                <select class="form-select" id="sucursal" name="sucursal" required>
+                    <option value="" selected disabled>Seleccionar Sucursal</option>
+                    {% for sucursal in sucursales %}
+                    <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Empleado</button>
+        </form>
+    </div>
+</main>
+{% endblock %}

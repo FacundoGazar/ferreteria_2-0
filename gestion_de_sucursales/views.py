@@ -73,4 +73,31 @@ def dar_de_baja_view(request):
 
 
 def agregar_empleado_view(request):
-    return redirect('gestion_de_empleados')
+    sucursales = Sucursal.objects.all()
+    return render(request, "gestion_de_sucursales/agregar_empleado.html", {'sucursales': sucursales})
+
+def registrar_empleado (request):
+    if request.method == 'POST':
+        usuario = request.POST.get('usuario')
+        nombre = request.POST.get('nombre')
+        email = request.POST.get('email')
+        contrasenia = request.POST.get('password')
+        dni = request.POST.get('dni')
+        nombre_sucursal = request.POST.get('sucursal')
+        try:
+            sucursal = Sucursal.objects.get(nombre=nombre_sucursal)
+        except Sucursal.DoesNotExist:
+            messages.error(request, "La sucursal seleccionada no existe")
+            return redirect('agregar_empleado')     
+        if User.objects.filter(username=usuario).exists():
+            messages.error(request, "El nombre de usuario ya se encuentra registrado")
+            return redirect('agregar_empleado')       
+
+            # Crear un nuevo usuario en el sistema
+        nuevo_usuario = User.objects.create_user(username=usuario, email=email, password=contrasenia)
+        # Crear un perfil de cliente asociado al nuevo usuario
+        perfil_empleado = PerfilEmpleado(usuario=nuevo_usuario, nombre = nombre, dni = dni, sucursal = sucursal  )
+        perfil_empleado.save()
+        messages.success(request, "Se registro el usuario")
+
+        return redirect('agregar_empleado')   

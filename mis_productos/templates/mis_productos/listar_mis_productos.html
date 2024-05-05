@@ -13,6 +13,7 @@
     <body>
         {% block content %}
 <div class="row">
+    {% if lista%}
     {% for producto in lista %}
     <div class="col-md-4 mb-4">
         <div class="card" style="width: 18rem;">
@@ -20,11 +21,14 @@
             <div class="card-body">
                 <h5 class="card-title">{{ producto.nombre }}</h5>
                 <p class="card-text">{{ producto.descripcion }}</p>
-                <a href="#" class="btn btn-primary stretched-link">Detalles</a>
+                <a href="#" class="btn btn-primary stretched-link">Ver más</a>
             </div>
         </div>
     </div>
     {% endfor %}
+    {% else %}
+        <h1>No tenes ningun producto master</h1>
+    {% endif %}
 </div>
 {% endblock %}
 

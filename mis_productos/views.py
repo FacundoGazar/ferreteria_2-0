@@ -32,13 +32,14 @@ def eliminar_producto_view(request):
 
 @not_super_user
 def listar_mis_productos_view(request):
-    queryset = Producto.objects.all()
+    usuario = request.user
+    queryset = Producto.objects.filter(cliente=usuario)
     
     context = {
         "lista": queryset
     }
     
-    return render (request, "mis_productos/listar_mis_productos.html", context)
+    return render(request, "mis_productos/listar_mis_productos.html", context)
 
 @not_super_user
 def ver_detalle_view(request):

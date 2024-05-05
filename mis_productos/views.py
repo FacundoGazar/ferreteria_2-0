@@ -42,5 +42,6 @@ def listar_mis_productos_view(request):
     return render(request, "mis_productos/listar_mis_productos.html", context)
 
 @not_super_user
-def ver_detalle_view(request):
-    return render (request, "mis_productos/ver_detalle.html")
+def ver_detalle_view(request, slug):
+    producto = Producto.objects.get(slug=slug)
+    return render(request, 'mis_productos/ver_detalle.html', {'producto': producto})

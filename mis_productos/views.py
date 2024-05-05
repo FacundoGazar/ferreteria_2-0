@@ -1,6 +1,5 @@
 from django.shortcuts import render
-from .decoradores import *
-
+from iniciar_sesion import not_super_user
 # Create your views here.
 
 @not_super_user

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import *
-from .decoradores import super_user
 from django.contrib import messages
+from iniciar_sesion import super_user
 
 # Create your views here.
 

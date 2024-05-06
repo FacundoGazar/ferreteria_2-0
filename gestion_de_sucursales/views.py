@@ -75,13 +75,14 @@ def dar_de_baja_view(request):
     empleados_json = json.dumps(list(empleados.values('dni', 'sucursal')))
     return render(request, 'gestion_de_sucursales/dar_de_baja.html', {'sucursales': sucursales, 'empleados_json': empleados_json})
 
-def eliminar_empleado (request):
+def eliminar_empleado_view (request):
     if request.method == 'POST':
         emp_dni = request.POST.get('dni')
 
         if emp_dni:
             try:
                 empleado= PerfilEmpleado.objects.get(dni=emp_dni)
+                empleado.usuario.delete()
                 empleado.delete()
                 messages.error(request, ("Empleado dado de baja"))
             except PerfilEmpleado.DoesNotExist:
@@ -92,7 +93,7 @@ def eliminar_empleado (request):
             return redirect('dar_de_baja')
     else:
         messages.error(request, ("Solicitud Invalida"))
-        return redirect('eliminar_sucursal')
+        return redirect('dar_de_baja')
 
 
 def agregar_empleado_view(request):

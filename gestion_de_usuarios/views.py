@@ -46,23 +46,17 @@ def register(request):
 def ver_perfil(request, username=None):
     current_user = request.user
     perfil = None
+
     # Verificar si el usuario actual es un cliente
-    if hasattr(current_user, 'PerfilCliente'):
+    if hasattr(current_user, 'perfilcliente'):
         perfil = current_user.perfilcliente
         template_name = "gestion_de_usuarios/ver_perfil_cliente.html"
 
-    # Verificar si el usuario actual es un empleado
-    elif hasattr(current_user, 'PerfilEmpleado'):
-        perfil = current_user.perfilempleado
-        template_name = "gestion_de_usuarios/ver_perfil_empleado.html"
-
     # Verificar si el usuario actual es un superusuario
     elif current_user.is_superuser:
-        template_name = "gestion_de_usuarios/ver_perfil_admin.html"
-    else:
-        template_name = "gestion_de_usuarios/ver_perfil_empleado.html"
-    return render(request, template_name, {'perfil': perfil})
+        template_name = "gestion_de_usuarios/ver_perfil_superuser.html"
 
+    return render(request, template_name, {'perfil': perfil})
 
 def modificar_perfil(request, username=None):
     current_user = request.user

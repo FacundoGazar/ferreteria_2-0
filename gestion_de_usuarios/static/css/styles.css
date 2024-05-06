@@ -1,0 +1,12 @@
+.perfil-box {
+    width: 400px; /* Ancho del cuadro */
+    margin: 0 auto; /* Centrar horizontalmente */
+    padding: 20px; /* Espacio alrededor del contenido */
+    border: 1px solid #ccc; /* Borde */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+.perfil {
+    text-align: center; /* Centrar el texto dentro del cuadro */
+}

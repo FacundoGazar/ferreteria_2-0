@@ -1,0 +1,24 @@
+{% extends "homepage/base.html" %}
+{% load static %} <!-- Cargar el tag static -->
+
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"> <!-- Enlazar el archivo CSS -->
+
+<!-- Perfil Empelado -->
+<div class="perfil-box">
+    <div class="perfil">
+        <h2>@{{ perfil.usuario.username }}</h2>
+        <p>Nombre: {{ perfil.nombre }}</p>
+        <p>Correo electrónico: {{ perfil.usuario.email }}</p>
+        <p>DNI: {{ perfil.dni }}</p> 
+        <p>Sucursal: {{ perfil.nombre_sucursal }}</p>
+        <p>Perfil: {{ perfil }}</p>
+        <form action="#" method="get">
+            <button type="submit">Modificar</button>
+          </form>
+    </div>
+</div>
+
+{{ block.super }}
+{% endblock %}

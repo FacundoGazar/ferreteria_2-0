@@ -3,10 +3,11 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from gestion_de_usuarios.models import PerfilCliente
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from gestion_de_usuarios.forms import FormularioModificarCliente, UserForm 
 
 def registrar(request):
     return render(request, 'gestion_de_usuarios/registrar.html')
-
 
 def register(request):
     if request.method == 'POST':
@@ -40,3 +41,38 @@ def register(request):
            messages.error(request, "Debe ser mayor de edad para registrarse en este sitio")
            return render(request, 'gestion_de_usuarios/registrar.html')
     return render(request, "/")
+
+
+def ver_perfil(request, username=None):
+    current_user = request.user
+    perfil = None
+    # Verificar si el usuario actual es un cliente
+    if hasattr(current_user, 'PerfilCliente'):
+        perfil = current_user.perfilcliente
+        template_name = "gestion_de_usuarios/ver_perfil_cliente.html"
+
+    # Verificar si el usuario actual es un empleado
+    elif hasattr(current_user, 'PerfilEmpleado'):
+        perfil = current_user.perfilempleado
+        template_name = "gestion_de_usuarios/ver_perfil_empleado.html"
+
+    # Verificar si el usuario actual es un superusuario
+    elif current_user.is_superuser:
+        template_name = "gestion_de_usuarios/ver_perfil_admin.html"
+    else:
+        template_name = "gestion_de_usuarios/ver_perfil_empleado.html"
+    return render(request, template_name, {'perfil': perfil})
+
+
+def modificar_perfil(request, username=None):
+    current_user = request.user
+    perfil = PerfilCliente.objects.get(user=current_user)
+    if request.method == 'POST':
+        form = FormularioModificarCliente(request.POST, instance=perfil)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "¡Se guardaron los cambios con éxito!")
+            return render(request, "gestion_de_usuarios/ver_perfil.html", {'perfil': perfil})
+    else:
+        form = FormularioModificarCliente(instance=perfil)
+    return render(request, "gestion_de_usuarios/modificar_perfil.html", {'form': form, 'perfil': perfil, 'user_form': UserForm})

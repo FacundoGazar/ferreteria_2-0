@@ -28,6 +28,9 @@
         <li><button class="dropdown-item" type="button">Accion mas random todavia</button></li>
         {% if request.user.is_authenticated %}
         <li><hr class="dropdown-divider"></li>
+        <form action="{% url 'ver_perfil' request.user.username %}" method="get">
+          <button type="submit">Ver mi perfil</button>
+        </form>
         {% if request.user.is_superuser %}
         <li><a class="dropdown-item" type="button" href="{% url 'gestion_de_sucursales' %}">Gestion de sucursales</a></li>
         {% else %}

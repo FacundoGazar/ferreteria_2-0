@@ -6,11 +6,11 @@ import json
 
 # Create your views here.
 
-@super_user
+@super_user 
 def gestion_de_sucursales_view (request):
     return render(request, "gestion_de_sucursales/gestion_sucursales.html")
 
-@super_user
+@super_user 
 def agregar_sucursal_view (request):
     if request.method == "POST":
         nombre = request.POST["sucursal"]
@@ -28,7 +28,7 @@ def agregar_sucursal_view (request):
         
     return render(request, "gestion_de_sucursales/agregar_sucursal.html")
     
-@super_user
+@super_user 
 def listar_sucursales_view(request):
     queryset = Sucursal.objects.all()
     
@@ -38,13 +38,13 @@ def listar_sucursales_view(request):
 
     return render(request, "gestion_de_sucursales/listar_sucursales.html", context)
 
-@super_user
+@super_user 
 def eliminar_sucursal_view (request):
     sucursales = Sucursal.objects.all()
 
     return render (request,"gestion_de_sucursales/eliminar_sucursal.html",{'sucursales': sucursales})
 
-@super_user
+@super_user 
 def delete_sucursal_view(request):
     if request.method == 'POST':
         nombre_sucursal = request.POST.get('sucursal')
@@ -65,16 +65,19 @@ def delete_sucursal_view(request):
         messages.error(request, ("Solicitud Invalida"))
         return redirect('eliminar_sucursal')
     
+@super_user 
 def gestion_de_empleados_view (request):
     empleados = PerfilEmpleado.objects.all()
     return render(request, "gestion_de_sucursales/gestion_de_empleados.html",{'empleados': empleados})
 
+@super_user 
 def dar_de_baja_view(request):
     sucursales = Sucursal.objects.all()
     empleados = PerfilEmpleado.objects.all()
     empleados_json = json.dumps(list(empleados.values('dni', 'sucursal')))
     return render(request, 'gestion_de_sucursales/dar_de_baja.html', {'sucursales': sucursales, 'empleados_json': empleados_json})
 
+@super_user
 def eliminar_empleado_view (request):
     if request.method == 'POST':
         emp_dni = request.POST.get('dni')
@@ -96,10 +99,12 @@ def eliminar_empleado_view (request):
         return redirect('dar_de_baja')
 
 
+@super_user 
 def agregar_empleado_view(request):
     sucursales = Sucursal.objects.all()
     return render(request, "gestion_de_sucursales/agregar_empleado.html", {'sucursales': sucursales})
 
+@super_user 
 def registrar_empleado (request):
     if request.method == 'POST':
         usuario = request.POST.get('usuario')

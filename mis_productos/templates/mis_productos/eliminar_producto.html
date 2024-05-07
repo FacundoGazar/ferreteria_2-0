@@ -1,18 +1,20 @@
 {% extends "homepage/base.html" %}
 
-<!DOCTYPE html>
+{% block title %}{% endblock %}
 
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body>
-     
-        
-
-    </body>
-</html>
+{% block content %}
+<h2>Eliminar Producto</h2>
+<form action="{% url 'eliminar_producto' %}" method="POST">
+    {% csrf_token %}
+    <ul>
+        {% for producto in productos %}
+        <li>
+            <input type="radio" id="producto_{{ producto.id }}" name="producto_id" value="{{ producto.id }}">
+            <label for="producto_{{ producto.id }}">{{ producto.nombre }}</label>
+        </li>
+        {% endfor %}
+    </ul>
+    <br>
+    <button type="submit" id="deleteBtn" onclick="return confirm('¿Estás seguro de que deseas eliminar el producto seleccionado?')">Eliminar Producto</button>
+</form>
+{% endblock %}

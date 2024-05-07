@@ -21,24 +21,25 @@
     </div>
     <div class="btn-group dropstart">
       <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        Menú
+          Menú
       </button>
       <ul class="dropdown-menu">
-        <li><button class="dropdown-item" type="button">Accion random</button></li>
-        <li><button class="dropdown-item" type="button">Accion mas random todavia</button></li>
-        {% if request.user.is_authenticated %}
-        <li><hr class="dropdown-divider"></li>
-        <form action="{% url 'ver_perfil' request.user.username %}" method="get">
-          <button type="submit">Ver mi perfil</button>
-        </form>
-        {% if request.user.is_superuser %}
-        <li><a class="dropdown-item" type="button" href="{% url 'gestion_de_sucursales' %}">Gestion de sucursales</a></li>
-        {% else %}
-        <li><a class="dropdown-item" type="button" href="{% url 'mis_productos' %}">Mis productos</a></li>
-        {% endif %}
-        <li><a class="dropdown-item" type="button" href="{% url 'modificar_contrasena' %}">Modificar contraseña</a></li>
-        <li><a class="dropdown-item" onclick="return confirm('¿Estás seguro de cerrar sesión?')" type="button" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a></li>
-        {% endif %}
+          {% if request.user.is_authenticated %}
+              {% if request.user.is_superuser %}
+                  <li><a class="dropdown-item" href="{% url 'gestion_de_sucursales' %}">Gestión de sucursales</a></li>
+              {% elif not request.user.is_staff %}
+                  <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis productos</a></li>
+              {% endif %}
+              <li><hr class="dropdown-divider"></li>
+              <form action="{% url 'ver_perfil' request.user.username %}" method="get">
+                  <button type="submit" class="dropdown-item">Ver mi perfil</button>
+              </form>
+              <li><a class="dropdown-item" href="{% url 'modificar_contrasena' %}">Modificar contraseña</a></li>
+              <li><a class="dropdown-item" onclick="return confirm('¿Estás seguro de cerrar sesión?')" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a></li>
+          {% endif %}
+      </ul>
+  </div>
+  
       </ul>
     </div>
   </div>

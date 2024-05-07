@@ -100,7 +100,7 @@ def registrar_empleado (request):
             messages.error(request, "El nombre de usuario ya se encuentra registrado")
             return redirect('agregar_empleado')       
 
-        nuevo_usuario = User.objects.create_user(username=usuario, email=email, password=contrasenia)
+        nuevo_usuario = User.objects.create_user(username=usuario, email=email, password=contrasenia, is_staff=True)
         perfil_empleado = PerfilEmpleado(usuario=nuevo_usuario, nombre = nombre, dni = dni, sucursal = sucursal  )
         perfil_empleado.save()
         messages.success(request, "Se registro el usuario")

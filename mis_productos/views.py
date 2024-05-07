@@ -25,7 +25,24 @@ def subir_producto_view(request):
 
 @not_super_user
 def eliminar_producto_view(request):
-    return render (request, "mis_productos/eliminar_producto.html")
+    productos = Producto.objects.all()
+    return render (request, "mis_productos/eliminar_producto.html",{'productos': productos})
+
+def delete_producto_view(request):
+    if request.method == 'POST':
+        producto_id = request.POST.get('producto_id')
+
+        if producto_id:
+            producto = Producto.objects.get(id=producto_id)
+            producto.delete()
+            messages.success(request, "Producto eliminado con éxito")
+        else:
+            messages.error(request, "No se seleccionó un producto")
+
+    else:
+        messages.error(request, "Solicitud inválida")
+
+    return redirect('eliminar_producto')
 
 @not_super_user
 def listar_mis_productos_view(request):

@@ -5,7 +5,7 @@ from gestion_de_usuarios.models import PerfilCliente
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from gestion_de_usuarios.forms import FormularioModificarCliente, UserForm
-from iniciar_sesion import unauthenticated_user, clienteOEmpleado
+from iniciar_sesion import unauthenticated_user, clienteOEmpleado, authenticated_user
 
 @unauthenticated_user
 def registrar(request):
@@ -45,7 +45,7 @@ def register(request):
            return render(request, 'gestion_de_usuarios/registrar.html')
     return render(request, "/")
 
-@clienteOEmpleado
+@authenticated_user
 def ver_perfil(request, username=None):
     current_user = request.user
     perfil = None

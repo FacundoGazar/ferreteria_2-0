@@ -10,6 +10,15 @@ def unauthenticated_user(view_func):
         
     return wrapper_func
 
+def clienteOEmpleado(view_func):
+    def wrapper_func(request, *args, **kwargs):
+        if request.user.is_authenticated and not (request.user.is_superuser):
+            return view_func(request, *args, **kwargs)
+        else:
+            return redirect("homepage")
+        
+    return wrapper_func
+
 def authenticated_user(view_func):
     def wrapper_func(request, *args, **kwargs):
         if request.user.is_authenticated:
@@ -49,5 +58,15 @@ def not_super_user(view_func):
             return redirect("homepage")
         else:
             return view_func(request, *args, **kwargs)
+        
+    return wrapper_func
+
+def soy_cliente(view_func):
+    def wrapper_func(request, *args, **kwargs):
+        if request.user.is_authenticated and not request.user.is_staff and not request.user.is_superuser :
+            return view_func(request, *args, **kwargs)
+           
+        else:
+            return redirect("homepage")
         
     return wrapper_func

@@ -31,6 +31,7 @@
           {% if request.user.is_authenticated %}
               {% if request.user.is_superuser %}
                   <li><a class="dropdown-item" href="{% url 'gestion_de_sucursales' %}">Gestión de sucursales</a></li>
+                  <li><a class="dropdown-item" href="{% url 'gestion_de_empleados' %}">Gestión de empleados</a></li>
               {% elif not request.user.is_staff %}
                   <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis productos</a></li>
               {% endif %}

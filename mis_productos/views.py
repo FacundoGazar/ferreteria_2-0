@@ -1,15 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from iniciar_sesion import not_super_user
 from .forms import ProductoForm
 from .models import Producto
+from iniciar_sesion import soy_cliente
 # Create your views here.
 
-@not_super_user
+@soy_cliente
 def mis_productos_view(request):
     return render (request, "mis_productos/mis_productos.html")
 
-@not_super_user
+@soy_cliente
 def subir_producto_view(request):
     if request.method == "POST":
         form = ProductoForm(request.POST, request.FILES)
@@ -23,12 +23,9 @@ def subir_producto_view(request):
         form = ProductoForm
     return render (request, "mis_productos/subir_producto.html", {"form": form}) 
 
-@not_super_user
+@soy_cliente
 def eliminar_producto_view(request):
-    productos = Producto.objects.all()
-    return render (request, "mis_productos/eliminar_producto.html",{'productos': productos})
-
-def delete_producto_view(request):
+    productos = Producto.objects.filter(cliente=request.user)
     if request.method == 'POST':
         producto_id = request.POST.get('producto_id')
 
@@ -37,14 +34,11 @@ def delete_producto_view(request):
             producto.delete()
             messages.success(request, "Producto eliminado con éxito")
         else:
-            messages.error(request, "No se seleccionó un producto")
+            messages.error(request, "Seleccione un producto")
 
-    else:
-        messages.error(request, "Solicitud inválida")
+    return render (request, "mis_productos/eliminar_producto.html",{'productos': productos})
 
-    return redirect('eliminar_producto')
-
-@not_super_user
+@soy_cliente
 def listar_mis_productos_view(request):
     usuario = request.user
     queryset = Producto.objects.filter(cliente=usuario)
@@ -55,7 +49,7 @@ def listar_mis_productos_view(request):
     
     return render(request, "mis_productos/listar_mis_productos.html", context)
 
-@not_super_user
+@soy_cliente
 def ver_detalle_view(request, slug):
     producto = Producto.objects.get(slug=slug)
     return render(request, 'mis_productos/ver_detalle.html', {'producto': producto})

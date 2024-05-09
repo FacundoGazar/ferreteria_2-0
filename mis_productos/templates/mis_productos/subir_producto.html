@@ -13,20 +13,67 @@
     <body>
     {% block content %}
         <h1>Subir un producto</h1>
-        <br></br>
-        {% if subido %}
-            Tu producto fue subido exitosamente
-
-        {% else %}
 
             <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                {{ form.as_p }}
+            
+                <div>
+                    {{ form.nombre.label_tag }}
+                    {{ form.nombre }}
+                </div>
 
+                <div>
+                    {{ form.estado.label_tag }}
+                    {{ form.estado }}
+                </div>
+
+                <div>
+                    {{ form.categoria.label_tag }}
+                    {{ form.categoria }}
+                </div>
+
+                <div>
+                    {{ form.horario_disponibilidad.label_tag }}
+                    {{ form.horario_disponibilidad }}
+                </div>
+
+                <div>
+                    {{ form.sucursal.label_tag }}
+                    {{ form.sucursal }}
+                </div>
+                <br></br>
+                <div class="custom-file">
+                    {{ form.imagen_principal }}
+                    <label class="custom-file-label" for="imagen_principal">Selecciona una imagen OBLIGATORIA</label>
+                </div>
+                <br></br>
+                <div class="custom-file">
+                    {{ form.imagen_extra1 }}
+                    <label class="custom-file-label" for="imagen_extra1">Selecciona otra imagen opcional</label>
+                </div>
+                <br></br>
+                <div class="custom-file">
+                    {{ form.imagen_extra2 }}
+                    <label class="custom-file-label" for="imagen_extra2">Selecciona otra imagen opcional</label>
+                </div>
+                <br></br>
+                <div class="custom-file">
+                    {{ form.imagen_extra3 }}
+                    <label class="custom-file-label" for="imagen_extra3">Selecciona otra imagen opcional</label>
+                </div>
+                <br></br>
                 <input type="submit" value="Subir producto" class="btn btn-dark">
-            </form>
-        {% endif %}
+            </form>  
+            
+            
+            <script>
+                document.querySelector('.custom-file-input input[type="file"]').addEventListener('change', function (e) {
+                    var fileName = e.target.files[0].name;
+                    var label = document.querySelector('.custom-file-input label');
+                    label.textContent = fileName;
+                });
+            </script>
     {% endblock %}
     </body>
 </html>

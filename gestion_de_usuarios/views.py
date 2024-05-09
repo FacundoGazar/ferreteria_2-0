@@ -2,14 +2,16 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from gestion_de_usuarios.models import PerfilCliente
-from gestion_de_sucursales.models import PerfilEmpleado
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from gestion_de_usuarios.forms import FormularioModificarCliente, UserForm 
+from gestion_de_usuarios.forms import FormularioModificarCliente, UserForm
+from iniciar_sesion import unauthenticated_user, clienteOEmpleado
 
+@unauthenticated_user
 def registrar(request):
     return render(request, 'gestion_de_usuarios/registrar.html')
 
+@unauthenticated_user
 def register(request):
     if request.method == 'POST':
         # Obtener los datos del formulario enviado por el usuario
@@ -43,7 +45,7 @@ def register(request):
            return render(request, 'gestion_de_usuarios/registrar.html')
     return render(request, "/")
 
-
+@clienteOEmpleado
 def ver_perfil(request, username=None):
     current_user = request.user
     perfil = None
@@ -61,6 +63,7 @@ def ver_perfil(request, username=None):
 
     return render(request, template_name, {'perfil': perfil})
 
+@clienteOEmpleado
 def modificar_perfil(request, username=None):
     current_user = request.user
     perfil = PerfilCliente.objects.get(user=current_user)

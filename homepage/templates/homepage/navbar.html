@@ -23,12 +23,12 @@
         {% endif %}
       </ul>
     </div>
+    {% if request.user.is_authenticated %}
     <div class="btn-group dropstart">
       <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           Menú
       </button>
       <ul class="dropdown-menu">
-          {% if request.user.is_authenticated %}
               {% if request.user.is_superuser %}
                   <li><a class="dropdown-item" href="{% url 'gestion_de_sucursales' %}">Gestión de sucursales</a></li>
                   <li><a class="dropdown-item" href="{% url 'gestion_de_empleados' %}">Gestión de empleados</a></li>

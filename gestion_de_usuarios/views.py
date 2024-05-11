@@ -10,7 +10,6 @@ from iniciar_sesion import unauthenticated_user, clienteOEmpleado, authenticated
 @unauthenticated_user
 def registrar(request):
     return render(request, 'gestion_de_usuarios/registrar.html')
-
 @unauthenticated_user
 def register(request):
     if request.method == 'POST':
@@ -23,6 +22,14 @@ def register(request):
         ciudad = request.POST.get('ciudad')
         edad = int(request.POST.get('edad')) 
 
+        # Verificar si la contraseña cumple con los requisitos
+        try:
+             validate_password(contrasenia)
+        except ValidationError as error:
+            messages.success(request, "La contraseña no cumple con los requisitos")
+            return render(request, 'gestion_de_usuarios/registrar.html')
+
+        #Verifica si el nombre de usuario es unico
         if User.objects.filter(username=usuario).exists():
             messages.error(request, "El nombre de usuario ya se encuentra registrado")
             return render(request, 'gestion_de_usuarios/registrar.html')         

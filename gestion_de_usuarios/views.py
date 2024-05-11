@@ -6,6 +6,9 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from gestion_de_usuarios.forms import FormularioModificarCliente, UserForm
 from iniciar_sesion import unauthenticated_user, clienteOEmpleado, authenticated_user
+import re
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 @unauthenticated_user
 def registrar(request):

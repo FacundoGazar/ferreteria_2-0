@@ -57,35 +57,35 @@
       </button>
     </div>
       <div class="card-body">
-        {% if producto.nombre %}
+
         <div class="mb-4">
             <h5 class="display-5">Nombre: {{ producto.nombre }}</h5>
         </div>
-        {% endif %}
+
         
-        {% if producto.estado %}
+
         <div class="mb-4">
             <h8 class="display-8">Estado: {{ producto.estado }}</h8>
         </div>
-        {% endif %}
+
     
-        {% if producto.categoria %}
+
         <div class="mb-4">
             <h8 class="display-8">Categoría: {{ producto.categoria }}</h8>
         </div>
-        {% endif %}
+
     
-        {% if producto.horario_disponibilidad %}
+
         <div class="mb-4">
-            <h8 class="display-8">Horario de disponibilidad: {{ producto.horario_disponibilidad }}</h8>
+            <h8 class="display-8">Horario de disponibilidad: {{ producto.horario_inicio }} - {{ producto.horario_fin }}</h8>
         </div>
-        {% endif %}
+
     
-        {% if producto.sucursal %}
+
         <div class="mb-4">
-            <h8 class="display-8">Sucursal: {{ producto.sucursal }}</h8>
+            <h8 class="display-8">Sucursal: {{ producto.sucursal}}</h8>
         </div>
-        {% endif %}
+
       </div>
           
   {% endblock %}          

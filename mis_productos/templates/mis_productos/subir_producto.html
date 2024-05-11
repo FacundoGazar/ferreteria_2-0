@@ -24,23 +24,64 @@
                 </div>
 
                 <div>
-                    {{ form.estado.label_tag }}
-                    {{ form.estado }}
+                    <div class="mb-3">
+                        <label for="estado" class="form-label"></label>
+                        <select class="form-select" id="estado" name="estado" required>
+                            <option value="" selected disabled>Seleccionar Estado</option>
+                            {% for valore in estados_list %}
+                            <option value="{{ valore }}">{{ valore }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
 
                 <div>
-                    {{ form.categoria.label_tag }}
-                    {{ form.categoria }}
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label"></label>
+                        <select class="form-select" id="categoria" name="categoria" required>
+                            <option value="" selected disabled>Seleccionar Categoría</option>
+                            {% for valorc in categorias_list %}
+                            <option value="{{ valorc }}">{{ valorc }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
 
                 <div>
-                    {{ form.horario_disponibilidad.label_tag }}
-                    {{ form.horario_disponibilidad }}
+                    <div class="mb-3">
+                        <label for="horario_inicio" class="form-label"></label>
+                        <select class="form-select" id="horario_inicio" name="horario_inicio" required>
+                            <option value="" selected disabled>Inicio de tu Disponibilidad</option>
+                            {% for valorh in horarios_list_inicio %}
+                            <option value="{{ valorh }}">{{ valorh }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    </div>
+                    <div>
+                        <div class="mb-3">
+                            <label for="horario_fin" class="form-label"></label>
+                            <select class="form-select" id="horario_fin" name="horario_fin" required>
+                                <option value="" selected disabled>Fin de tu Disponibilidad</option>
+                                {% for valorh in horarios_list_fin %}
+                                <option value="{{ valorh }}">{{ valorh }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        </div>
                 </div>
 
                 <div>
-                    {{ form.sucursal.label_tag }}
-                    {{ form.sucursal }}
+                    <div class="mb-3">
+                        <label for="sucursal" class="form-label"></label>
+                        <label for="sucursal" class="form-label"></label>
+                        <select class="form-select" id="sucursal" name="sucursal" required>
+                            <option value="" selected disabled>Seleccionar Sucursal</option>
+                            {% for sucursal in sucursales %}
+                            <option value="{{ sucursal.nombre }} - {{ sucursal.ciudad }}">{{ sucursal.nombre }} - {{ sucursal.ciudad }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
                 <br></br>
                 <div class="custom-file">

@@ -3,6 +3,8 @@ from .models import *
 from django.contrib import messages
 from iniciar_sesion import super_user
 import json
+from django.core.mail import send_mail
+
 
 # Create your views here.
 
@@ -52,8 +54,13 @@ def delete_sucursal_view(request):
         if nombre_sucursal:
             try:
                 sucursal = Sucursal.objects.get(nombre=nombre_sucursal)
-                sucursal.delete()
-                messages.error(request, ("Sucursal eliminada con exito"))
+                if sucursal.perfilempleado_set.exists():
+                    messages.error(request, "No se puede eliminar la sucursal porque hay empleados asignados a ella")
+                elif Sucursal.objects.count() == 1:
+                    messages.error(request, "No se puede eliminar la única sucursal que existe")
+                else:
+                    sucursal.delete()
+                    messages.success(request, "Sucursal eliminada con éxito")
             except Sucursal.DoesNotExist:
                 messages.error(request, ("No existe la sucursal"))
             return redirect('eliminar_sucursal')
@@ -68,6 +75,8 @@ def delete_sucursal_view(request):
 @super_user 
 def gestion_de_empleados_view (request):
     empleados = PerfilEmpleado.objects.all()
+    if not empleados:
+        messages.info(request, "No hay empleados registrados.")
     return render(request, "gestion_de_sucursales/gestion_de_empleados.html",{'empleados': empleados})
 
 @super_user 
@@ -113,6 +122,7 @@ def registrar_empleado (request):
         contrasenia = request.POST.get('password')
         dni = request.POST.get('dni')
         nombre_sucursal = request.POST.get('sucursal')
+
         try:
             sucursal = Sucursal.objects.get(nombre=nombre_sucursal)
         except Sucursal.DoesNotExist:
@@ -121,10 +131,20 @@ def registrar_empleado (request):
         if User.objects.filter(username=usuario).exists():
             messages.error(request, "El nombre de usuario ya se encuentra registrado")
             return redirect('agregar_empleado')       
+        if PerfilEmpleado.objects.filter(dni=dni).exists():
+            messages.error(request, "El DNI ya está registrado para otro empleado")
+            return redirect('agregar_empleado')
+
 
         nuevo_usuario = User.objects.create_user(username=usuario, email=email, password=contrasenia, is_staff=True)
         perfil_empleado = PerfilEmpleado(usuario=nuevo_usuario, nombre = nombre, dni = dni, sucursal = sucursal  )
         perfil_empleado.save()
-        messages.success(request, "Se registro el usuario")
+        subject = 'Registro de empleado en Ferreplus'
+        message = f'Hola {nombre},\n\nTu cuenta de empleado en Ferreplus ha sido creada.\n\nNombre de usuario: {usuario}\nContraseña: {contrasenia}\n\n¡Gracias!'
+        from_email = 'noreply@ferreplus.com'
+        to_email = [email]
+        send_mail(subject, message, from_email, to_email)
 
-        return redirect('agregar_empleado')   
+        messages.success(request, "Se registró el usuario y se envió un correo electrónico con los detalles de la cuenta")
+
+        return redirect('agregar_empleado')

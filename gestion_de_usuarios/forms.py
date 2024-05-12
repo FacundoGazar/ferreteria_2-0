@@ -16,7 +16,7 @@ class UserForm(forms.ModelForm):
 class FormularioModificarCliente(forms.ModelForm):
     first_name = forms.CharField(label="Nombre")
     last_name = forms.CharField(label="Apellido")
-    edad = forms.IntegerField(label="Edad")
+    edad = forms.IntegerField(label="Edad", min_value=18,max_value=100)
     ciudad = forms.CharField(label="Ciudad")
 
     class Meta:

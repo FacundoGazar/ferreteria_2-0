@@ -1,7 +1,4 @@
 {% extends "homepage/base.html" %}
-
-{% block title %}Lista de Empleados - Ferreplus{% endblock %}
-
 {% block content %}
 <main>
     <h2>Lista de Empleados</h2>
@@ -29,7 +26,11 @@
     </div>
     <!-- Botón "Dar de Baja" -->
     <div class="mt-3">
+        {% if not empleados %}
+        <a href="#" class="btn btn-danger disabled" aria-disabled="true">Dar de Baja</a>
+        {% else %}
         <a href="{% url 'dar_de_baja' %}" class="btn btn-danger">Dar de Baja</a>
+        {% endif %}
     </div>
 </main>
 {% endblock %}

@@ -1,6 +1,10 @@
+{% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #173F84;">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'homepage' %}">Ferreplus</a>
+    <a class="navbar-brand" href="{% url 'homepage' %}">
+      <img src="{% static 'logoFerreplus.png' %}" alt="Logo" width="165" height="75" class="d-inline-block align-text-top">
+    </a>
+   
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -19,14 +23,15 @@
         {% endif %}
       </ul>
     </div>
+    {% if request.user.is_authenticated %}
     <div class="btn-group dropstart">
       <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           Menú
       </button>
       <ul class="dropdown-menu">
-          {% if request.user.is_authenticated %}
               {% if request.user.is_superuser %}
                   <li><a class="dropdown-item" href="{% url 'gestion_de_sucursales' %}">Gestión de sucursales</a></li>
+                  <li><a class="dropdown-item" href="{% url 'gestion_de_empleados' %}">Gestión de empleados</a></li>
               {% elif not request.user.is_staff %}
                   <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis productos</a></li>
               {% endif %}
@@ -37,6 +42,7 @@
               <li><a class="dropdown-item" href="{% url 'modificar_contrasena' %}">Modificar contraseña</a></li>
               <li><a class="dropdown-item" onclick="return confirm('¿Estás seguro de cerrar sesión?')" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a></li>
           {% endif %}
+          
       </ul>
   </div>
   

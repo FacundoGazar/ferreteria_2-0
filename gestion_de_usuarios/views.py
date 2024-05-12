@@ -4,11 +4,16 @@ from django.contrib.auth.models import User
 from gestion_de_usuarios.models import PerfilCliente
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from gestion_de_usuarios.forms import FormularioModificarCliente, UserForm 
+from gestion_de_usuarios.forms import FormularioModificarCliente, UserForm
+from iniciar_sesion import unauthenticated_user, clienteOEmpleado, authenticated_user
+import re
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
+@unauthenticated_user
 def registrar(request):
     return render(request, 'gestion_de_usuarios/registrar.html')
-
+@unauthenticated_user
 def register(request):
     if request.method == 'POST':
         # Obtener los datos del formulario enviado por el usuario
@@ -20,6 +25,14 @@ def register(request):
         ciudad = request.POST.get('ciudad')
         edad = int(request.POST.get('edad')) 
 
+        # Verificar si la contraseña cumple con los requisitos
+        try:
+             validate_password(contrasenia)
+        except ValidationError as error:
+            messages.success(request, "La contraseña no cumple con los requisitos")
+            return render(request, 'gestion_de_usuarios/registrar.html')
+
+        #Verifica si el nombre de usuario es unico
         if User.objects.filter(username=usuario).exists():
             messages.error(request, "El nombre de usuario ya se encuentra registrado")
             return render(request, 'gestion_de_usuarios/registrar.html')         
@@ -42,22 +55,25 @@ def register(request):
            return render(request, 'gestion_de_usuarios/registrar.html')
     return render(request, "/")
 
-
+@authenticated_user
 def ver_perfil(request, username=None):
     current_user = request.user
     perfil = None
-
     # Verificar si el usuario actual es un cliente
     if hasattr(current_user, 'perfilcliente'):
         perfil = current_user.perfilcliente
         template_name = "gestion_de_usuarios/ver_perfil_cliente.html"
-
     # Verificar si el usuario actual es un superusuario
     elif current_user.is_superuser:
-        template_name = "gestion_de_usuarios/ver_perfil_superuser.html"
+        template_name = "gestion_de_usuarios/ver_perfil_admin.html"
+    #no me toma la verificacion del staff ni por perfil empleado, el else funciona pero medio medio jaja
+    elif hasattr(current_user, 'perfilempleado'):
+        perfil = current_user.perfilempleado
+        template_name = "gestion_de_usuarios/ver_perfil_empleado.html"
 
     return render(request, template_name, {'perfil': perfil})
 
+@clienteOEmpleado
 def modificar_perfil(request, username=None):
     current_user = request.user
     perfil = PerfilCliente.objects.get(user=current_user)
@@ -66,7 +82,7 @@ def modificar_perfil(request, username=None):
         if form.is_valid():
             form.save()
             messages.success(request, "¡Se guardaron los cambios con éxito!")
-            return render(request, "gestion_de_usuarios/ver_perfil.html", {'perfil': perfil})
+            return render(request, "gestion_de_usuarios/ver_perfil_cliente.html", {'perfil': perfil})
     else:
         form = FormularioModificarCliente(instance=perfil)
     return render(request, "gestion_de_usuarios/modificar_perfil.html", {'form': form, 'perfil': perfil, 'user_form': UserForm})

@@ -4,7 +4,8 @@ from django.contrib import messages
 from iniciar_sesion import super_user
 import json
 from django.core.mail import send_mail
-
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 # Create your views here.
 
@@ -133,6 +134,12 @@ def registrar_empleado (request):
             return redirect('agregar_empleado')       
         if PerfilEmpleado.objects.filter(dni=dni).exists():
             messages.error(request, "El DNI ya está registrado para otro empleado")
+            return redirect('agregar_empleado')
+        
+        try:
+             validate_password(contrasenia)
+        except ValidationError as error:
+            messages.success(request, "La contraseña no cumple con los requisitos")
             return redirect('agregar_empleado')
 
 

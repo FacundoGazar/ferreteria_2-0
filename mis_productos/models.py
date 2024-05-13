@@ -1,8 +1,4 @@
 from django.db import models
-
-# Create your models here.
-
-from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 
@@ -24,6 +20,3 @@ class Producto(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.nombre + "-" + str(self.imagen_principal))
         return super().save(*args , **kwargs)
-
-    def __str__(self):
-        return self.nombre

@@ -6,6 +6,7 @@ from .models import Producto
 from iniciar_sesion import soy_cliente
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
+from PIL import Image, ImageChops
 import re
 
 # Create your views here.
@@ -77,7 +78,12 @@ def subir_producto_view(request):
             producto = form.save(commit=False)
             producto.cliente = request.user
             producto.save()
-            messages.success(request, "¡Se ha subido el producto correctamente!")
+            if are_images_equal(producto.id):
+                productoDel = Producto.objects.get(id=producto.id)
+                productoDel.delete()
+                messages.error(request, "¡Este producto ya fue publicado en el sitio!")
+            else:
+                messages.success(request, "¡Se ha subido el producto correctamente!")
             return redirect("mis_productos")
         
         else:
@@ -86,6 +92,22 @@ def subir_producto_view(request):
         form = ProductoForm()
 
     return render(request, "mis_productos/subir_producto.html", {"form": form, "sucursales": sucursales, "categorias_list": categorias_list, "estados_list": estados_list, "dias_list": dias_list, "horarios_list_inicio": horarios_list[:8], "horarios_list_fin": horarios_list[1:]})
+
+def are_images_equal(producto):
+    path_one = Producto.objects.get(id=producto)
+    image_one = Image.open(path_one.imagen_principal).convert('RGB')
+    
+    comparativas = Producto.objects.exclude(id=producto)
+    
+    for producto in comparativas:
+    
+        image_two = Image.open(producto.imagen_principal).convert('RGB')
+        diff = ImageChops.difference(image_one, image_two)
+
+        if diff.getbbox():
+            return False
+        else:
+            return True
 
 def verificar_formato_imagen(imagen):
     try:

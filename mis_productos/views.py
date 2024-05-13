@@ -6,7 +6,7 @@ from .models import Producto
 from iniciar_sesion import soy_cliente
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
-
+import re
 
 # Create your views here.
 
@@ -60,11 +60,28 @@ def subir_producto_view(request):
                         })
                     
         if form.is_valid():   
+            
+            nombre = form.cleaned_data['nombre']
+            if not re.search('[a-zA-Z]{3,}', nombre):
+                messages.error(request, "El nombre debe contener al menos tres letras.")
+                return render(request, "mis_productos/subir_producto.html", {
+                            "form": form,
+                            "sucursales": sucursales,
+                            "categorias_list": categorias_list,
+                            "estados_list": estados_list,
+                            "dias_list": dias_list,
+                            "horarios_list_inicio": horarios_list[:8],
+                            "horarios_list_fin": horarios_list[1:]
+                        })          
+            
             producto = form.save(commit=False)
             producto.cliente = request.user
             producto.save()
             messages.success(request, "¡Se ha subido el producto correctamente!")
             return redirect("mis_productos")
+        
+        else:
+            messages.error(request, "¡Algo salió mal! Por favor, verifica el formulario.")
     else:
         form = ProductoForm()
 

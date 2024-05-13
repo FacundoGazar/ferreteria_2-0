@@ -28,5 +28,5 @@ class ProductoForm(ModelForm):
             "dias": forms.TextInput(attrs={"class": "form-control", "placeholder": "Tus días disponibles de la semana"}),
             "horario_inicio": forms.TextInput(attrs={"class": "form-control", "placeholder": "Tu horario inicial de disponibilidad"}),
             "horario_fin": forms.TextInput(attrs={"class": "form-control", "placeholder": "Tu horario final de disponibilidad"}),
-            "sucursal": forms.TextInput(attrs={"class": "form-control", "placeholder": "Sucursal"}),
+            "sucursal": forms.Select(attrs={"class": "form-select", "placeholder": "Sucursal"}),
         }   

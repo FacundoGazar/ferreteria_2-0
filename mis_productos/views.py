@@ -5,7 +5,6 @@ from gestion_de_sucursales.models import Sucursal
 from .models import Producto
 from iniciar_sesion import soy_cliente
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm
 from PIL import Image, ImageChops
 import re
 
@@ -13,6 +12,13 @@ import re
 
 @soy_cliente
 def mis_productos_view(request):
+    # Obtener todos los productos del usuario actual
+    productos = Producto.objects.filter(cliente=request.user)
+
+    # Verificar si hay al menos un producto con sucursal "sucursal inactiva"
+    if productos.filter(sucursal__isnull=True).exists():
+        messages.warning(request, "Tenes al menos un producto en una sucursal inactiva. Por favor, asignale una nueva sucursal.")
+
     return render (request, "mis_productos/mis_productos.html")
 
 @soy_cliente
@@ -87,7 +93,9 @@ def subir_producto_view(request):
             return redirect("mis_productos")
         
         else:
-            messages.error(request, "¡Algo salió mal! Por favor, verifica el formulario.")
+            print(request.POST)
+            print(form.errors)
+            messages.error(request, "Por favor, verifica el formulario.")
     else:
         form = ProductoForm()
 
@@ -139,7 +147,9 @@ def eliminar_producto_view(request):
 def listar_mis_productos_view(request):
     usuario = request.user
     queryset = Producto.objects.filter(cliente=usuario)
-    
+    if queryset.filter(sucursal__isnull=True).exists():
+        messages.warning(request, "Tenes al menos un producto en una sucursal inactiva. Por favor, asignale una nueva sucursal.")
+
     context = {
         "lista": queryset
     }

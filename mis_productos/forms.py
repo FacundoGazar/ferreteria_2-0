@@ -23,10 +23,10 @@ class ProductoForm(ModelForm):
         
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre del producto"}),
-            "estado": forms.TextInput(attrs={"class": "form-control", "placeholder": "Estado del producto"}),
-            "categoria": forms.TextInput(attrs={"class": "form-control", "placeholder": "Categoria del producto"}),
-            "dias": forms.TextInput(attrs={"class": "form-control", "placeholder": "Tus días disponibles de la semana"}),
-            "horario_inicio": forms.TextInput(attrs={"class": "form-control", "placeholder": "Tu horario inicial de disponibilidad"}),
-            "horario_fin": forms.TextInput(attrs={"class": "form-control", "placeholder": "Tu horario final de disponibilidad"}),
+            "estado": forms.Select(attrs={"class": "form-control", "placeholder": "Estado del producto"}),
+            "categoria": forms.Select(attrs={"class": "form-control", "placeholder": "Categoria del producto"}),
+            "dias": forms.Select(attrs={"class": "form-control", "placeholder": "Tus días disponibles de la semana"}),
+            "horario_inicio": forms.Select(attrs={"class": "form-control", "placeholder": "Tu horario inicial de disponibilidad"}),
+            "horario_fin": forms.Select(attrs={"class": "form-control", "placeholder": "Tu horario final de disponibilidad"}),
             "sucursal": forms.Select(attrs={"class": "form-select", "placeholder": "Sucursal"}),
         }   

@@ -23,6 +23,7 @@
                     <label> Nombre con el cual publicarás tu producto </label>
                     {{ form.nombre.label_tag }}
                     {{ form.nombre }}
+                    
                 </div>
 
                 <div>
@@ -35,6 +36,7 @@
                             {% endfor %}
                         </select>
                     </div>
+                    
                 </div>
 
                 <div>
@@ -47,6 +49,7 @@
                             {% endfor %}
                         </select>
                     </div>
+                    
                 </div>
 
                 <div>
@@ -59,6 +62,7 @@
                             {% endfor %}
                         </select>
                     </div>
+                 
                 </div>
 
                 <div>
@@ -71,14 +75,16 @@
                             {% endfor %}
                         </select>
                     </div>
+                    
                     <div class="mb-3">
                         <label for="horario_fin" class="form-label">Hora de Fin de tu Disponibilidad</label>
                         <select class="form-select" id="horario_fin" name="horario_fin" disabled required>
                             <option value="" selected disabled>Selecciona un horario de fin</option>
                         </select>
                     </div>
-                        </div>
+                   
                 </div>
+
 
                 <div>
                     <div class="mb-3">
@@ -86,10 +92,11 @@
                         <select class="form-select" id="sucursal" name="sucursal" required>
                             <option value="" selected disabled>Seleccionar Sucursal</option>
                             {% for sucursal in sucursales %}
-                            <option value="{{ sucursal.nombre }} - {{ sucursal.ciudad }}">{{ sucursal.nombre }} - {{ sucursal.ciudad }}</option>
+                            <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
                             {% endfor %}
                         </select>
                     </div>
+                   
                 </div>                
                 <label><strong> Formatos de imágenes admitidos: .jpg, .jpeg, .png, .gif, .bmp, .tif, .tiff, .webp, .ico, .svg </strong></label>
                 <br></br>
@@ -98,6 +105,7 @@
                     <input type="file" id="id_imagen_principal" name="imagen_principal" class="custom-file-input">
                     <label class="custom-file-label" for="id_imagen_principal"><strong>Selecciona la imagen que presentará tu publicación (OBLIGATORIA)</strong></label>
                 </div>
+                
                 <br></br>
                 <div class="custom-file">
                     <input type="file" id="id_imagen_extra1" name="imagen_extra1" class="custom-file-input" disabled>
@@ -156,13 +164,9 @@
                             }));
                         });
                     }
-                    // Evento change para el campo de inicio
                     $('#horario_inicio').change(function() {
-                    // Limpiar el valor del campo de fin
                     $('#horario_fin').val('');
-                    // Habilitar el campo de fin
                     $('#horario_fin').prop('disabled', false);
-                    // Actualizar las opciones de horarios de fin
                     actualizarHorariosFin();                    
                     $('#horario_fin').val('');
                     });

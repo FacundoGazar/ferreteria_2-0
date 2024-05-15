@@ -1,16 +1,21 @@
-<!-- modificar_perfil.html -->
 {% extends "homepage/base.html" %}
-{% load static %} <!-- Cargar el tag static -->
-
-
+{% load static %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}"> <!-- Enlazar el archivo CSS -->
-  <h2>Modificar Perfil</h2>
-  <h2>@{{ perfil.user.username }}</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Guardar Cambios</button>
-  </form>
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="perfil-box"> <!-- Aplicamos la clase perfil-box -->
+        <h2 class="text-center perfil">Modificar Perfil</h2> <!-- Aplicamos la clase perfil -->
+        <h2 class="text-center perfil">@{{ perfil.user.username }}</h2> <!-- Aplicamos la clase perfil -->
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary btn-block mt-3">Guardar Cambios</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

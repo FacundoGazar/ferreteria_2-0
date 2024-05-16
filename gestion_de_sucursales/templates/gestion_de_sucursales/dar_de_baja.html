@@ -20,7 +20,10 @@
                     <option value="" selected disabled>Seleccionar DNI</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-danger">Dar de Baja</button>
+            <button type="submit" class="btn btn-danger" id="deleteBtn"
+                onclick="return confirm('¿Estás seguro de que deseas dar de baja a este empleado?')">Dar de
+                Baja</button>
+
         </form>
     </div>
 </main>

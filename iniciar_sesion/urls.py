@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from .views import ModificarContrasenaView
 
 urlpatterns = [
     path("", views.iniciar_sesion_view, name='iniciar_sesion'),
@@ -22,7 +23,11 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(template_name="authenticate/reset_contrasena_exitoso.html"), 
          name="password_reset_complete"),
     
-    path("modificar_contrasena",
-         views.modificar_constrasena_view,
+    path("modificar_contrasena/", 
+         ModificarContrasenaView.as_view(template_name="authenticate/modificar_contrasena.html"),
          name="modificar_contrasena"),
+    
+    path("modificar_contrasena_exitoso/",
+         views.modificar_contrasena_exitoso,
+         name="modificar_contrasena_exitoso"),
 ]

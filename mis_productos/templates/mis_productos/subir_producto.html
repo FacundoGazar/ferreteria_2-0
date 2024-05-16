@@ -13,7 +13,7 @@
     <body>
     {% block content %}    
 
-        <h1>Subir un producto</h1>
+        <h3>Subir un producto</h3>
 
             <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -25,10 +25,8 @@
                     {{ form.nombre }}
                     
                 </div>
-
-                <div>
-                    <div class="mb-3">
-                        <label for="estado" class="form-label">Estado de tu producto</label>
+                    <div class="mr-3">
+                        <label for="estado" class="mr-3">Estado de tu producto</label>
                         <select class="form-select" id="estado" name="estado" required>
                             <option value="" selected disabled>Seleccionar Estado</option>
                             {% for valore in estados_list %}
@@ -36,12 +34,8 @@
                             {% endfor %}
                         </select>
                     </div>
-                    
-                </div>
-
-                <div>
-                    <div class="mb-3">
-                        <label for="categoria" class="form-label">Categoría de tu producto</label>
+                    <div class="mr-3">
+                        <label for="categoria" class="mr-3">Categoría de tu producto</label>
                         <select class="form-select" id="categoria" name="categoria" required>
                             <option value="" selected disabled>Seleccionar Categoría</option>
                             {% for valorc in categorias_list %}
@@ -49,81 +43,61 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class=""form-group d-flex"">
+                        <div class="mr-3">
+                            <label for="dias" class="mr-3">Días de tu Disponibilidad</label>
+                            <select class="form-select" id="dias" name="dias" required>
+                                <option value="" selected disabled>Selecciona tu/s día/s disponibles</option>
+                                {% for valord in dias_list %}
+                                <option value="{{ valord }}">{{ valord }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     
-                </div>
-
-                <div>
-                    <div class="mb-3">
-                        <label for="dias" class="form-label">Días de tu Disponibilidad</label>
-                        <select class="form-select" id="dias" name="dias" required>
-                            <option value="" selected disabled>Selecciona tu/s día/s disponibles</option>
-                            {% for valord in dias_list %}
-                            <option value="{{ valord }}">{{ valord }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                 
-                </div>
-
-                <div>
-                    <div class="mb-3">
-                        <label for="horario_inicio" class="form-label">Hora de Inicio de tu Disponibilidad</label>
-                        <select class="form-select" id="horario_inicio" name="horario_inicio" required>
-                            <option value="" selected disabled>Selecciona un horario de inicio</option>
-                            {% for valorh in horarios_list_inicio %}
+                        <div class="mr-3">
+                            <label for="horario_inicio" class="mr-3">Hora de Inicio de tu Disponibilidad</label>
+                            <select class="form-select" id="horario_inicio" name="horario_inicio" required>
+                                <option value="" selected disabled>Selecciona un horario de inicio</option>
+                                {% for valorh in horarios_list_inicio %}
                                 <option value="{{ valorh }}">{{ valorh }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+                                {% endfor %}
+                            </select>
+                        </div>
                     
-                    <div class="mb-3">
-                        <label for="horario_fin" class="form-label">Hora de Fin de tu Disponibilidad</label>
-                        <select class="form-select" id="horario_fin" name="horario_fin" disabled required>
-                            <option value="" selected disabled>Selecciona un horario de fin</option>
-                        </select>
-                    </div>
-                   
-                </div>
-
-
-                <div>
-                    <div class="mb-3">
-                        <label for="sucursal" class="form-label">Selecciona la sucursal donde podrán encontrar tu producto</label>
+                        <div class="mr-3">
+                            <label for="horario_fin" class="mr-3">Hora de Fin de tu Disponibilidad</label>
+                            <select class="form-select" id="horario_fin" name="horario_fin" disabled required>
+                                <option value="" selected disabled>Selecciona un horario de fin</option>
+                            </select>
+                        </div>
+                    </div>                    
+                    <div class="mr-3">
+                        <label for="sucursal" class="mr-3">Selecciona la sucursal donde podrán encontrar tu producto</label>
                         <select class="form-select" id="sucursal" name="sucursal" required>
                             <option value="" selected disabled>Seleccionar Sucursal</option>
                             {% for sucursal in sucursales %}
                             <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
                             {% endfor %}
                         </select>
-                    </div>
-                   
-                </div>                
-                <label><strong> Formatos de imágenes admitidos: .jpg, .jpeg, .png, .gif, .bmp, .tif, .tiff, .webp, .ico, .svg </strong></label>
-                <br></br>
-                
+                    </div>          
+                <label><strong> Formatos de imágenes admitidos: .jpg, .jpeg, .png, .gif, .bmp, .tif, .tiff, .webp, .ico, .svg </strong></label>              
                 <div class="custom-file">
                     <input type="file" id="id_imagen_principal" name="imagen_principal" class="custom-file-input">
                     <label class="custom-file-label" for="id_imagen_principal"><strong>Selecciona la imagen que presentará tu publicación (OBLIGATORIA)</strong></label>
                 </div>
-                
-                <br></br>
                 <div class="custom-file">
                     <input type="file" id="id_imagen_extra1" name="imagen_extra1" class="custom-file-input" disabled>
                     <label class="custom-file-label" for="id_imagen_extra1">Selecciona otra imagen <strong>(opcional)</strong></label>
                 </div>
-                <br></br>
                 <div class="custom-file">
                     <input type="file" id="id_imagen_extra2" name="imagen_extra2" class="custom-file-input" disabled>
                     <label class="custom-file-label" for="id_imagen_extra2">Selecciona otra imagen <strong>(opcional)</strong></label>
                 </div>
-                <br></br>
                 <div class="custom-file">
                     <input type="file" id="id_imagen_extra3" name="imagen_extra3" class="custom-file-input" disabled>
                     <label class="custom-file-label" for="id_imagen_extra3">Selecciona otra imagen <strong>(opcional)</strong></label>
-                </div>
-                
-                <br></br>
-                <input type="submit" value="Subir producto" class="btn btn-dark">
+                </div>                
+                <input type="submit" value="Publicar" class="btn btn-dark">
             </form>  
                         
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

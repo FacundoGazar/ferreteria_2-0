@@ -6,6 +6,7 @@ from .models import Producto
 from iniciar_sesion import soy_cliente
 from django.core.exceptions import ValidationError
 from PIL import Image, ImageChops
+from django.core.files.images import ImageFile
 import re
 
 # Create your views here.
@@ -69,8 +70,8 @@ def subir_producto_view(request):
         if form.is_valid():   
             
             nombre = form.cleaned_data['nombre']
-            if not re.search('[a-zA-Z]{3,}', nombre):
-                messages.error(request, "El nombre debe contener al menos tres letras.")
+            if not re.search('[a-zA-Z]{1,}', nombre):
+                messages.error(request, "El nombre debe contener al menos una letra.")
                 return render(request, "mis_productos/subir_producto.html", {
                             "form": form,
                             "sucursales": sucursales,
@@ -92,10 +93,6 @@ def subir_producto_view(request):
                 messages.success(request, "¡Se ha subido el producto correctamente!")
             return redirect("mis_productos")
         
-        else:
-            print(request.POST)
-            print(form.errors)
-            messages.error(request, "Por favor, verifica el formulario.")
     else:
         form = ProductoForm()
 
@@ -103,19 +100,45 @@ def subir_producto_view(request):
 
 def are_images_equal(producto):
     path_one = Producto.objects.get(id=producto)
-    image_one = Image.open(path_one.imagen_principal).convert('RGB')
+    image_one = Image.open(path_one.imagen_principal.path).convert('RGB')
     
+    image_extra1 = None
+    if path_one.imagen_extra1:
+        image_extra1 = Image.open(path_one.imagen_extra1.path).convert('RGB')
+        
+    image_extra2 = None
+    if path_one.imagen_extra2:
+        image_extra2 = Image.open(path_one.imagen_extra2.path).convert('RGB')
+        
+    image_extra3 = None
+    if path_one.imagen_extra3:
+        image_extra3 = Image.open(path_one.imagen_extra3.path).convert('RGB')
+        
     comparativas = Producto.objects.exclude(id=producto)
     
     for producto in comparativas:
     
-        image_two = Image.open(producto.imagen_principal).convert('RGB')
+        image_two = Image.open(producto.imagen_principal.path).convert('RGB')
+        
         diff = ImageChops.difference(image_one, image_two)
-
-        if diff.getbbox():
-            return False
-        else:
+        if not diff.getbbox():
             return True
+        
+        if image_extra1:
+            diff_extra1 = ImageChops.difference(image_extra1, image_two)
+            if not diff_extra1.getbbox():
+                return True
+                
+        if image_extra2:
+            diff_extra2 = ImageChops.difference(image_extra2, image_two)
+            if not diff_extra2.getbbox():
+                return True
+                
+        if image_extra3:
+            diff_extra3 = ImageChops.difference(image_extra3, image_two)
+            if not diff_extra3.getbbox():
+                return True
+    return False
 
 def verificar_formato_imagen(imagen):
     try:

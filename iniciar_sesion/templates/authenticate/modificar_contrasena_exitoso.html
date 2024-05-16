@@ -1,31 +1,28 @@
 {% extends "homepage/base.html" %}
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
 </head>
-<body>
+<body class="bg-dark text-white text-center">
     {% block content %}
-    <h1>Modificar contraseña</h1>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
                 <div class="card bg-dark">
                     <div class="card-body text-white">
-                        <div class="form-group">
-                            <form method="POST">
-                                {% csrf_token %}
-                                {{ form.as_p }}
-                                <button type="submit" class="submit">Modificar</button>
-                            </form>
-                        </div>
+                        <h1 class="display-1 mt-5">¡Contraseña modificada!</h1>
+                        <br>
+                        <h5 class="display-5 mb-4">Ya puede iniciar sesion con su nueva contraseña</h5>
+                        <a class="btn btn-primary btn-lg" href="{% url 'iniciar_sesion' %}">Iniciar sesión</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-{% endblock %}
+    {% endblock %}
 </body>
 </html>

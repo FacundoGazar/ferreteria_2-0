@@ -18,10 +18,8 @@
                 </p>
                 <form method="post">
                     {% csrf_token %}
-                    <div data-mdb-input-init class="form-outline mb-4">
-                        <input type="email" id="typeEmail" class="form-control my-3" name="email" />
-                        <label class="form-label" for="typeEmail text-white">Correo electrónico</label>
-                    </div>
+                    {{form}}
+                    <br></br>
                     <button type="submit" class="btn w-100" style="background-color: #0041AD;">Reiniciar contraseña</button>
                 </form>
             </div>

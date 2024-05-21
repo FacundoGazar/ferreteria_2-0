@@ -1,0 +1,44 @@
+{% extends "homepage/base.html" %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <header>
+
+    </header>
+    <main>
+        {% block content %}
+        {% if lista %}
+        <table class="table table-striped mx-auto table-info" style="width: 300px;">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Categoria</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for instance in lista %}
+                <tr>
+                    <td>{{ instance.nombre }}</td>
+                    <td>{{ instance.estado }}</td>
+                    <td>{{ instance.categoria }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <h1 class="display-1 mt-5">No hay datos disponibles</h1>
+        {% endif %}
+        {% endblock %}
+
+    </main>
+</body>
+
+</html>

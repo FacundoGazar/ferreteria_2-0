@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "gestion_de_sucursales",
     "gestion_de_usuarios",
     "mis_productos",
+    "busqueda_de_productos",
 ]
 
 MIDDLEWARE = [

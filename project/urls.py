@@ -27,5 +27,6 @@ urlpatterns = [
     path("gestion_de_sucursales/", include("gestion_de_sucursales.urls")),
     path("gestion_de_usuarios/", include("gestion_de_usuarios.urls")),
     path("mis_productos/", include("mis_productos.urls")),
+    path("busqueda_de_productos/", include("busqueda_de_productos.urls")),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

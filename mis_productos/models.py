@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from gestion_de_sucursales.models import Sucursal 
 
 class Producto(models.Model):
+    id = models.AutoField(primary_key=True)
     cliente = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100)
     estado = models.CharField(max_length=100)

@@ -86,7 +86,7 @@
             <h8 class="display-8">Sucursal: {% if not producto.sucursal %}Sucursal Inactiva{% else %}{{ producto.sucursal.nombre }} - {{ producto.sucursal.ciudad }}{% endif %}</h8>
         </div>
         
-
+        <a href="{% url 'modificar_producto' producto.slug %}" class="btn btn-primary stretched-link">Modificar</a>
       </div>
           
   {% endblock %}          

@@ -64,7 +64,7 @@
                         <h8 class="display-8">Sucursal: {% if not producto.sucursal %}Sucursal Inactiva{% else %}{{ producto.sucursal.nombre }} - {{ producto.sucursal.ciudad }}{% endif %}</h8>
                     </div>
                     <div class="mb-4">
-                        <a href="#" class="btn btn-success stretched-link" id="btn-intercambiar">Intercambiar</a>
+                        <a href="{% url 'intercambio listado' producto.slug %}" class="btn btn-success stretched-link" id="btn-intercambiar">Intercambiar</a>
                     </div>
                 </div>
             </div>

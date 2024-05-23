@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from mis_productos.models import Producto
-from rest_framework import viewsets, filters
 from mis_productos.models import Producto
 from django.contrib.auth.models import User
 

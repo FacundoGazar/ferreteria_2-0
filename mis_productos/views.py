@@ -86,7 +86,7 @@ def subir_producto_view(request):
             producto.cliente = request.user
             producto.save()
 
-            if are_images_equal(producto.id):
+            if are_images_equal(producto.slug):
                 producto.delete()
                 messages.error(request, "¡Este producto ya fue publicado en el sitio!")
             else:
@@ -106,9 +106,9 @@ def subir_producto_view(request):
         "horarios_list_fin": horarios_list[1:]
     })
 
-def are_images_equal(producto_id):
-    producto = Producto.objects.get(id=producto_id)
-    comparativas = Producto.objects.exclude(id=producto_id)
+def are_images_equal(producto_slug):
+    producto = Producto.objects.get(slug=producto_slug)
+    comparativas = Producto.objects.exclude(slug=producto_slug)
 
     image_one = Image.open(producto.imagen_principal.path).convert('RGB')
 
@@ -201,7 +201,7 @@ def modificar_producto_view(request, slug):
                     "horarios_list_inicio": horarios_list[:8],
                     "horarios_list_fin": horarios_list[1:]
                 })
-        
+
         if form.is_valid():
             nombre = form.cleaned_data['nombre']
             if not re.search('[a-zA-Z]{1,}', nombre):
@@ -215,9 +215,11 @@ def modificar_producto_view(request, slug):
                     "horarios_list_inicio": horarios_list[:8],
                     "horarios_list_fin": horarios_list[1:]
                 })
-            
-            form.save()
-            messages.success(request, "¡Se ha modificado el producto correctamente!")
+            if are_images_equal(producto.slug):
+                messages.error(request, "¡Este producto ya fue publicado en el sitio!")
+            else:
+                form.save()
+                messages.success(request, "¡Se ha subido el producto correctamente!")
             return redirect("mis_productos")
         else:
             messages.error(request, "Por favor, verifica el formulario.")

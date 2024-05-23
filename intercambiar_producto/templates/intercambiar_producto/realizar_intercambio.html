@@ -1,0 +1,30 @@
+<!-- templates/crear_intercambio.html -->
+{% extends "homepage/base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Crear Intercambio</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <p>Nombre del producto que usted ofrece: {{ producto_solicitante }}</p>
+        </div>
+        <div>
+            <p>Nombre del producto solicitado: {{ producto_receptor }}</p>
+        </div>
+        <div>
+            <p>Nombre del usuario al que le solicita el intercambio: {{ producto_receptor.cliente }}</p>
+        </div>
+        <!-- Campos ocultos para producto_solicitante y cliente_solicitante -->
+        <input type="hidden" name="producto_solicitante" value="{{ producto_solicitante.id }}">
+        <input type="hidden" name="cliente_solicitante" value="{{ request.user.id }}">
+        <!-- Campos ocultos para producto_receptor y cliente_receptor -->
+        <input type="hidden" name="producto_receptor" value="{{ producto_receptor.id }}">
+        <input type="hidden" name="cliente_receptor" value="{{ producto_receptor.cliente.id }}">
+        <div class="mb-3">
+            <label for="id_estado" class="form-label">Estado:</label>
+            {{ form.estado }}
+        </div>
+        <button type="submit" class="btn btn-primary">Solicitar Intercambio</button>
+    </form>
+</div>
+{% endblock %}

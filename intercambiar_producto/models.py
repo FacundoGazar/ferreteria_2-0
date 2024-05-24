@@ -7,6 +7,17 @@ class Intercambio(models.Model):
         ('pendiente', 'Pendiente'),
         ('aceptado', 'Aceptado'),
         ('rechazado', 'Rechazado'),
+        ('realizado', 'Realizado'),
+        ('ausente', 'Ausente'),
+    )
+    
+    
+    DIAS = (
+        ('Lunes', 'lunes'),
+        ('Martes', 'martes'),
+        ('Miercoles', 'miercoles'),
+        ('Jueves', 'jueves'),
+        ('Viernes', 'viernes'),
     )
 
     producto_solicitante = models.ForeignKey(Producto, related_name='intercambios_solicitados', on_delete=models.CASCADE)
@@ -15,6 +26,8 @@ class Intercambio(models.Model):
     cliente_receptor = models.ForeignKey(User, related_name='solicitudes_recibidas', on_delete=models.CASCADE)
     estado = models.CharField(max_length=10, choices=ESTADOS, default='pendiente')
     fecha_solicitud = models.DateTimeField(auto_now_add=True)
+    dia = models.CharField(max_length=20, choices=DIAS, default= ' ')
+    horario = models.IntegerField()
 
     def __str__(self):
-        return f"{self.producto_solicitante} <-> {self.producto_receptor} ({self.estado})"
+        return f"{self.producto_solicitante} <-> {self.producto_receptor} ({self.dia}) ({self.horario}) ({self.estado})"

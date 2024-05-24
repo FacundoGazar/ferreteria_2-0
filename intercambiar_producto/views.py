@@ -9,7 +9,8 @@ from .forms import IntercambioForm
 @soy_cliente
 def intercambiar_listar_mis_productos_view(request, slug_intercambio):
     usuario = request.user
-    queryset = Producto.objects.filter(cliente=usuario)
+    producto_receptor = Producto.objects.get(slug=slug_intercambio)
+    queryset = Producto.objects.filter(cliente=usuario, sucursal=producto_receptor.sucursal)
 
     context = {
         "lista": queryset,
@@ -20,26 +21,53 @@ def intercambiar_listar_mis_productos_view(request, slug_intercambio):
 
 @soy_cliente
 def realizar_intercambio_view(request, slug_intercambio):
-    producto_solicitante = Producto.objects.get(cliente=request.user)
     producto_receptor = Producto.objects.get(slug=slug_intercambio)
+    # Convertir los horarios de formato '9:00' a horas enteras
+    hora_inicio_str = producto_receptor.horario_inicio.split(':')[0]
+    hora_fin_str = producto_receptor.horario_fin.split(':')[0]
+
+    # Convertir las horas de cadena a enteros
+    hora_inicio = int(hora_inicio_str)
+    hora_fin = int(hora_fin_str)
+    horarios_disponibles = [(hora, str(hora)) for hora in range(hora_inicio, hora_fin + 1)]
     
+    print("Horarios disponibles:", horarios_disponibles)
+
     if request.method == 'POST':
-        form = IntercambioForm(request.POST)
+        producto_solicitante_id = request.POST.get('producto_solicitante_id')        
+        try:
+            producto_solicitante = Producto.objects.get(id=producto_solicitante_id)
+        except Producto.DoesNotExist:
+            messages.error(request, "Producto solicitante no encontrado.")
+            return redirect("intercambiar_producto/intercambiar_listado.html")  # Ajusta el redireccionamiento según sea necesario
+        
+        form = IntercambioForm(request.POST, horario_choices=horarios_disponibles)
         if form.is_valid():
-            Intercambio = form.save(commit=False)
-            # Asignar los valores de producto_solicitante, cliente_solicitante, producto_receptor y cliente_receptor directamente
-            Intercambio.producto_solicitante = producto_solicitante
-            Intercambio.cliente_solicitante = request.user
-            Intercambio.producto_receptor = producto_receptor
-            Intercambio.cliente_receptor = producto_receptor.cliente
-            Intercambio.estado = form.cleaned_data['estado']
-            Intercambio.save()
+            intercambio = form.save(commit=False)
+            intercambio.producto_solicitante = producto_solicitante
+            intercambio.cliente_solicitante = request.user
+            intercambio.producto_receptor = producto_receptor
+            intercambio.cliente_receptor = producto_receptor.cliente
+            intercambio.dia = producto_receptor.dias
+            intercambio.estado = 'pendiente'
+            intercambio.save()
             messages.success(request, "Solicitud de intercambio enviada con éxito.")
             return redirect('homepage')
         else:
             print(form.errors)
             messages.error(request, "Por favor, verifica el formulario.")
     else:
-        form = IntercambioForm()
+        producto_solicitante_id = request.GET.get('producto_solicitante_id')
+        try:
+            producto_solicitante = Producto.objects.get(id=producto_solicitante_id)
+        except Producto.DoesNotExist:
+            messages.error(request, "Producto solicitante no encontrado.")
+            return redirect("intercambiar_producto/intercambiar_listado.html")  # Ajusta el redireccionamiento según sea necesario
+        
+        form = IntercambioForm(horario_choices=horarios_disponibles)
 
-    return render(request, 'intercambiar_producto/realizar_intercambio.html', {'form': form, 'producto_solicitante': producto_solicitante, 'producto_receptor': producto_receptor})
+    return render(request, 'intercambiar_producto/realizar_intercambio.html', {
+        'form': form,
+        'producto_solicitante': producto_solicitante,
+        'producto_receptor': producto_receptor
+    })

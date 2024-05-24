@@ -4,6 +4,7 @@ from .forms import ProductoForm
 from gestion_de_sucursales.models import Sucursal
 from .models import Producto
 from iniciar_sesion import soy_cliente
+from intercambiar_producto.models import Intercambio
 from django.core.exceptions import ValidationError
 from PIL import Image, ImageChops
 from django.core.files.images import ImageFile
@@ -173,7 +174,16 @@ def listar_mis_productos_view(request):
 @soy_cliente
 def ver_detalle_view(request, slug):
     producto = Producto.objects.get(slug=slug)
-    return render(request, 'mis_productos/ver_detalle.html', {'producto': producto})
+    tiene_intercambio = Intercambio.objects.filter(
+        producto_solicitante=producto
+    ).exists() or Intercambio.objects.filter(
+        producto_receptor=producto
+    ).exists()
+    
+    return render(request, 'mis_productos/ver_detalle.html', {
+        'producto': producto,
+        'tiene_intercambio': tiene_intercambio
+    })
 
 @soy_cliente
 def modificar_producto_view(request, slug):
@@ -186,45 +196,25 @@ def modificar_producto_view(request, slug):
 
     if request.method == "POST":
         form = ProductoForm(request.POST, request.FILES, instance=producto)
-
-        imagen_principal = request.FILES.get('imagen_principal')
-        if imagen_principal:
-            formato_valido, mensaje_error = verificar_formato_imagen(imagen_principal)
-            if not formato_valido:
-                messages.error(request, mensaje_error)
-                return render(request, "mis_productos/modificar_producto.html", {
-                    "form": form,
-                    "sucursales": sucursales,
-                    "categorias_list": categorias_list,
-                    "estados_list": estados_list,
-                    "dias_list": dias_list,
-                    "horarios_list_inicio": horarios_list[:8],
-                    "horarios_list_fin": horarios_list[1:]
-                })
-
         if form.is_valid():
-            nombre = form.cleaned_data['nombre']
-            if not re.search('[a-zA-Z]{1,}', nombre):
-                messages.error(request, "El nombre debe contener al menos una letra.")
-                return render(request, "mis_productos/modificar_producto.html", {
-                    "form": form,
-                    "sucursales": sucursales,
-                    "categorias_list": categorias_list,
-                    "estados_list": estados_list,
-                    "dias_list": dias_list,
-                    "horarios_list_inicio": horarios_list[:8],
-                    "horarios_list_fin": horarios_list[1:]
-                })
-            if are_images_equal(producto.slug):
-                messages.error(request, "¡Este producto ya fue publicado en el sitio!")
-            else:
-                form.save()
-                messages.success(request, "¡Se ha subido el producto correctamente!")
+            if 'imagen_principal' in request.FILES:
+                producto.imagen_principal = request.FILES['imagen_principal']
+            if 'imagen_extra1' in request.FILES:
+                producto.imagen_extra1 = request.FILES['imagen_extra1']
+            if 'imagen_extra2' in request.FILES:
+                producto.imagen_extra2 = request.FILES['imagen_extra2']
+            if 'imagen_extra3' in request.FILES:
+                producto.imagen_extra3 = request.FILES['imagen_extra3']
+            form.save()
+            messages.success(request, "¡Se ha subido el producto correctamente!")
             return redirect("mis_productos")
         else:
             messages.error(request, "Por favor, verifica el formulario.")
     else:
         form = ProductoForm(instance=producto)
+        horario_inicio = producto.horario_inicio
+        horario_fin = producto.horario_fin
+        horarios_list_fin = horarios_list[horarios_list.index(horario_inicio)+1:] if horario_inicio else []
 
     return render(request, "mis_productos/modificar_producto.html", {
         "form": form,
@@ -233,5 +223,6 @@ def modificar_producto_view(request, slug):
         "estados_list": estados_list,
         "dias_list": dias_list,
         "horarios_list_inicio": horarios_list[:8],
-        "horarios_list_fin": horarios_list[1:]
+        "horarios_list_fin": horarios_list_fin
     })
+

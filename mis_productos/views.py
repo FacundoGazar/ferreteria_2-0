@@ -227,21 +227,5 @@ def modificar_producto_view(request, slug):
     })
 
 
-def ver_intercambios(request):
-    usuario_actual = request.user
-    solicitudes_enviadas = Intercambio.objects.filter(cliente_solicitante=usuario_actual)
-    solicitudes_recibidas = Intercambio.objects.filter(cliente_receptor=usuario_actual)
-    context = {
-        'solicitudes_enviadas': solicitudes_enviadas,
-        'solicitudes_recibidas': solicitudes_recibidas,
-    }
-    return render(request, "intercambiar_producto/ver_intercambios.html", context)
 
-def detalle_intercambio(request, solicitud_id):
-    # Recuperar la solicitud de intercambio basada en el ID proporcionado
-    solicitud = Intercambio.objects.get(id=solicitud_id)
-    context = {
-        'solicitud': solicitud
-    }
-    return render(request, 'intercambiar_producto/ver_detalle.html', context)
 

@@ -1,0 +1,47 @@
+{% extends "homepage/base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2 class="text-center">Solicitudes de Intercambio</h2>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h3>Solicitudes Enviadas</h3>
+      <ul class="list-group">
+        {% for solicitud in solicitudes_enviadas %}
+          <li class="list-group-item">
+            <strong>Producto Solicitante:</strong> {{ solicitud.producto_solicitante.nombre }} <br>
+            <strong>Producto Receptor:</strong> {{ solicitud.producto_receptor.nombre }} <br>
+            <strong>Estado:</strong> {{ solicitud.estado }} <br>
+            <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
+            <strong>Día:</strong> {{ solicitud.dia }} <br>
+            <strong>Horario:</strong> {{ solicitud.horario }} <br>
+        {% empty %}
+          <li class="list-group-item">No has enviado ninguna solicitud de intercambio.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="col-md-6">
+      <h3>Solicitudes Recibidas</h3>
+      <ul class="list-group">
+        {% for solicitud in solicitudes_recibidas %}
+          <li class="list-group-item">
+            <strong>Producto Solicitante:</strong> {{ solicitud.producto_solicitante.nombre }} <br>
+            <strong>Producto Receptor:</strong> {{ solicitud.producto_receptor.nombre }} <br>
+            <strong>Estado:</strong> {{ solicitud.estado }} <br>
+            <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
+            <strong>Día:</strong> {{ solicitud.dia }} <br>
+            <strong>Horario:</strong> {{ solicitud.horario }} <br>
+            <div class="btn-group" role="group" aria-label="Acciones">
+              <a href="{% url 'ver_detalle' solicitud.id %}" class="btn btn-primary">Ver Detalle</a>
+            </div>
+          </li>
+        {% empty %}
+          <li class="list-group-item">No has recibido ninguna solicitud de intercambio.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

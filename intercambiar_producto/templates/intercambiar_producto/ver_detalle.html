@@ -1,0 +1,128 @@
+{% extends "homepage/base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2 class="text-center">Detalles del Intercambio</h2>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h3>Detalles del producto ofrecido</h3>
+      <ul>
+        <div class="col-md-6">
+            <div id="carouselExample" class="carousel slide mb-4">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="{{ solicitud.producto_solicitante.imagen_principal.url }}" class="d-block w-100" alt="...">
+                    </div>
+                    {% if producto.imagen_extra1 %}
+                    <div class="carousel-item">
+                        <img src="{{ solicitud_solicitante.producto.imagen_extra1.url }}" class="d-block w-100" alt="...">
+                    </div>
+                    {% endif %}
+                    {% if producto.imagen_extra2 %}
+                    <div class="carousel-item">
+                        <img src="{{ solicitud_solicitante.producto.imagen_extra2.url }}" class="d-block w-100" alt="...">
+                    </div>
+                    {% endif %}
+                    {% if producto.imagen_extra3 %}
+                    <div class="carousel-item">
+                        <img src="{{ solicitud_solicitante.producto.imagen_extra3.url }}" class="d-block w-100" alt="...">
+                    </div>
+                    {% endif %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <!-- Contenido de la tarjeta -->
+                    <div class="mb-4">
+                        <h5 class="display-5">Nombre: {{ solicitud.producto_solicitante.nombre }}</h5>
+                    </div>
+                    <div class="mb-4">
+                        <h8 class="display-8">Estado: {{ solicitud.producto_solicitante.estado }}</h8>
+                    </div>
+                    <div class="mb-4">
+                        <h8 class="display-8">Categoría: {{ solicitud.producto_solicitante.categoria }}</h8>
+                    </div>
+                    <div class="mb-4">
+                        <h8 class="display-8">Día y horario de disponibilidad: {{ solicitud.producto_solicitante.dias }} de {{ solicitud.producto_solicitante.horario_inicio }} a {{ solicitud.producto_solicitante.horario_fin }}</h8>
+                    </div>
+                    <div class="mb-4">
+                        <h8 class="display-8">Sucursal: {% if not solicitud.producto_solicitante.sucursal %}Sucursal Inactiva{% else %}{{ solicitud.producto_solicitante.sucursal.nombre }} - {{ solicitud.producto_solicitante.sucursal.ciudad }}{% endif %}</h8>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </ul>
+    </div>
+    <div class="col-md-6">
+      <h3>Detalles del mi producto </h3>
+      <ul>
+        <div class="col-md-6">
+            <div id="carouselExample" class="carousel slide mb-4">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="{{ solicitud.producto_receptor.imagen_principal.url }}" class="d-block w-100" alt="...">
+                    </div>
+                    {% if producto.imagen_extra1 %}
+                    <div class="carousel-item">
+                        <img src="{{ solicitud_solicitante.producto_receptor.imagen_extra1.url }}" class="d-block w-100" alt="...">
+                    </div>
+                    {% endif %}
+                    {% if producto.imagen_extra2 %}
+                    <div class="carousel-item">
+                        <img src="{{ solicitud_solicitante.producto_receptor.imagen_extra2.url }}" class="d-block w-100" alt="...">
+                    </div>
+                    {% endif %}
+                    {% if producto.imagen_extra3 %}
+                    <div class="carousel-item">
+                        <img src="{{ solicitud_solicitante.producto_receptor.imagen_extra3.url }}" class="d-block w-100" alt="...">
+                    </div>
+                    {% endif %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <!-- Contenido de la tarjeta -->
+                    <div class="mb-4">
+                        <h5 class="display-5">Nombre: {{ solicitud.producto_receptor.nombre }}</h5>
+                    </div>
+                    <div class="mb-4">
+                        <h8 class="display-8">Estado: {{ solicitud.producto_receptor.estado }}</h8>
+                    </div>
+                    <div class="mb-4">
+                        <h8 class="display-8">Categoría: {{ solicitud.producto_receptor.categoria }}</h8>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </ul>
+    </div>
+  </div>
+  
+  <p></p>
+  <p></p>
+  <p></p>
+  <div class="text-center">
+    <a href="#" class="btn btn-success">Aceptar</a>
+    <a href="#" class="btn btn-danger">Rechazar</a>
+    <a href="#" class="btn btn-primary" onclick="history.back();">Volver</a>
+  </div>
+</div>
+<p></p>
+{% endblock %}

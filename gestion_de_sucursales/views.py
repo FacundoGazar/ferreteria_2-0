@@ -87,6 +87,13 @@ def dar_de_baja_view(request):
     empleados_json = json.dumps(list(empleados.values('dni', 'sucursal')))
     return render(request, 'gestion_de_sucursales/dar_de_baja.html', {'sucursales': sucursales, 'empleados_json': empleados_json})
 
+@super_user 
+def trasladar_empleado_view(request):
+    sucursales = Sucursal.objects.all()
+    empleados = PerfilEmpleado.objects.all()
+    empleados_json = json.dumps(list(empleados.values('dni', 'sucursal')))
+    return render(request, 'gestion_de_sucursales/trasladar_empleado.html', {'sucursales': sucursales, 'empleados_json': empleados_json})
+
 @super_user
 def eliminar_empleado_view (request):
     if request.method == 'POST':

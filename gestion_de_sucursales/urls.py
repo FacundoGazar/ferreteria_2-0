@@ -12,4 +12,5 @@ urlpatterns = [
     path("dar_de_baja/eliminar_empleado/", eliminar_empleado_view , name ='eliminar_empleado'),
     path("agregar_empleado/", agregar_empleado_view, name='agregar_empleado'),
     path('agregar_empleado/registrar_empleado/', registrar_empleado, name='registrar_empleado'),
+    path("trasladar_empleado/", trasladar_empleado_view, name='trasladar_empleado'),
 ]

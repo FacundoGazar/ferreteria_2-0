@@ -88,14 +88,17 @@
                   <li><a class="dropdown-item" href="{% url 'gestion_de_sucursales' %}">Gestión de sucursales</a></li>
                   <li><a class="dropdown-item" href="{% url 'gestion_de_empleados' %}">Gestión de empleados</a></li>
               {% elif not request.user.is_staff %}
-                  <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis productos</a></li>
+                  <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis Productos</a></li>                  
+                  <li><a class="dropdown-item" href="{% url 'ver_intercambios' %}">Mis Intercambios</a></li>
+              {% endif %}
+              {% if not request.user.is_superuser and request.user.is_staff %}
+                  <button>Intercambios Empleado</button> 
               {% endif %}
               <li><hr class="dropdown-divider"></li>
               <form action="{% url 'ver_perfil' request.user.username %}" method="get">
                   <button type="submit" class="dropdown-item">Ver mi perfil</button>
               </form>
               <li><a class="dropdown-item" href="{% url 'modificar_contrasena' %}">Modificar contraseña</a></li>
-              <li><a class="dropdown-item" href="{% url 'ver_intercambios' %}">Intercambios</a></li>
               <li><a class="dropdown-item" onclick="return confirm('¿Estás seguro de cerrar sesión?')" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a></li>
           {% endif %}
           

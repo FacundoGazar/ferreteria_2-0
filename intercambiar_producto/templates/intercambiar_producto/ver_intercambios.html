@@ -15,7 +15,16 @@
             <strong>Estado:</strong> {{ solicitud.estado }} <br>
             <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
             <strong>Día:</strong> {{ solicitud.dia }} <br>
-            <strong>Horario:</strong> {{ solicitud.horario }} <br>
+            <strong>Horario:</strong> {{ solicitud.horario }} hs<br>
+            <strong>Sucursal:</strong> {{ solicitud.producto_solicitante.sucursal }} <strong>Ciudad:</strong> {{ solicitud.producto_solicitante.sucursal.ciudad }} <br>
+            <form method="post" action="{% url 'ver_intercambios' %}" style="display:inline;">
+              {% csrf_token %}
+              <input type="hidden" name="intercambio_id" value="{{ solicitud.id }}">
+              {% if solicitud.estado == 'pendiente' %}
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas cancelar esta solicitud?')">Cancelar Solicitud</button>
+              {% endif %}
+              </form>
+          </li>
         {% empty %}
           <li class="list-group-item">No has enviado ninguna solicitud de intercambio.</li>
         {% endfor %}
@@ -32,7 +41,8 @@
             <strong>Estado:</strong> {{ solicitud.estado }} <br>
             <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
             <strong>Día:</strong> {{ solicitud.dia }} <br>
-            <strong>Horario:</strong> {{ solicitud.horario }} <br>
+            <strong>Horario:</strong> {{ solicitud.horario }} hs <br>
+            <strong>Sucursal:</strong> {{ solicitud.producto_solicitante.sucursal }} <strong>Ciudad:</strong> {{ solicitud.producto_solicitante.sucursal.ciudad }} <br>
             <div class="btn-group" role="group" aria-label="Acciones">
               <a href="{% url 'ver_detalle' solicitud.id %}" class="btn btn-primary">Ver Detalle</a>
             </div>

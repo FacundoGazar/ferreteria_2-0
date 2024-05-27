@@ -22,11 +22,8 @@ def intercambiar_listar_mis_productos_view(request, slug_intercambio):
 @soy_cliente
 def realizar_intercambio_view(request, slug_intercambio):
     producto_receptor = Producto.objects.get(slug=slug_intercambio)
-    # Convertir los horarios de formato '9:00' a horas enteras
     hora_inicio_str = producto_receptor.horario_inicio.split(':')[0]
     hora_fin_str = producto_receptor.horario_fin.split(':')[0]
-
-    # Convertir las horas de cadena a enteros
     hora_inicio = int(hora_inicio_str)
     hora_fin = int(hora_fin_str)
     horarios_disponibles = [(hora, str(hora)) for hora in range(hora_inicio, hora_fin + 1)]
@@ -71,21 +68,51 @@ def realizar_intercambio_view(request, slug_intercambio):
         'producto_solicitante': producto_solicitante,
         'producto_receptor': producto_receptor
     })
-
+@soy_cliente
 def ver_intercambios(request):
     usuario_actual = request.user
     solicitudes_enviadas = Intercambio.objects.filter(cliente_solicitante=usuario_actual)
     solicitudes_recibidas = Intercambio.objects.filter(cliente_receptor=usuario_actual)
+    
+    if request.method == 'POST':
+        intercambio_id = request.POST.get('intercambio_id')
+        if intercambio_id:
+            try:
+                intercambio = Intercambio.objects.get(id=intercambio_id)
+                intercambio.delete()
+                messages.success(request, "Solicitud cancelada con éxito")
+            except Intercambio.DoesNotExist:
+                messages.error(request, "La solicitud no existe")
+        else:
+            messages.error(request, "Algo salió mal")
+
     context = {
         'solicitudes_enviadas': solicitudes_enviadas,
         'solicitudes_recibidas': solicitudes_recibidas,
     }
     return render(request, "intercambiar_producto/ver_intercambios.html", context)
 
+@soy_cliente
 def detalle_intercambio(request, solicitud_id):
-    # Recuperar la solicitud de intercambio basada en el ID proporcionado
     solicitud = Intercambio.objects.get(id=solicitud_id)
+    
+    if request.method == "POST":
+        accion = request.POST.get('accion')
+        if accion == 'aceptar':
+            solicitud.estado = 'aceptado'
+            solicitud.save()
+            messages.success(request, "La solicitud ha sido aceptada.")
+        elif accion == 'rechazar':
+            solicitud.estado = 'rechazado'
+            solicitud.save()
+            messages.success(request, "La solicitud ha sido rechazada.")
+    
     context = {
         'solicitud': solicitud
     }
     return render(request, 'intercambiar_producto/ver_detalle.html', context)
+
+
+
+    
+

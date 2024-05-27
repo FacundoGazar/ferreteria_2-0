@@ -2,7 +2,13 @@
 
 {% block content %}
 <div class="container">
-  <h2 class="text-center">Detalles del Intercambio</h2>
+  <h1 class="text-center">Detalles del Intercambio</h1>
+  <div class="mb-4 text-center">
+    <h6 class="small">
+        <strong>Día:</strong> {{ solicitud.dia }} <strong>Horario:</strong> {{ solicitud.horario }} hs <br>
+        <strong>Sucursal:</strong> {{ solicitud.producto_solicitante.sucursal }} <strong>Ciudad:</strong> {{ solicitud.producto_solicitante.sucursal.ciudad }} <br>
+    </h6>
+    </div>
 
   <div class="row">
     <div class="col-md-6">
@@ -63,7 +69,7 @@
       </ul>
     </div>
     <div class="col-md-6">
-      <h3>Detalles del mi producto </h3>
+      <h3>Detalles de mi producto </h3>
       <ul>
         <div class="col-md-6">
             <div id="carouselExample" class="carousel slide mb-4">
@@ -108,6 +114,12 @@
                     <div class="mb-4">
                         <h8 class="display-8">Categoría: {{ solicitud.producto_receptor.categoria }}</h8>
                     </div>
+                    <div class="mb-4">
+                        <h8 class="display-8">Día y horario de disponibilidad: {{ solicitud.producto_receptor.dias }} de {{ solicitud.producto_receptor.horario_inicio }} a {{ solicitud.producto_receptor.horario_fin }}</h8>
+                    </div>
+                    <div class="mb-4">
+                        <h8 class="display-8">Sucursal: {% if not solicitud.producto_receptor.sucursal %}Sucursal Inactiva{% else %}{{ solicitud.producto_receptor.sucursal.nombre }} - {{ solicitud.producto_receptor.sucursal.ciudad }}{% endif %}</h8>
+                    </div>
                 </div>
             </div>
         </div>
@@ -118,11 +130,17 @@
   <p></p>
   <p></p>
   <p></p>
+  ...
   <div class="text-center">
-    <a href="#" class="btn btn-success">Aceptar</a>
-    <a href="#" class="btn btn-danger">Rechazar</a>
-    <a href="#" class="btn btn-primary" onclick="history.back();">Volver</a>
+    {% if solicitud.estado == 'pendiente' %}
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="accion" value="aceptar" class="btn btn-success" onclick="return confirm('¿Estás seguro de que deseas Aceptar esta solicitud?')">Aceptar</button>
+        <button type="submit" name="accion" value="rechazar" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas Rechazar esta solicitud?')">Rechazar</button>
+      </form>
+    {% endif %}
   </div>
 </div>
+
 <p></p>
 {% endblock %}

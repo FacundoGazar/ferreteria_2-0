@@ -13,60 +13,64 @@
         <li class="nav-item">
           <a class="nav-link" aria-current="page" href="{% url 'homepage' %}">Inicio</a>
         </li>
+         <li class="nav-item">
         <!-- Barra de búsqueda -->
-        <li class="nav-item">
-        {% if not request.user.is_staff %}
-          <form class="d-flex flex-column" method="GET" action="{% url 'buscar_productos' %}">
-              <div class="mb-3 d-flex align-items-center">
+          {% if not request.user.is_staff %}
+            <form class="d-flex flex-column flex-md-row" method="GET" action="{% url 'buscar_productos' %}">
+              <div class="mb-3 d-flex align-items-center me-md-3">
                 <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" name="busqueda">
-                <button class="btn btn-outline-success" type="submit">Buscar</button>
-            </div>
-              <!-- Botones de filtros -->
-              <div class="mb-3">
-                  <!-- Botón para Categorías -->
-                  <button class="btn btn-primary" type="button" onclick="toggleOptions('categorias')">Categorías</button>
-                  <!-- Menú desplegable para Categorías -->
-                  <div class="mt-1" id="categorias" style="display: none;">
-                      <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="categoria1" id="categoria1" name="categoria">
-                          <label class="form-check-label" for="categoria1">Jardín</label>
-                      </div>
-                      <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="categoria2" id="categoria2" name="categoria">
-                          <label class="form-check-label" for="categoria2">Herramienta</label>
-                      </div>
-                  </div>
-                  
-                  <!-- Botón para Estado -->
-                  <button class="btn btn-primary mt-2" type="button" onclick="toggleOptions('estados')">Estado</button>
-                  <!-- Menú desplegable para Estado -->
-                  <div class="mt-1" id="estados" style="display: none;">
-                      <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="estado1" id="estado1" name="estado">
-                          <label class="form-check-label" for="estado1">Estado 1</label>
-                      </div>
-                      <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="estado2" id="estado2" name="estado">
-                          <label class="form-check-label" for="estado2">Estado 2</label>
-                      </div>
-                  </div>
-                  
-                  <!-- Botón para Sucursal -->
-                  <button class="btn btn-primary mt-2" type="button" onclick="toggleOptions('sucursales')">Sucursal</button>
-                  <!-- Menú desplegable para Sucursal -->
-                  <div class="mt-1" id="sucursales" style="display: none;">
-                      <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="sucursal1" id="sucursal1" name="sucursal">
-                          <label class="form-check-label" for="sucursal1">Sucursal 1</label>
-                      </div>
-                      <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="sucursal2" id="sucursal2" name="sucursal">
-                          <label class="form-check-label" for="sucursal2">Sucursal 2</label>
-                      </div>
-                  </div>
+                <button class="btn btn-primary" type="submit">Buscar</button>
               </div>
-          </form>
-        {% endif %}
+              <!-- Botones de filtros -->
+              <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  Categorías
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  {% for categoria in categorias_list %}
+                  <li>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="{{ categoria }}" id="categoria{{ forloop.counter }}" name="categorias">
+                      <label class="form-check-label" for="categoria{{ forloop.counter }}">{{ categoria }}</label>
+                    </div>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+              <!-- Menú desplegable para Estado -->
+              <div class="dropdown mt-2 mt-md-0 ms-md-3">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuEstado" data-bs-toggle="dropdown" aria-expanded="false">
+                  Estado
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuEstado">
+                  {% for estado in estados_list %}
+                  <li>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="{{ estado }}" id="estado{{ forloop.counter }}" name="estados">
+                      <label class="form-check-label" for="estado{{ forloop.counter }}">{{ estado }}</label>
+                    </div>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+             <!-- Menú desplegable para Sucursal -->
+            <div class="dropdown mt-2">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuSucursal" data-bs-toggle="dropdown" aria-expanded="false">
+                Sucursal
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuSucursal" style="margin-right: 10px;">
+                {% for sucursal in sucursales %}
+                <li>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{ sucursal.id }}" id="sucursal{{ forloop.counter }}" name="sucursales">
+                    <label class="form-check-label" for="sucursal{{ forloop.counter }}">{{ sucursal.nombre }}</label>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            </form>
+          {% endif %}
         </li>
         {% if not request.user.is_authenticated %}
         <li class="nav-item">

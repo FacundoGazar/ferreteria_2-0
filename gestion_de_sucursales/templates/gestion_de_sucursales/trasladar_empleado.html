@@ -3,8 +3,19 @@
 <main>
     <div class="container">
         <h2>Trasladar Empleado</h2>
-        <form action="eliminar_empleado/" method="POST" id="darDeBajaForm">
+        <form action="{% url 'trasladar' %}" method="POST" id="trasladarEmpleadoForm">
             {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="dni" class="form-label">Seleccionar DNI:</label>
+                <select class="form-select" id="dni" name="dni" required>
+                    <option value="" selected disabled>Seleccionar DNI</option>
+                    {% for empleado in empleados %}
+                    <option value="{{ empleado.dni }}">{{ empleado.dni }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div class="mb-3">
                 <label for="sucursal" class="form-label">Seleccionar Sucursal:</label>
                 <select class="form-select" id="sucursal" name="sucursal" required>
@@ -14,35 +25,11 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="mb-3">
-                <label for="dni" class="form-label">Seleccionar DNI:</label>
-                <select class="form-select" id="dni" name="dni" required disabled>
-                    <option value="" selected disabled>Seleccionar DNI</option>
-                </select>
-            </div>
+
             <button type="submit" class="btn btn-danger" id="deleteBtn"
-                onclick="return confirm('¿Estás seguro de que deseas cambiar la sucursal del empleado?')">Dar de
-                Baja</button>
+                onclick="return confirm('¿Estás seguro de que deseas cambiar la sucursal del empleado?')">Trasladar</button>
 
         </form>
     </div>
 </main>
-
-<script>
-    document.getElementById('sucursal').addEventListener('change', function () {
-        var sucursalSeleccionada = this.value;
-        var dniSelect = document.getElementById('dni');
-        dniSelect.innerHTML = '<option value="" selected disabled>Seleccionar DNI</option>';
-
-        var empleados = JSON.parse("{{ empleados_json|escapejs }}");
-
-        for (var i = 0; i < empleados.length; i++) {
-            if (empleados[i].sucursal === sucursalSeleccionada) {
-                dniSelect.innerHTML += '<option value="' + empleados[i].dni + '">' + empleados[i].dni + '</option>';
-            }
-        }
-
-        dniSelect.removeAttribute('disabled');
-    });
-</script>
 {% endblock %}

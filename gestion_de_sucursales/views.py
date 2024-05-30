@@ -91,8 +91,30 @@ def dar_de_baja_view(request):
 def trasladar_empleado_view(request):
     sucursales = Sucursal.objects.all()
     empleados = PerfilEmpleado.objects.all()
-    empleados_json = json.dumps(list(empleados.values('dni', 'sucursal')))
-    return render(request, 'gestion_de_sucursales/trasladar_empleado.html', {'sucursales': sucursales, 'empleados_json': empleados_json})
+    return render(request, 'gestion_de_sucursales/trasladar_empleado.html', {'sucursales': sucursales, 'empleados': empleados})
+
+@super_user
+def trasladar_view (request):
+    if request.method == 'POST':
+        emp_dni = request.POST.get('dni')
+        nueva_sucursal_nombre = request.POST.get('sucursal')
+        
+
+        if emp_dni:
+            try:
+                empleado= PerfilEmpleado.objects.get(dni=emp_dni)
+                nueva_sucursal = Sucursal.objects.get(nombre=nueva_sucursal_nombre)
+                empleado.sucursal= nueva_sucursal
+                messages.error(request, ("Empleado trasladado con exito"))
+            except PerfilEmpleado.DoesNotExist:
+                messages.error (request,'No se encontro el empleado')
+            return redirect ('trasladar_empleado')
+        else:
+            messages.error(request, ("No se selecciono empleado"))
+            return redirect('trasladar_empleado')
+    else:
+        messages.error(request, ("Solicitud Invalida"))
+        return redirect('trasladar_empleado')
 
 @super_user
 def eliminar_empleado_view (request):

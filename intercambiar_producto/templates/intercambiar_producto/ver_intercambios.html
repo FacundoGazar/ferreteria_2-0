@@ -4,8 +4,22 @@
 <div class="container">
   <h2 class="text-center">Solicitudes de Intercambio</h2>
 
+  <div class="row mb-3 justify-content-center">
+    <div class="col-auto">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="toggleEnviadas" checked>
+        <label class="form-check-label" for="toggleEnviadas">Solicitudes Enviadas</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="toggleRecibidas" checked>
+        <label class="form-check-label" for="toggleRecibidas">Solicitudes Recibidas</label>
+      </div>
+      <button class="btn btn-primary btn-sm ml-2" onclick="actualizarVisibilidad()">Actualizar</button>
+    </div>
+  </div>
+  
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-6" id="solicitudesEnviadas">
       <h3>Solicitudes Enviadas</h3>
       <ul class="list-group">
         {% for solicitud in solicitudes_enviadas %}
@@ -23,7 +37,7 @@
               {% if solicitud.estado == 'pendiente' %}
                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas cancelar esta solicitud?')">Cancelar Solicitud</button>
               {% endif %}
-              </form>
+            </form>
           </li>
         {% empty %}
           <li class="list-group-item">No has enviado ninguna solicitud de intercambio.</li>
@@ -31,7 +45,7 @@
       </ul>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-6" id="solicitudesRecibidas">
       <h3>Solicitudes Recibidas</h3>
       <ul class="list-group">
         {% for solicitud in solicitudes_recibidas %}
@@ -54,4 +68,18 @@
     </div>
   </div>
 </div>
+
+<script>
+  function actualizarVisibilidad() {
+    var mostrarEnviadas = document.getElementById('toggleEnviadas').checked;
+    var mostrarRecibidas = document.getElementById('toggleRecibidas').checked;
+    
+    document.getElementById('solicitudesEnviadas').style.display = mostrarEnviadas ? 'block' : 'none';
+    document.getElementById('solicitudesRecibidas').style.display = mostrarRecibidas ? 'block' : 'none';
+  }
+
+  // Inicializar la visibilidad al cargar la página
+  window.onload = actualizarVisibilidad;
+</script>
 {% endblock %}
+

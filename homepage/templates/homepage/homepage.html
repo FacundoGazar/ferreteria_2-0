@@ -15,8 +15,8 @@
         {% block content %}
         {% if not request.user.is_staff %}
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% if lista %}
-                {% for producto in lista %}
+            {% if lista_productos %}
+                {% for producto in lista_productos %}
                     <div class="col">
                         <div class="card">
                             <img src="{{ producto.imagen_principal.url }}" class="card-img-top img-thumbnail" alt="{{ producto.nombre }}" style="height: 300px;">

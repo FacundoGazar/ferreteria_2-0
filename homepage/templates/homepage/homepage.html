@@ -13,8 +13,28 @@
     </header>
     <main>
         {% block content %}
-        
+        {% if not request.user.is_staff %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% if lista %}
+                {% for producto in lista %}
+                    <div class="col">
+                        <div class="card">
+                            <img src="{{ producto.imagen_principal.url }}" class="card-img-top img-thumbnail" alt="{{ producto.nombre }}" style="height: 300px;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ producto.nombre }}</h5>
+                                <a href="{% url 'ver_detalle_intercambio' producto.slug %}" class="btn btn-primary stretched-link">Ver más</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h1 class="display-1">No hay productos</h1>
+            {% endif %}
+        </div>
+        {% endif %}
         {%endblock%}
     </main>
 </body>
 </html>
+<!DOCTYPE html>
+

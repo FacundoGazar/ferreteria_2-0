@@ -2,35 +2,47 @@
 {% extends "homepage/base.html" %}
 {% block content %}
 <div class="container">
+    {% if messages %}
+        <div class="alert alert-danger">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
     <h1>Crear Intercambio</h1>
     <form method="post">
         {% csrf_token %}
         <input type="hidden" name="producto_solicitante_id" value="{{ producto_solicitante.id }}">
         <div class="mb-3">
-            <label for="producto_solicitante" class="form-label">Producto Solicitante:</label>
-            <p>{{ producto_solicitante.nombre }}</p>
+            <label for="producto_solicitante" class="form-label"><strong>Producto Solicitante:</strong> {{ producto_solicitante.nombre }}</label>
         </div>
         <div class="mb-3">
-            <label for="producto_receptor" class="form-label">Producto Receptor:</label>
-            <p>{{ producto_receptor.nombre }}</p>
+            <label for="producto_receptor" class="form-label"><strong>Producto Receptor:</strong>{{ producto_receptor.nombre }}</label>
+            <p></p>
         </div>
         <div class="mb-3">
-            <label for="cliente_solicitante" class="form-label">Cliente Solicitante:</label>
-            <p>{{ request.user }}</p>
+            <label for="cliente_solicitante" class="form-label"><strong>Cliente Solicitante:</strong> {{ request.user }}</label>
         </div>
         <div class="mb-3">
-            <label for="cliente_receptor" class="form-label">Cliente Receptor:</label>
-            <p>{{ producto_receptor.cliente }}</p>
+            <label for="cliente_receptor" class="form-label"><strong>Cliente Receptor:</strong> {{ producto_receptor.cliente }}</label>
         </div>
         <div class="mb-3">
-            <label for="producto_receptor" class="form-label">Dia:</label>
-            <p>{{ producto_receptor.dias }}</p>
+            <label for="producto_receptor.sucursal" class="form-label"><strong>Sucursal y Ciudad:</strong> {{producto_receptor.sucursal }} - {{producto_receptor.sucursal.ciudad }}</label>
         </div>
         <div class="mb-3">
-            <label for="horario" class="form-label">Horario:</label>
-            {{ form.horario }}
-        </div> 
-        
+            <label for="producto_receptor" class="form-label"><strong>Dia:</strong> {{ producto_receptor.dias }}</label>
+        </div>
+        <div class="form-group">
+            <label for="id_fecha">Fecha</label>
+            {{ form.fecha }}
+            {% if form.fecha.errors %}
+                    <div class="text-danger">{{ form.fecha.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="horario" class="form-label"><strong>Horario:</strong>             {{ form.horario }} hs</label>
+        </div>    
+     
         <button type="submit" class="btn btn-primary">Solicitar Intercambio</button>
     </form>
 </div>

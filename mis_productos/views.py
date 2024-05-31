@@ -7,7 +7,6 @@ from iniciar_sesion import soy_cliente
 from intercambiar_producto.models import Intercambio
 from django.core.exceptions import ValidationError
 from PIL import Image, ImageChops
-from django.core.files.images import ImageFile
 import re
 
 # Create your views here.

@@ -28,7 +28,7 @@
             <strong>Producto Receptor:</strong> {{ solicitud.producto_receptor.nombre }} <br>
             <strong>Estado:</strong> {{ solicitud.estado }} <br>
             <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
-            <strong>Día:</strong> {{ solicitud.dia }} <br>
+            <strong>Día:</strong> {{ solicitud.dia }} {{ solicitud.fecha }} <br>
             <strong>Horario:</strong> {{ solicitud.horario }} hs<br>
             <strong>Sucursal:</strong> {{ solicitud.producto_solicitante.sucursal }} <strong>Ciudad:</strong> {{ solicitud.producto_solicitante.sucursal.ciudad }} <br>
             <form method="post" action="{% url 'ver_intercambios' %}" style="display:inline;">
@@ -54,7 +54,7 @@
             <strong>Producto Receptor:</strong> {{ solicitud.producto_receptor.nombre }} <br>
             <strong>Estado:</strong> {{ solicitud.estado }} <br>
             <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
-            <strong>Día:</strong> {{ solicitud.dia }} <br>
+            <strong>Día:</strong> {{ solicitud.dia }} {{ solicitud.fecha }} <br>
             <strong>Horario:</strong> {{ solicitud.horario }} hs <br>
             <strong>Sucursal:</strong> {{ solicitud.producto_solicitante.sucursal }} <strong>Ciudad:</strong> {{ solicitud.producto_solicitante.sucursal.ciudad }} <br>
             <div class="btn-group" role="group" aria-label="Acciones">

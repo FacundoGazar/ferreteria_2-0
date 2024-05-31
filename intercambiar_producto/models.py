@@ -10,15 +10,7 @@ class Intercambio(models.Model):
         ('realizado', 'Realizado'),
         ('ausente', 'Ausente'),
     )
-    
-    
-    DIAS = (
-        ('Lunes', 'lunes'),
-        ('Martes', 'martes'),
-        ('Miercoles', 'miercoles'),
-        ('Jueves', 'jueves'),
-        ('Viernes', 'viernes'),
-    )
+
 
     producto_solicitante = models.ForeignKey(Producto, related_name='intercambios_solicitados', on_delete=models.CASCADE)
     producto_receptor = models.ForeignKey(Producto, related_name='intercambios_recibidos', on_delete=models.CASCADE)
@@ -26,8 +18,12 @@ class Intercambio(models.Model):
     cliente_receptor = models.ForeignKey(User, related_name='solicitudes_recibidas', on_delete=models.CASCADE)
     estado = models.CharField(max_length=10, choices=ESTADOS, default='pendiente')
     fecha_solicitud = models.DateTimeField(auto_now_add=True)
-    dia = models.CharField(max_length=20, choices=DIAS, default= ' ')
+    dia = models.CharField(max_length=20, blank=True)
+    fecha = models.DateField(null=True, blank=True)
     horario = models.IntegerField()
-
+    def save(self, *args, **kwargs):
+        if not self.dia:  # Si el campo 'dia' está vacío
+            self.dia = self.producto_receptor.dias  # Asignamos el valor del producto receptor
+        super().save(*args, **kwargs)  # Llamamos al método save de la clase base
     def __str__(self):
-        return f"{self.producto_solicitante} <-> {self.producto_receptor} ({self.dia}) ({self.horario}) ({self.estado})"
+        return f"{self.producto_solicitante} <-> {self.producto_receptor} ({self.dia}) ({self.fecha}) ({self.horario}) ({self.estado})"

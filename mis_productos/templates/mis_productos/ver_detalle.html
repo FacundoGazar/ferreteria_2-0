@@ -87,7 +87,7 @@
         </div>
         
         {% if not tiene_intercambio %}
-        <a href="{% url 'modificar_producto' producto.slug %}" class="btn btn-primary stretched-link">Modificar</a>
+        <a href="{% url 'modificar_producto' producto.slug %}" class="btn btn-primary">Modificar</a>
         {% else %}
         <p><b>Este producto está involucrado en un intercambio y no puede ser modificado.</b></p>
         {% endif %}

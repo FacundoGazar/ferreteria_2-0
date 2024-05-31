@@ -119,7 +119,6 @@
                 });
             });
 
-            // Verificar si hay valores preexistentes y actualizar los selectores en consecuencia
             if ($('#horario_inicio').val()) {
                 var horarioInicioSeleccionado = $('#horario_inicio').val();
                 var horariosFinDisponibles = [];
@@ -136,7 +135,7 @@
                         text: value
                     }));
                 });
-                // Preseleccionar el valor actual de horario_fin si existe
+                
                 $('#horario_fin').val('{{ form.horario_fin.value }}');
             }
         });

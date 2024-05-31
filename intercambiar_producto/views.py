@@ -10,7 +10,7 @@ from .forms import IntercambioForm
 def intercambiar_listar_mis_productos_view(request, slug_intercambio):
     usuario = request.user
     producto_receptor = Producto.objects.get(slug=slug_intercambio)
-    queryset = Producto.objects.filter(cliente=usuario, sucursal=producto_receptor.sucursal)
+    queryset = Producto.objects.filter(cliente=usuario, categoria=producto_receptor.categoria)
 
     context = {
         "lista": queryset,
@@ -27,8 +27,7 @@ def realizar_intercambio_view(request, slug_intercambio):
     hora_inicio = int(hora_inicio_str)
     hora_fin = int(hora_fin_str)
     horarios_disponibles = [(hora, str(hora)) for hora in range(hora_inicio, hora_fin + 1)]
-    
-    print("Horarios disponibles:", horarios_disponibles)
+   
 
     if request.method == 'POST':
         producto_solicitante_id = request.POST.get('producto_solicitante_id')        
@@ -36,9 +35,9 @@ def realizar_intercambio_view(request, slug_intercambio):
             producto_solicitante = Producto.objects.get(id=producto_solicitante_id)
         except Producto.DoesNotExist:
             messages.error(request, "Producto solicitante no encontrado.")
-            return redirect("intercambiar_producto/intercambiar_listado.html")  # Ajusta el redireccionamiento según sea necesario
+            return redirect("intercambiar_producto/intercambiar_listado.html")  
         
-        form = IntercambioForm(request.POST, horario_choices=horarios_disponibles)
+        form = IntercambioForm(request.POST, horario_choices=horarios_disponibles, producto_receptor=producto_receptor)
         if form.is_valid():
             intercambio = form.save(commit=False)
             intercambio.producto_solicitante = producto_solicitante
@@ -46,12 +45,15 @@ def realizar_intercambio_view(request, slug_intercambio):
             intercambio.producto_receptor = producto_receptor
             intercambio.cliente_receptor = producto_receptor.cliente
             intercambio.dia = producto_receptor.dias
+            print(producto_receptor.dias)
             intercambio.estado = 'pendiente'
             intercambio.save()
             messages.success(request, "Solicitud de intercambio enviada con éxito.")
             return redirect('homepage')
         else:
-            print(form.errors)
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"Error en {field}: {error}")
             messages.error(request, "Por favor, verifica el formulario.")
     else:
         producto_solicitante_id = request.GET.get('producto_solicitante_id')
@@ -59,15 +61,39 @@ def realizar_intercambio_view(request, slug_intercambio):
             producto_solicitante = Producto.objects.get(id=producto_solicitante_id)
         except Producto.DoesNotExist:
             messages.error(request, "Producto solicitante no encontrado.")
-            return redirect("intercambiar_producto/intercambiar_listado.html")  # Ajusta el redireccionamiento según sea necesario
+            return redirect("intercambiar_producto/intercambiar_listado.html")  
         
-        form = IntercambioForm(horario_choices=horarios_disponibles)
+        form = IntercambioForm(request.GET, horario_choices=horarios_disponibles, producto_receptor=producto_receptor)
 
     return render(request, 'intercambiar_producto/realizar_intercambio.html', {
         'form': form,
         'producto_solicitante': producto_solicitante,
         'producto_receptor': producto_receptor
     })
+@soy_cliente
+def ver_intercambios(request):
+    usuario_actual = request.user
+    solicitudes_enviadas = Intercambio.objects.filter(cliente_solicitante=usuario_actual)
+    solicitudes_recibidas = Intercambio.objects.filter(cliente_receptor=usuario_actual)
+    
+    if request.method == 'POST':
+        intercambio_id = request.POST.get('intercambio_id')
+        if intercambio_id:
+            try:
+                intercambio = Intercambio.objects.get(id=intercambio_id)
+                intercambio.delete()
+                messages.success(request, "Solicitud cancelada con éxito")
+            except Intercambio.DoesNotExist:
+                messages.error(request, "La solicitud no existe")
+        else:
+            messages.error(request, "Algo salió mal")
+
+    context = {
+        'solicitudes_enviadas': solicitudes_enviadas,
+        'solicitudes_recibidas': solicitudes_recibidas,
+    }
+    return render(request, "intercambiar_producto/ver_intercambios.html", context)
+
 @soy_cliente
 def ver_intercambios(request):
     usuario_actual = request.user

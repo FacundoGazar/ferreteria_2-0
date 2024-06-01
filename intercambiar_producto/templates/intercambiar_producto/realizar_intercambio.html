@@ -2,13 +2,6 @@
 {% extends "homepage/base.html" %}
 {% block content %}
 <div class="container">
-    {% if messages %}
-        <div class="alert alert-danger">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
     <h1>Crear Intercambio</h1>
     <form method="post">
         {% csrf_token %}
@@ -33,16 +26,19 @@
             <label for="producto_receptor" class="form-label"><strong>Dia:</strong> {{ producto_receptor.dias }}</label>
         </div>
         <div class="form-group">
-            <label for="id_fecha">Fecha</label>
+            <label for="id_fecha" ><strong>Fecha:</strong></label>
             {{ form.fecha }}
-            {% if form.fecha.errors %}
-                    <div class="text-danger">{{ form.fecha.errors }}</div>
-            {% endif %}
         </div>
         <div class="mb-3">
-            <label for="horario" class="form-label"><strong>Horario:</strong>             {{ form.horario }} hs</label>
-        </div>    
-     
+            <label for="horario" class="form-label" ><strong>Horario:</strong></label>
+            <select class="form-select" id="horario" name="horario" required>
+                <option value="" selected disabled>Selecciona un horario</option>
+                {% for valor, etiqueta in form.horario.field.choices %}
+                    <option value="{{ valor }}">{{ etiqueta }}</option>
+                {% endfor %}
+            </select>
+        </div>
+                
         <button type="submit" class="btn btn-primary">Solicitar Intercambio</button>
     </form>
 </div>

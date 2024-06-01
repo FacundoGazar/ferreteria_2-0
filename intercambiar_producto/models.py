@@ -8,6 +8,7 @@ class Intercambio(models.Model):
         ('aceptado', 'Aceptado'),
         ('rechazado', 'Rechazado'),
         ('realizado', 'Realizado'),
+        ('cancelado', 'Cancelado'),
         ('ausente', 'Ausente'),
     )
 
@@ -22,8 +23,8 @@ class Intercambio(models.Model):
     fecha = models.DateField(null=True, blank=True)
     horario = models.IntegerField()
     def save(self, *args, **kwargs):
-        if not self.dia:  # Si el campo 'dia' está vacío
-            self.dia = self.producto_receptor.dias  # Asignamos el valor del producto receptor
-        super().save(*args, **kwargs)  # Llamamos al método save de la clase base
+        if not self.dia:  
+            self.dia = self.producto_receptor.dias  
+        super().save(*args, **kwargs) 
     def __str__(self):
         return f"{self.producto_solicitante} <-> {self.producto_receptor} ({self.dia}) ({self.fecha}) ({self.horario}) ({self.estado})"

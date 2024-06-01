@@ -174,9 +174,11 @@ def listar_mis_productos_view(request):
 def ver_detalle_view(request, slug):
     producto = Producto.objects.get(slug=slug)
     tiene_intercambio = Intercambio.objects.filter(
-        producto_solicitante=producto
+       estado='aceptado',
+       producto_solicitante=producto
     ).exists() or Intercambio.objects.filter(
-        producto_receptor=producto
+       estado='aceptado',
+       producto_receptor=producto
     ).exists()
     
     return render(request, 'mis_productos/ver_detalle.html', {

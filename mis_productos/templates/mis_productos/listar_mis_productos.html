@@ -1,7 +1,5 @@
 {% extends "homepage/base.html" %}
 
-<!DOCTYPE html>
-
 <html>
     <head>
         <meta charset="utf-8">
@@ -21,7 +19,6 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ producto.nombre }}</h5>
                                 <a href="{% url 'ver_detalle' producto.slug %}" class="btn btn-primary stretched-link">Ver más</a>
-                                <a href="{% url 'modificar_producto' producto.slug %}" class="btn btn-primary stretched-link">Modificar</a>
                             </div>
                         </div>
                     </div>

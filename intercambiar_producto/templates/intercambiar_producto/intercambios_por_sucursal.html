@@ -1,0 +1,47 @@
+{% extends "homepage/base.html" %}
+
+{% block content %}
+<h2>Intercambios en la sucursal {{ sucursal.nombre }} para hoy</h2>
+
+<form method="get" action="{% url 'intercambios_por_sucursal' %}">
+    <label for="id_fecha">Seleccionar Fecha:</label>
+    <input type="date" id="id_fecha" name="fecha" value="{{ fecha_seleccionada }}">
+    <button type="submit">Filtrar</button>
+</form>
+
+{% if intercambios %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Producto Solicitante</th>
+            <th>Producto Receptor</th>
+            <th>Cliente Solicitante</th>
+            <th>Cliente Receptor</th>
+            <th>Estado</th>
+            <th>Fecha de Solicitud</th>
+            <th>Día</th>
+            <th>Fecha</th>
+            <th>Horario</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for intercambio in intercambios %}
+        <tr>
+            <td>{{ intercambio.producto_solicitante.nombre }}</td>
+            <td>{{ intercambio.producto_receptor.nombre }}</td>
+            <td>{{ intercambio.cliente_solicitante.username }}</td>
+            <td>{{ intercambio.cliente_receptor.username }}</td>
+            <td>{{ intercambio.estado }}</td>
+            <td>{{ intercambio.fecha_solicitud }}</td>
+            <td>{{ intercambio.dia }}</td>
+            <td>{{ intercambio.fecha }}</td>
+            <td>{{ intercambio.horario }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay intercambios programados para hoy en esta sucursal.</p>
+{% endif %}
+
+{% endblock %}

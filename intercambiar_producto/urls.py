@@ -6,4 +6,5 @@ urlpatterns = [
     path("<slug:slug_intercambio>/realizar_intercambio", realizar_intercambio_view, name='realizar intercambio'),
     path("ver_intercambios", ver_intercambios, name='ver_intercambios'),
     path('ver_detalle/<int:solicitud_id>/', detalle_intercambio, name='ver_detalle'),
+    path('intercambios_por_sucursal', intercambios_por_sucursal_view, name='intercambios_por_sucursal'),
 ]

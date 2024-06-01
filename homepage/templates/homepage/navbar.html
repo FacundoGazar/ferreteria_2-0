@@ -2,71 +2,79 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #173F84;">
   <div class="container-fluid">
     <a class="navbar-brand" href="{% url 'homepage' %}">
-      <img src="{% static 'logoFerreplus.png' %}" alt="Logo" width="165" height="75" class="d-inline-block align-text-top">
+      <img src="{% static 'logoFerreplus.png' %}" alt="Logo" width="165" height="75"
+        class="d-inline-block align-text-top">
     </a>
-   
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-         <li class="nav-item">
-        <!-- Barra de búsqueda -->
+        <li class="nav-item">
+          <!-- Barra de búsqueda -->
           {% if not request.user.is_staff %}
-            <form class="d-flex flex-column flex-md-row" method="GET" action="{% url 'buscar_productos' %}">
-              <div class="mb-3 d-flex align-items-center me-md-3">
-                <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" name="busqueda">
-                <button class="btn btn-primary" type="submit">Buscar</button>
-              </div>
-              <!-- Botones de filtros -->
-              <div class="dropdown">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                  Categorías
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  {% for categoria in categorias_list %}
-                  <li>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="{{ categoria }}" id="categoria{{ forloop.counter }}" name="categorias">
-                      <label class="form-check-label" for="categoria{{ forloop.counter }}">{{ categoria }}</label>
-                    </div>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-              <!-- Menú desplegable para Estado -->
-              <div class="dropdown mt-2 mt-md-0 ms-md-3">
-                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuEstado" data-bs-toggle="dropdown" aria-expanded="false">
-                  Estado
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuEstado">
-                  {% for estado in estados_list %}
-                  <li>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="{{ estado }}" id="estado{{ forloop.counter }}" name="estados">
-                      <label class="form-check-label" for="estado{{ forloop.counter }}">{{ estado }}</label>
-                    </div>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-             <!-- Menú desplegable para Sucursal -->
+          <form class="d-flex flex-column flex-md-row" method="GET" action="{% url 'buscar_productos' %}">
+            <div class="mb-3 d-flex align-items-center me-md-3">
+              <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" name="busqueda">
+              <button class="btn btn-primary" type="submit">Buscar</button>
+            </div>
+            <!-- Botones de filtros -->
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Categorías
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                {% for categoria in categorias_list %}
+                <li>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{ categoria }}"
+                      id="categoria{{ forloop.counter }}" name="categorias">
+                    <label class="form-check-label" for="categoria{{ forloop.counter }}">{{ categoria }}</label>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            <!-- Menú desplegable para Estado -->
             <div class="dropdown mt-2 mt-md-0 ms-md-3">
-              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuSucursal" data-bs-toggle="dropdown" aria-expanded="false">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuEstado"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Estado
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuEstado">
+                {% for estado in estados_list %}
+                <li>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{ estado }}"
+                      id="estado{{ forloop.counter }}" name="estados">
+                    <label class="form-check-label" for="estado{{ forloop.counter }}">{{ estado }}</label>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            <!-- Menú desplegable para Sucursal -->
+            <div class="dropdown mt-2 mt-md-0 ms-md-3">
+              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuSucursal"
+                data-bs-toggle="dropdown" aria-expanded="false">
                 Sucursal
               </button>
               <ul class="dropdown-menu" aria-labelledby="dropdownMenuSucursal" style="margin-right: 10px;">
                 {% for sucursal in sucursales %}
                 <li>
                   <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{ sucursal.id }}" id="sucursal{{ forloop.counter }}" name="sucursales">
+                    <input class="form-check-input" type="checkbox" value="{{ sucursal.id }}"
+                      id="sucursal{{ forloop.counter }}" name="sucursales">
                     <label class="form-check-label" for="sucursal{{ forloop.counter }}">{{ sucursal.nombre }}</label>
                   </div>
                 </li>
                 {% endfor %}
               </ul>
             </div>
-            </form>
+          </form>
           {% endif %}
         </li>
         {% if not request.user.is_authenticated %}
@@ -82,42 +90,46 @@
     {% if request.user.is_authenticated %}
     <div class="btn-group dropstart">
       <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          Menú
+        Menú
       </button>
       <ul class="dropdown-menu">
-              {% if request.user.is_superuser %}
-                  <li><a class="dropdown-item" href="{% url 'gestion_de_sucursales' %}">Gestión de sucursales</a></li>
-                  <li><a class="dropdown-item" href="{% url 'gestion_de_empleados' %}">Gestión de empleados</a></li>
-              {% elif not request.user.is_staff %}
-                  <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis Productos</a></li>                  
-                  <li><a class="dropdown-item" href="{% url 'ver_intercambios' %}">Mis Intercambios</a></li>
-              {% endif %}
-              {% if not request.user.is_superuser and request.user.is_staff %}
-                  <button>Intercambios Empleado</button> 
-              {% endif %}
-              <li><hr class="dropdown-divider"></li>
-              <form action="{% url 'ver_perfil' request.user.username %}" method="get">
-                  <button type="submit" class="dropdown-item">Ver mi perfil</button>
-              </form>
-              <li><a class="dropdown-item" href="{% url 'modificar_contrasena' %}">Modificar contraseña</a></li>
-              <li><a class="dropdown-item" onclick="return confirm('¿Estás seguro de cerrar sesión?')" href="{% url 'cerrar_sesion' %}">Cerrar sesión</a></li>
-          {% endif %}
-          
-      </ul>
-  </div>
-  
+        {% if request.user.is_superuser %}
+        <li><a class="dropdown-item" href="{% url 'gestion_de_sucursales' %}">Gestión de sucursales</a></li>
+        <li><a class="dropdown-item" href="{% url 'gestion_de_empleados' %}">Gestión de empleados</a></li>
+        {% elif not request.user.is_staff %}
+        <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis Productos</a></li>
+        <li><a class="dropdown-item" href="{% url 'ver_intercambios' %}">Mis Intercambios</a></li>
+        {% endif %}
+        {% if not request.user.is_superuser and request.user.is_staff %}
+        <li><a class="dropdown-item" href="{% url 'intercambios_por_sucursal' %}">Intercambios por sucursal</a>
+        </li>
+        {% endif %}
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <form action="{% url 'ver_perfil' request.user.username %}" method="get">
+          <button type="submit" class="dropdown-item">Ver mi perfil</button>
+        </form>
+        <li><a class="dropdown-item" href="{% url 'modificar_contrasena' %}">Modificar contraseña</a></li>
+        <li><a class="dropdown-item" onclick="return confirm('¿Estás seguro de cerrar sesión?')"
+            href="{% url 'cerrar_sesion' %}">Cerrar sesión</a></li>
+        {% endif %}
+
       </ul>
     </div>
+
+    </ul>
+  </div>
   </div>
 </nav>
 
 <script>
   function toggleOptions(id) {
-      var options = document.getElementById(id);
-      if (options.style.display === "none") {
-          options.style.display = "block";
-      } else {
-          options.style.display = "none";
-      }
+    var options = document.getElementById(id);
+    if (options.style.display === "none") {
+      options.style.display = "block";
+    } else {
+      options.style.display = "none";
+    }
   }
 </script>

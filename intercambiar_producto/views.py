@@ -7,6 +7,8 @@ from .models import Intercambio
 from .forms import IntercambioForm
 from django.db.models import Q
 from datetime import datetime, timedelta
+from gestion_de_sucursales.models import PerfilEmpleado
+from django.utils import timezone
 
 
 @soy_cliente
@@ -217,6 +219,22 @@ def detalle_intercambio(request, solicitud_id):
     return render(request, 'intercambiar_producto/ver_detalle.html', context)
 
 
+def intercambios_por_sucursal_view(request):
+    try:
+        empleado = PerfilEmpleado.objects.get(usuario=request.user)
+        sucursal = empleado.sucursal
 
-    
+        # Obtener la fecha del formulario si está presente, de lo contrario usar la fecha actual
+        fecha_seleccionada = request.GET.get('fecha')
+        if fecha_seleccionada:
+            fecha_seleccionada = datetime.strptime(fecha_seleccionada, '%Y-%m-%d').date()
+        else:
+            fecha_seleccionada = datetime.now().date()
 
+        # Filtrar los intercambios por sucursal y fecha
+        intercambios = Intercambio.objects.filter(producto_receptor__sucursal=sucursal, fecha=fecha_seleccionada)
+
+        return render(request, 'intercambiar_producto/intercambios_por_sucursal.html', {'sucursal': sucursal, 'intercambios': intercambios})
+    except PerfilEmpleado.DoesNotExist:
+        messages.error(request, "El usuario logueado no tiene un perfil de empleado asociado.")
+        return redirect('pagina_de_error')

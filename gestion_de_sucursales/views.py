@@ -187,3 +187,4 @@ def registrar_empleado (request):
         messages.success(request, "Se registró el usuario y se envió un correo electrónico con los detalles de la cuenta")
 
         return redirect('agregar_empleado')
+    

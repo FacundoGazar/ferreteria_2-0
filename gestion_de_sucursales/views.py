@@ -104,8 +104,11 @@ def trasladar_view (request):
             try:
                 empleado= PerfilEmpleado.objects.get(dni=emp_dni)
                 nueva_sucursal = Sucursal.objects.get(nombre=nueva_sucursal_nombre)
+                print(nueva_sucursal)
                 empleado.sucursal= nueva_sucursal
-                messages.error(request, ("Empleado trasladado con exito"))
+                print(empleado.sucursal.nombre)
+                empleado.save()  # Guarda los cambios en la base de datos
+                messages.success(request, "Empleado trasladado con éxito")
             except PerfilEmpleado.DoesNotExist:
                 messages.error (request,'No se encontro el empleado')
             return redirect ('trasladar_empleado')

@@ -6,6 +6,8 @@ from django.contrib import messages
 from .models import Intercambio
 from .forms import IntercambioForm
 from django.db.models import Q
+from datetime import datetime, timedelta
+
 
 @soy_cliente
 def intercambiar_listar_mis_productos_view(request, slug_intercambio):
@@ -92,30 +94,6 @@ def realizar_intercambio_view(request, slug_intercambio):
         'producto_receptor': producto_receptor,
         'horarios_disponibles': horarios_disponibles
     })
-    
-@soy_cliente
-def ver_intercambios(request):
-    usuario_actual = request.user
-    solicitudes_enviadas = Intercambio.objects.filter(cliente_solicitante=usuario_actual)
-    solicitudes_recibidas = Intercambio.objects.filter(cliente_receptor=usuario_actual)
-    
-    if request.method == 'POST':
-        intercambio_id = request.POST.get('intercambio_id')
-        if intercambio_id:
-            try:
-                intercambio = Intercambio.objects.get(id=intercambio_id)
-                intercambio.delete()
-                messages.success(request, "Solicitud cancelada con éxito")
-            except Intercambio.DoesNotExist:
-                messages.error(request, "La solicitud no existe")
-        else:
-            messages.error(request, "Algo salió mal")
-
-    context = {
-        'solicitudes_enviadas': solicitudes_enviadas,
-        'solicitudes_recibidas': solicitudes_recibidas,
-    }
-    return render(request, "intercambiar_producto/ver_intercambios.html", context)
 
 @soy_cliente
 def ver_intercambios(request):
@@ -191,9 +169,48 @@ def detalle_intercambio(request, solicitud_id):
             solicitud.save()
             messages.success(request, "La solicitud ha sido rechazada.")
         elif accion == 'cancelar':
-            solicitud.estado = 'cancelado'
-            solicitud.save()
-            messages.success(request, "El intercambio ha sido cancelado.")
+            try:
+                intercambio_id = request.POST.get('intercambio_id')
+                intercambio = Intercambio.objects.get(id=intercambio_id)
+                if intercambio_id:
+            
+                
+                # Depuración: Verifica que los campos están presentes
+                    print(f"Fecha del intercambio: {intercambio.fecha}")
+                    print(f"Horario del intercambio: {intercambio.horario}")
+
+                    try:
+                        intercambio_datetime = datetime.combine(intercambio.fecha, datetime.strptime(intercambio.horario, '%H:%M').time())
+                        print(f"Fecha y hora del intercambio: {intercambio_datetime}")
+                    except Exception as e:
+                        print(f"Error al combinar fecha y hora: {e}")
+                        messages.error(request, f"Error al combinar fecha y hora: {e}")
+                        return redirect('intercambiar_producto/ver_intercambios.html')
+
+                    ahora = datetime.now()
+                    print(f"Hora actual: {ahora}")
+                
+                    try:
+                        hora_limite = intercambio_datetime - timedelta(hours=1)
+                        print(f"Hora límite: {hora_limite}")
+                    except Exception as e:
+                        print(f"Error al calcular hora límite: {e}")
+                        messages.error(request, f"Error al calcular hora límite: {e}")
+                        return redirect('intercambiar_producto/ver_intercambios.html')
+
+                    if ahora >= hora_limite:
+                        messages.error(request, "No puedes cancelar la solicitud dentro de la próxima hora antes del intercambio. Horario límite.")
+                    else:
+                        intercambio.delete()
+                        messages.success(request, "Solicitud cancelada con éxito")
+            except Intercambio.DoesNotExist:
+                messages.error(request, "La solicitud no existe")
+            except Exception as e:
+                print(f"Error inesperado: {e}")
+                messages.error(request, f"Error inesperado: {e}")
+        else:
+            messages.error(request, "Algo salió mal")
+    
     context = {
         'solicitud': solicitud
     }

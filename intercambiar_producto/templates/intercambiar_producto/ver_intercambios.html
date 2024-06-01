@@ -14,11 +14,24 @@
         <input class="form-check-input" type="checkbox" id="toggleRecibidas" checked>
         <label class="form-check-label" for="toggleRecibidas">Solicitudes Recibidas</label>
       </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="toggleAceptadas" checked>
+        <label class="form-check-label" for="toggleAceptadas">Solicitudes Aceptadas</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="toggleRealizadas" checked>
+        <label class="form-check-label" for="toggleRealizadas">Solicitudes Realizadas</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="toggleCanceladas" checked>
+        <label class="form-check-label" for="toggleCanceladas">Solicitudes Canceladas</label>
+      </div>
       <button class="btn btn-primary btn-sm ml-2" onclick="actualizarVisibilidad()">Actualizar</button>
     </div>
   </div>
   
   <div class="row">
+    <!-- Solicitudes Enviadas -->
     <div class="col-md-6" id="solicitudesEnviadas">
       <h3>Solicitudes Enviadas</h3>
       <ul class="list-group">
@@ -45,6 +58,7 @@
       </ul>
     </div>
 
+    <!-- Solicitudes Recibidas -->
     <div class="col-md-6" id="solicitudesRecibidas">
       <h3>Solicitudes Recibidas</h3>
       <ul class="list-group">
@@ -66,6 +80,75 @@
         {% endfor %}
       </ul>
     </div>
+
+    <!-- Solicitudes Aceptadas -->
+    <div class="col-md-6" id="solicitudesAceptadas">
+      <h3>Solicitudes Aceptadas</h3>
+      <ul class="list-group">
+        {% for solicitud in solicitudes_aceptadas %}
+          <li class="list-group-item">
+            <strong>Producto Solicitante:</strong> {{ solicitud.producto_solicitante.nombre }} <br>
+            <strong>Producto Receptor:</strong> {{ solicitud.producto_receptor.nombre }} <br>
+            <strong>Estado:</strong> {{ solicitud.estado }} <br>
+            <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
+            <strong>Día:</strong> {{ solicitud.dia }} {{ solicitud.fecha }} <br>
+            <strong>Horario:</strong> {{ solicitud.horario }} hs <br>
+            <strong>Sucursal:</strong> {{ solicitud.producto_solicitante.sucursal }} <strong>Ciudad:</strong> {{ solicitud.producto_solicitante.sucursal.ciudad }} <br>
+            <div class="btn-group" role="group" aria-label="Acciones">
+              <a href="{% url 'ver_detalle' solicitud.id %}" class="btn btn-primary">Ver Detalle</a>
+            </div>
+          </li>
+        {% empty %}
+          <li class="list-group-item">No tienes ninguna solicitud aceptada.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Solicitudes Realizadas -->
+    <div class="col-md-6" id="solicitudesRealizadas">
+      <h3>Solicitudes Realizadas</h3>
+      <ul class="list-group">
+        {% for solicitud in solicitudes_realizadas %}
+          <li class="list-group-item">
+            <strong>Producto Solicitante:</strong> {{ solicitud.producto_solicitante.nombre }} <br>
+            <strong>Producto Receptor:</strong> {{ solicitud.producto_receptor.nombre }} <br>
+            <strong>Estado:</strong> {{ solicitud.estado }} <br>
+            <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
+            <strong>Día:</strong> {{ solicitud.dia }} {{ solicitud.fecha }} <br>
+            <strong>Horario:</strong> {{ solicitud.horario }} hs <br>
+            <strong>Sucursal:</strong> {{ solicitud.producto_solicitante.sucursal }} <strong>Ciudad:</strong> {{ solicitud.producto_solicitante.sucursal.ciudad }} <br>
+            <div class="btn-group" role="group" aria-label="Acciones">
+              <a href="{% url 'ver_detalle' solicitud.id %}" class="btn btn-primary">Ver Detalle</a>
+            </div>
+          </li>
+        {% empty %}
+          <li class="list-group-item">No tienes ninguna solicitud realizada.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Solicitudes Canceladas -->
+    <div class="col-md-6" id="solicitudesCanceladas">
+      <h3>Solicitudes Canceladas</h3>
+      <ul class="list-group">
+        {% for solicitud in solicitudes_canceladas %}
+          <li class="list-group-item">
+            <strong>Producto Solicitante:</strong> {{ solicitud.producto_solicitante.nombre }} <br>
+            <strong>Producto Receptor:</strong> {{ solicitud.producto_receptor.nombre }} <br>
+            <strong>Estado:</strong> {{ solicitud.estado }} <br>
+            <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
+            <strong>Día:</strong> {{ solicitud.dia }} {{ solicitud.fecha }} <br>
+            <strong>Horario:</strong> {{ solicitud.horario }} hs <br>
+            <strong>Sucursal:</strong> {{ solicitud.producto_solicitante.sucursal }} <strong>Ciudad:</strong> {{ solicitud.producto_solicitante.sucursal.ciudad }} <br>
+            <div class="btn-group" role="group" aria-label="Acciones">
+              <a href="{% url 'ver_detalle' solicitud.id %}" class="btn btn-primary">Ver Detalle</a>
+            </div>
+          </li>
+        {% empty %}
+          <li class="list-group-item">No tienes ninguna solicitud cancelada.</li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -73,13 +156,18 @@
   function actualizarVisibilidad() {
     var mostrarEnviadas = document.getElementById('toggleEnviadas').checked;
     var mostrarRecibidas = document.getElementById('toggleRecibidas').checked;
-    
+    var mostrarAceptadas = document.getElementById('toggleAceptadas').checked;
+    var mostrarRealizadas = document.getElementById('toggleRealizadas').checked;
+    var mostrarCanceladas = document.getElementById('toggleCanceladas').checked;
+
     document.getElementById('solicitudesEnviadas').style.display = mostrarEnviadas ? 'block' : 'none';
     document.getElementById('solicitudesRecibidas').style.display = mostrarRecibidas ? 'block' : 'none';
+    document.getElementById('solicitudesAceptadas').style.display = mostrarAceptadas ? 'block' : 'none';
+    document.getElementById('solicitudesRealizadas').style.display = mostrarRealizadas ? 'block' : 'none';
+    document.getElementById('solicitudesCanceladas').style.display = mostrarCanceladas ? 'block' : 'none';
   }
 
   // Inicializar la visibilidad al cargar la página
   window.onload = actualizarVisibilidad;
 </script>
 {% endblock %}
-

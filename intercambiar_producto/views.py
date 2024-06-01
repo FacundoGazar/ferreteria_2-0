@@ -97,8 +97,11 @@ def ver_intercambios(request):
 @soy_cliente
 def ver_intercambios(request):
     usuario_actual = request.user
-    solicitudes_enviadas = Intercambio.objects.filter(cliente_solicitante=usuario_actual)
-    solicitudes_recibidas = Intercambio.objects.filter(cliente_receptor=usuario_actual)
+    solicitudes_enviadas = Intercambio.objects.filter(cliente_solicitante=usuario_actual,estado="pendiente")
+    solicitudes_recibidas = Intercambio.objects.filter(cliente_receptor=usuario_actual,estado="pendiente" )
+    solicitudes_aceptadas = Intercambio.objects.filter(cliente_receptor=usuario_actual,estado="aceptado")
+    solicitudes_realizadas = Intercambio.objects.filter(cliente_receptor=usuario_actual,estado="realizado")
+    solicitudes_canceladas = Intercambio.objects.filter(cliente_receptor=usuario_actual,estado="rechazado")
     
     if request.method == 'POST':
         intercambio_id = request.POST.get('intercambio_id')
@@ -115,6 +118,9 @@ def ver_intercambios(request):
     context = {
         'solicitudes_enviadas': solicitudes_enviadas,
         'solicitudes_recibidas': solicitudes_recibidas,
+        'solicitudes_aceptadas': solicitudes_aceptadas,
+        'solicitudes_realizadas': solicitudes_realizadas,
+        'solicitudes_canceladas': solicitudes_canceladas,
     }
     return render(request, "intercambiar_producto/ver_intercambios.html", context)
 

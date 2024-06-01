@@ -1,11 +1,186 @@
-{% extends "homepage/base.html"  %}
+{% extends "homepage/base.html" %}
 {% block content %}
 <div class="container">
     <h1>Modificar Producto</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-    </form>
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre del Producto</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ form.nombre.value|default_if_none:'' }}">
+        </div>
+        <div class="mr-3">
+            <label for="estado" class="mr-3">Estado de tu producto</label>
+            <select class="form-select" id="estado" name="estado" required>
+                <option value="" selected disabled>Seleccionar Estado</option>
+                {% for valore in estados_list %}
+                <option value="{{ valore }}" {% if form.estado.value == valore %}selected{% endif %}>{{ valore }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mr-3">
+            <label for="categoria" class="mr-3">Categoría de tu producto</label>
+            <select class="form-select" id="categoria" name="categoria" required>
+                <option value="" selected disabled>Seleccionar Categoría</option>
+                {% for valorc in categorias_list %}
+                <option value="{{ valorc }}" {% if form.categoria.value == valorc %}selected{% endif %}>{{ valorc }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group d-flex">
+            <div class="mr-3">
+                <label for="dias" class="mr-3">Días de tu Disponibilidad</label>
+                <select class="form-select" id="dias" name="dias" required>
+                    <option value="" selected disabled>Selecciona tu/s día/s disponibles</option>
+                    {% for valord in dias_list %}
+                    <option value="{{ valord }}" {% if form.dias.value == valord %}selected{% endif %}>{{ valord }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mr-3">
+                <label for="horario_inicio" class="mr-3">Hora de Inicio de tu Disponibilidad</label>
+                <select class="form-select" id="horario_inicio" name="horario_inicio" required>
+                    <option value="" selected disabled>Selecciona un horario de inicio</option>
+                    {% for valorh in horarios_list_inicio %}
+                    <option value="{{ valorh }}" {% if form.horario_inicio.value == valorh %}selected{% endif %}>{{ valorh }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mr-3">
+                <label for="horario_fin" class="mr-3">Hora de Fin de tu Disponibilidad</label>
+                <select class="form-select" id="horario_fin" name="horario_fin" {% if not form.horario_inicio.value %}disabled{% endif %} required>
+                    <option value="" selected disabled>Selecciona un horario de fin</option>
+                    {% if form.horario_inicio.value %}
+                        {% for valorhf in horarios_list_fin %}
+                        <option value="{{ valorhf }}" {% if form.horario_fin.value == valorhf %}selected{% endif %}>{{ valorhf }}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+            </div>
+        </div>
+        <div class="mr-3">
+            <label for="sucursal" class="mr-3">Selecciona la sucursal donde podrán encontrar tu producto</label>
+            <select class="form-select" id="sucursal" name="sucursal" required>
+                <option value="" selected disabled>Seleccionar Sucursal</option>
+                {% for sucursal in sucursales %}
+                <option value="{{ sucursal.nombre }}" {% if form.sucursal.value == sucursal.nombre %}selected{% endif %}>{{ sucursal.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <label><strong> Formatos de imágenes admitidos: .jpg, .jpeg, .png, .gif, .bmp, .tif, .tiff, .webp, .ico, .svg </strong></label>              
+        <div class="custom-file">
+            <input type="file" id="id_imagen_principal" name="imagen_principal" class="custom-file-input">
+            <label class="custom-file-label" for="id_imagen_principal">Modifica la imagen que presentará tu publicación (opcional)</label>
+            {% if imagen_principal %}
+                <alt="Imagen actual" id="imagen_principal_actual">
+            {% endif %}
+        </div>
+        <div class="custom-file">
+            <input type="file" id="id_imagen_extra1" name="imagen_extra1" class="custom-file-input">
+            <label class="custom-file-label" for="id_imagen_extra1">Selecciona otra imagen <strong>(opcional)</strong></label>
+            {% if imagen_extra1 %}
+                <alt="Imagen extra 1 actual" id="imagen_extra1_actual">
+                <input type="checkbox" name="eliminar_imagen_extra1" id="eliminar_imagen_extra1"> Eliminar esta imagen
+            {% endif %}
+        </div>
+        <div class="custom-file">
+            <input type="file" id="id_imagen_extra2" name="imagen_extra2" class="custom-file-input" {% if not imagen_extra2 %}disabled{% endif %}>
+            <label class="custom-file-label" for="id_imagen_extra2">Selecciona otra imagen <strong>(opcional)</strong></label>
+            {% if imagen_extra2 %}
+                <alt="Imagen extra 2 actual" id="imagen_extra2_actual">
+                <input type="checkbox" name="eliminar_imagen_extra2" id="eliminar_imagen_extra2"> Eliminar esta imagen
+            {% endif %}
+        </div>
+        <div class="custom-file">
+            <input type="file" id="id_imagen_extra3" name="imagen_extra3" class="custom-file-input" {% if not imagen_extra3 %}disabled{% endif %}>
+            <label class="custom-file-label" for="id_imagen_extra3">Selecciona otra imagen <strong>(opcional)</strong></label>
+            {% if imagen_extra3 %}
+                <alt="Imagen extra 3 actual" id="imagen_extra3_actual">
+                <input type="checkbox" name="eliminar_imagen_extra3" id="eliminar_imagen_extra3"> Eliminar esta imagen
+            {% endif %}
+        </div>        
+        <input type="submit" value="Guardar cambios" class="btn btn-dark">
+    </form>  
+                        
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() { 
+            if ($('#imagen_extra1_actual').length) {
+                $('#id_imagen_extra2').prop('disabled', false);
+            }
+            if ($('#imagen_extra2_actual').length) {
+                $('#id_imagen_extra3').prop('disabled', false);
+            } 
+            $('#id_imagen_extra1').change(function() {
+                $('#id_imagen_extra2').prop('disabled', false);
+            });
+            $('#id_imagen_extra2').change(function() {
+                $('#id_imagen_extra3').prop('disabled', false);
+            });
+            $('#eliminar_imagen_extra1').change(function() {
+            if ($(this).is(':checked')) {
+                $('#id_imagen_extra1').prop('disabled', true).val('');
+            } else {
+                $('#id_imagen_extra1').prop('disabled', false);
+            }
+            });
+            $('#eliminar_imagen_extra2').change(function() {
+            if ($(this).is(':checked')) {
+                $('#id_imagen_extra2').prop('disabled', true).val('');
+            } else {
+                $('#id_imagen_extra2').prop('disabled', false);
+            }
+            });
+            $('#eliminar_imagen_extra3').change(function() {
+            if ($(this).is(':checked')) {
+                $('#id_imagen_extra3').prop('disabled', true).val('');
+            } else {
+                $('#id_imagen_extra3').prop('disabled', false);
+            }
+            });
+
+
+            var horarios_list = ["9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+            
+            $('#horario_inicio').change(function() {
+                var horarioInicioSeleccionado = $(this).val();
+                var horariosFinDisponibles = [];
+                var indexInicioSeleccionado = horarios_list.indexOf(horarioInicioSeleccionado);
+                for (var i = indexInicioSeleccionado + 1; i < horarios_list.length; i++) {
+                    horariosFinDisponibles.push(horarios_list[i]);                        
+                }
+                $('#horario_fin').prop('disabled', false);
+                $('#horario_fin').empty();
+                $('#horario_fin').append('<option value="" selected disabled>Selecciona un horario de fin</option>');
+                $.each(horariosFinDisponibles, function(index, value) {
+                    $('#horario_fin').append($('<option>', {
+                        value: value,
+                        text: value
+                    }));
+                });
+            });
+
+            if ($('#horario_inicio').val()) {
+                var horarioInicioSeleccionado = $('#horario_inicio').val();
+                var horariosFinDisponibles = [];
+                var indexInicioSeleccionado = horarios_list.indexOf(horarioInicioSeleccionado);
+                for (var i = indexInicioSeleccionado + 1; i < horarios_list.length; i++) {
+                    horariosFinDisponibles.push(horarios_list[i]);                        
+                }
+                $('#horario_fin').prop('disabled', false);
+                $('#horario_fin').empty();
+                $('#horario_fin').append('<option value="" selected disabled>Selecciona un horario de fin</option>');
+                $.each(horariosFinDisponibles, function(index, value) {
+                    $('#horario_fin').append($('<option>', {
+                        value: value,
+                        text: value
+                    }));
+                });
+                
+                $('#horario_fin').val('{{ form.horario_fin.value }}');
+            }
+        });
+    </script>
 </div>
-{% endblock %}
+
+
+    {% endblock %}

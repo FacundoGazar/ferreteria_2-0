@@ -1,0 +1,35 @@
+{% extends "homepage/base.html" %}
+{% block content %}
+<main>
+    <div class="container">
+        <h2>Trasladar Empleado</h2>
+        <form action="{% url 'trasladar' %}" method="POST" id="trasladarEmpleadoForm">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="dni" class="form-label">Seleccionar DNI:</label>
+                <select class="form-select" id="dni" name="dni" required>
+                    <option value="" selected disabled>Seleccionar DNI</option>
+                    {% for empleado in empleados %}
+                    <option value="{{ empleado.dni }}">{{ empleado.dni }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="sucursal" class="form-label">Seleccionar Sucursal:</label>
+                <select class="form-select" id="sucursal" name="sucursal" required>
+                    <option value="" selected disabled>Seleccionar Sucursal</option>
+                    {% for sucursal in sucursales %}
+                    <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-danger" id="deleteBtn"
+                onclick="return confirm('¿Estás seguro de que deseas cambiar la sucursal del empleado?')">Trasladar</button>
+
+        </form>
+    </div>
+</main>
+{% endblock %}

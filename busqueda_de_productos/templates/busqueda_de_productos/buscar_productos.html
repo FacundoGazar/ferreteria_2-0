@@ -1,44 +1,34 @@
 {% extends "homepage/base.html" %}
+
 <!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-</head>
-
-<body>
-    <header>
-
-    </header>
-    <main>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
         {% block content %}
-        {% if lista %}
-        <table class="table table-striped mx-auto table-info" style="width: 300px;">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Estado</th>
-                    <th>Categoria</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for instance in lista %}
-                <tr>
-                    <td>{{ instance.nombre }}</td>
-                    <td>{{ instance.estado }}</td>
-                    <td>{{ instance.categoria }}</td>
-                </tr>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% if lista %}
+                {% for producto in lista %}
+                    <div class="col">
+                        <div class="card">
+                            <img src="{{ producto.imagen_principal.url }}" class="card-img-top img-thumbnail" alt="{{ producto.nombre }}" style="height: 300px;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ producto.nombre }}</h5>
+                                <a href="{% url 'ver_detalle_intercambio' producto.slug %}" class="btn btn-primary stretched-link">Ver más</a>
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <h1 class="display-1 mt-5">No hay datos disponibles</h1>
-        {% endif %}
-        {% endblock %}
-
-    </main>
-</body>
-
+            {% else %}
+                <h1 class="display-1">No hay productos que coincidan con la busqueda</h1>
+            {% endif %}
+        </div>
+    {% endblock %}
+    </body>
 </html>

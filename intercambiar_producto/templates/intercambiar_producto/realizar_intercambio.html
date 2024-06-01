@@ -1,0 +1,49 @@
+<!-- templates/crear_intercambio.html -->
+{% extends "homepage/base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Crear Intercambio</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="producto_solicitante_id" value="{{ producto_solicitante.id }}">
+        <div class="mb-3">
+            <label for="producto_solicitante" class="form-label"><strong>Producto Solicitante:</strong> {{ producto_solicitante.nombre }}</label>
+        </div>
+        <div class="mb-3">
+            <label for="producto_receptor" class="form-label"><strong>Producto Receptor:</strong>{{ producto_receptor.nombre }}</label>
+            <p></p>
+        </div>
+        <div class="mb-3">
+            <label for="cliente_solicitante" class="form-label"><strong>Cliente Solicitante:</strong> {{ request.user }}</label>
+        </div>
+        <div class="mb-3">
+            <label for="cliente_receptor" class="form-label"><strong>Cliente Receptor:</strong> {{ producto_receptor.cliente }}</label>
+        </div>
+        <div class="mb-3">
+            <label for="producto_receptor.sucursal" class="form-label"><strong>Sucursal y Ciudad:</strong> {{producto_receptor.sucursal }} - {{producto_receptor.sucursal.ciudad }}</label>
+        </div>
+        <div class="mb-3">
+            <label for="producto_receptor" class="form-label"><strong>Dia:</strong> {{ producto_receptor.dias }}</label>
+        </div>
+        <div class="form-group">
+            <label for="id_fecha" ><strong>Fecha:</strong></label>
+            {{ form.fecha }}
+        </div>
+        <div class="mb-3">
+            <label for="horario" class="form-label" ><strong>Horario:</strong></label>
+            <select class="form-select" id="horario" name="horario" required>
+                <option value="" selected disabled>Selecciona un horario</option>
+                {% for valor, etiqueta in form.horario.field.choices %}
+                    <option value="{{ valor }}">{{ etiqueta }}</option>
+                {% endfor %}
+            </select>
+        </div>
+                
+        <button type="submit" class="btn btn-primary">Solicitar Intercambio</button>
+    </form>
+</div>
+
+
+
+
+{% endblock %}

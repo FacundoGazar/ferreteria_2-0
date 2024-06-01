@@ -4,9 +4,9 @@ from .forms import ProductoForm
 from gestion_de_sucursales.models import Sucursal
 from .models import Producto
 from iniciar_sesion import soy_cliente
+from intercambiar_producto.models import Intercambio
 from django.core.exceptions import ValidationError
 from PIL import Image, ImageChops
-from django.core.files.images import ImageFile
 import re
 
 # Create your views here.
@@ -86,7 +86,7 @@ def subir_producto_view(request):
             producto.cliente = request.user
             producto.save()
 
-            if are_images_equal(producto.id):
+            if are_images_equal(producto.slug):
                 producto.delete()
                 messages.error(request, "¡Este producto ya fue publicado en el sitio!")
             else:
@@ -106,9 +106,9 @@ def subir_producto_view(request):
         "horarios_list_fin": horarios_list[1:]
     })
 
-def are_images_equal(producto_id):
-    producto = Producto.objects.get(id=producto_id)
-    comparativas = Producto.objects.exclude(id=producto_id)
+def are_images_equal(producto_slug):
+    producto = Producto.objects.get(slug=producto_slug)
+    comparativas = Producto.objects.exclude(slug=producto_slug)
 
     image_one = Image.open(producto.imagen_principal.path).convert('RGB')
 
@@ -173,11 +173,23 @@ def listar_mis_productos_view(request):
 @soy_cliente
 def ver_detalle_view(request, slug):
     producto = Producto.objects.get(slug=slug)
-    return render(request, 'mis_productos/ver_detalle.html', {'producto': producto})
+    tiene_intercambio = Intercambio.objects.filter(
+       estado='aceptado',
+       producto_solicitante=producto
+    ).exists() or Intercambio.objects.filter(
+       estado='aceptado',
+       producto_receptor=producto
+    ).exists()
+    
+    return render(request, 'mis_productos/ver_detalle.html', {
+        'producto': producto,
+        'tiene_intercambio': tiene_intercambio
+    })
 
 @soy_cliente
 def modificar_producto_view(request, slug):
     producto = Producto.objects.get(slug=slug)
+    productoViejo = Producto.objects.get(slug=slug)
     sucursales = Sucursal.objects.all()
     estados_list = ["Nuevo - Sin uso", "Usado", "Restaurado", "Para reparar", "Para piezas", "Con defectos leves"]
     categorias_list = ["Herramientas", "Construcción", "Ferretería general", "Electricidad", "Fontanería", "Jardín"]
@@ -186,7 +198,6 @@ def modificar_producto_view(request, slug):
 
     if request.method == "POST":
         form = ProductoForm(request.POST, request.FILES, instance=producto)
-
         imagen_principal = request.FILES.get('imagen_principal')
         if imagen_principal:
             formato_valido, mensaje_error = verificar_formato_imagen(imagen_principal)
@@ -194,6 +205,10 @@ def modificar_producto_view(request, slug):
                 messages.error(request, mensaje_error)
                 return render(request, "mis_productos/modificar_producto.html", {
                     "form": form,
+                    'imagen_principal': producto.imagen_principal.url if producto.imagen_principal else None,
+                    'imagen_extra1': producto.imagen_extra1.url if producto.imagen_extra1 else None,
+                    'imagen_extra2': producto.imagen_extra2.url if producto.imagen_extra2 else None,
+                    'imagen_extra3': producto.imagen_extra3.url if producto.imagen_extra3 else None,
                     "sucursales": sucursales,
                     "categorias_list": categorias_list,
                     "estados_list": estados_list,
@@ -201,35 +216,105 @@ def modificar_producto_view(request, slug):
                     "horarios_list_inicio": horarios_list[:8],
                     "horarios_list_fin": horarios_list[1:]
                 })
-        
+        else:
+            imagen_principal = productoViejo.imagen_principal
+
+        for campo_imagen in ['imagen_extra1', 'imagen_extra2', 'imagen_extra3']:
+            imagen = request.FILES.get(campo_imagen)
+            if imagen:
+                formato_valido, mensaje_error = verificar_formato_imagen(imagen)
+                if not formato_valido:
+                    messages.error(request, mensaje_error)
+                    return render(request, "mis_productos/modificar_producto.html", {
+                        "form": form,
+                        'imagen_principal': producto.imagen_principal.url if producto.imagen_principal else None,
+                        'imagen_extra1': producto.imagen_extra1.url if producto.imagen_extra1 else None,
+                        'imagen_extra2': producto.imagen_extra2.url if producto.imagen_extra2 else None,
+                        'imagen_extra3': producto.imagen_extra3.url if producto.imagen_extra3 else None,
+                        "sucursales": sucursales,
+                        "categorias_list": categorias_list,
+                        "estados_list": estados_list,
+                        "dias_list": dias_list,
+                        "horarios_list_inicio": horarios_list[:8],
+                        "horarios_list_fin": horarios_list[1:]
+                    })
+                    
         if form.is_valid():
             nombre = form.cleaned_data['nombre']
             if not re.search('[a-zA-Z]{1,}', nombre):
                 messages.error(request, "El nombre debe contener al menos una letra.")
+                horario_inicio = producto.horario_inicio
+                horario_fin = producto.horario_fin
+                horarios_list_fin = horarios_list[horarios_list.index(horario_inicio)+1:] if horario_inicio else []
                 return render(request, "mis_productos/modificar_producto.html", {
                     "form": form,
+                    'imagen_principal': producto.imagen_principal.url if producto.imagen_principal else None,
+                    'imagen_extra1': producto.imagen_extra1.url if producto.imagen_extra1 else None,
+                    'imagen_extra2': producto.imagen_extra2.url if producto.imagen_extra2 else None,
+                    'imagen_extra3': producto.imagen_extra3.url if producto.imagen_extra3 else None,
                     "sucursales": sucursales,
                     "categorias_list": categorias_list,
                     "estados_list": estados_list,
                     "dias_list": dias_list,
                     "horarios_list_inicio": horarios_list[:8],
-                    "horarios_list_fin": horarios_list[1:]
+                    "horarios_list_fin": horarios_list_fin
                 })
             
-            form.save()
-            messages.success(request, "¡Se ha modificado el producto correctamente!")
+            if 'imagen_principal' in request.FILES:
+                producto.imagen_principal = request.FILES['imagen_principal']
+            if 'imagen_extra1' in request.FILES:
+                producto.imagen_extra1 = request.FILES['imagen_extra1']
+            if 'imagen_extra2' in request.FILES:
+                producto.imagen_extra2 = request.FILES['imagen_extra2']
+            if 'imagen_extra3' in request.FILES:
+                producto.imagen_extra3 = request.FILES['imagen_extra3']
+            if 'eliminar_imagen_extra1' in request.POST:
+                producto.imagen_extra1.delete()
+                producto.imagen_extra1 = None
+            if 'eliminar_imagen_extra2' in request.POST:
+                producto.imagen_extra2.delete()
+                producto.imagen_extra2 = None
+            if 'eliminar_imagen_extra3' in request.POST:
+                producto.imagen_extra3.delete()
+                producto.imagen_extra3 = None
+            producto = form.save(commit=False)
+            producto.cliente = request.user
+            producto.save()    
+            
+            if are_images_equal(producto.slug):
+                producto=productoViejo
+                producto.save()  
+                messages.error(request, "¡Este producto ya fue publicado en el sitio!")
+            else:
+                form.save()
+                messages.success(request, "¡Se ha subido el producto correctamente!")
             return redirect("mis_productos")
         else:
-            messages.error(request, "Por favor, verifica el formulario.")
+            form = ProductoForm(instance=producto)
+            messages.error(request, "Por favor, completa el nombre.")
     else:
         form = ProductoForm(instance=producto)
+        horario_inicio = producto.horario_inicio
+        horario_fin = producto.horario_fin
+        horarios_list_fin = horarios_list[horarios_list.index(horario_inicio)+1:] if horario_inicio else []
+    horario_inicio = producto.horario_inicio
+    horario_fin = producto.horario_fin
+    horarios_list_fin = horarios_list[horarios_list.index(horario_inicio)+1:] if horario_inicio else []
 
     return render(request, "mis_productos/modificar_producto.html", {
         "form": form,
+        'imagen_principal': producto.imagen_principal.url if producto.imagen_principal else None,
+        'imagen_extra1': producto.imagen_extra1.url if producto.imagen_extra1 else None,
+        'imagen_extra2': producto.imagen_extra2.url if producto.imagen_extra2 else None,
+        'imagen_extra3': producto.imagen_extra3.url if producto.imagen_extra3 else None,
         "sucursales": sucursales,
         "categorias_list": categorias_list,
         "estados_list": estados_list,
         "dias_list": dias_list,
         "horarios_list_inicio": horarios_list[:8],
-        "horarios_list_fin": horarios_list[1:]
+        "horarios_list_fin": horarios_list_fin
     })
+
+
+
+

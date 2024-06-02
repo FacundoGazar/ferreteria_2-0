@@ -22,6 +22,7 @@
             <th>Día</th>
             <th>Fecha</th>
             <th>Horario</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -36,6 +37,18 @@
             <td>{{ intercambio.dia }}</td>
             <td>{{ intercambio.fecha }}</td>
             <td>{{ intercambio.horario }}</td>
+            <td>
+                {% if intercambio.estado == 'aceptado' %}
+                <form method="post" action="{% url 'confirmar_intercambio' intercambio.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Confirmar</button>
+                </form>
+                <form method="post" action="{% url 'ausente_intercambio' intercambio.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Ausente</button>
+                </form>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

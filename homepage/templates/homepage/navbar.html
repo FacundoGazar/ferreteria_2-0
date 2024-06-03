@@ -56,24 +56,24 @@
                 {% endfor %}
               </ul>
             </div>
-            <!-- Menú desplegable para Sucursal -->
-            <div class="dropdown mt-2 mt-md-0 ms-md-3">
-              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuSucursal"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                Sucursal
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuSucursal" style="margin-right: 10px;">
-                {% for sucursal in sucursales %}
-                <li>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{ sucursal.id }}"
-                      id="sucursal{{ forloop.counter }}" name="sucursales">
-                    <label class="form-check-label" for="sucursal{{ forloop.counter }}">{{ sucursal.nombre }}</label>
-                  </div>
-                </li>
-                {% endfor %}
-              </ul>
-            </div>
+             <!-- Menú desplegable para Sucursal -->
+          <div class="dropdown mt-2 mt-md-0 ms-md-3">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuSucursal"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Sucursal
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuSucursal" style="margin-right: 10px;">
+              {% for sucursal in sucursales %}
+              <li>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="{{ sucursal.nombre }}"
+                    id="sucursal{{ forloop.counter }}" name="sucursal">
+                  <label class="form-check-label" for="sucursal{{ forloop.counter }}">{{ sucursal.nombre }}</label>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
           </form>
           {% endif %}
         </li>

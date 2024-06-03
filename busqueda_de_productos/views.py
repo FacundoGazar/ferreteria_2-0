@@ -10,7 +10,7 @@ def buscar_productos(request):
         queryset = Producto.objects.all()
 
     # Capturar el parámetro de búsqueda
-    busqueda = request.GET.get('busquedas')
+    busqueda = request.GET.get('busqueda')
 
     # Filtrar por categoría
     categorias = request.GET.getlist('categorias')

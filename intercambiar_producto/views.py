@@ -159,9 +159,22 @@ def detalle_intercambio(request, solicitud_id):
             solicitud.save()
             messages.success(request, "La solicitud ha sido rechazada.")
         elif accion == 'cancelar':
-            if solicitud:
+            ahora = timezone.now()  # Hora actual con zona horaria
+
+            # Crear un datetime para el horario del intercambio con la fecha pactada y hora
+            horario_intercambio = datetime.combine(solicitud.fecha, datetime.min.time()) + timedelta(hours=solicitud.horario)
+            
+            # Asegurarse de que horario_intercambio sea consciente de la zona horaria
+            horario_intercambio = timezone.make_aware(horario_intercambio, timezone.get_current_timezone())
+
+            diferencia = horario_intercambio - ahora
+            
+            if diferencia > timedelta(hours=1):
                 solicitud.delete()
                 messages.success(request, "Solicitud cancelada con éxito")
+            else:
+                messages.error(request, "No se puede cancelar el intercambio con menos de una hora de anticipación")
+            return redirect('ver_intercambios')
         else:
             messages.error(request, "Algo salió mal")
     

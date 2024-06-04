@@ -135,33 +135,21 @@ def detalle_intercambio(request, solicitud_id):
         accion = request.POST.get('accion')
         if accion == 'aceptar':
             producto_s = solicitud.producto_solicitante
-            producto_r = solicitud.producto_receptor
-            # Depuración: imprime los productos involucrados
-            print(f"Producto solicitante: {producto_s}")
-            print(f"Producto receptor: {producto_r}")
+            producto_r = solicitud.producto_receptor 
 
             # Rechazar todas las solicitudes pendientes que involucren los mismos productos en cualquier dirección
-            pending_solicitudes = Intercambio.objects.filter(
-                estado='pendiente',
-                producto_solicitante__in=[producto_s, producto_r],
-                producto_receptor__in=[producto_s, producto_r]
-            ).exclude(id=solicitud_id)
+            solicitudes_a_rechazar = Intercambio.objects.filter(producto_receptor=producto_r).exclude(id=solicitud_id)
+            solicitudes_a_rechazar_dos = Intercambio.objects.filter(producto_solicitante=producto_s).exclude(id=solicitud_id)
             
-            # Depuración: imprime la cantidad de solicitudes encontradas
-            print(f"Solicitudes pendientes: {pending_solicitudes.count()}")
-
-            # Depuración: imprime los estados antes de la actualización
-            for s in pending_solicitudes:
-                print(f"Solicitud antes de actualizar: {s.id} - Estado: {s.estado}")
-
             # Actualiza el estado a 'rechazado' y guarda cada solicitud
-            for s in pending_solicitudes:
+            for s in solicitudes_a_rechazar:
                 s.estado = 'rechazado'
                 s.save()
-            
-            # Depuración: imprime los estados después de la actualización
-            for s in pending_solicitudes:
-                print(f"Solicitud después de actualizar: {s.id} - Estado: {s.estado}")
+
+            # Actualiza el estado a 'rechazado' y guarda cada solicitud
+            for s_dos in solicitudes_a_rechazar_dos:
+                s_dos.estado = 'rechazado'
+                s_dos.save()
 
             solicitud.estado = 'aceptado'
             solicitud.save()

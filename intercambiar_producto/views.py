@@ -135,7 +135,7 @@ def detalle_intercambio(request, solicitud_id):
         accion = request.POST.get('accion')
         if accion == 'aceptar':
             producto_s = solicitud.producto_solicitante
-            producto_r = solicitud.producto_receptor
+            producto_r = solicitud.producto_receptor 
             # Depuración: imprime los productos involucrados
             print(f"Producto solicitante: {producto_s}")
             print(f"Producto receptor: {producto_r}")

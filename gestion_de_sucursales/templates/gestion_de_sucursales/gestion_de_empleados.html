@@ -1,6 +1,16 @@
 {% extends "homepage/base.html" %}
 {% block content %}
 <main>
+    <form method="get" action="{% url 'gestion_de_empleados' %}">
+        <label for="sucursal">Filtrar por Sucursal:</label>
+        <select id="sucursal" name="sucursal">
+            <option value="" {% if not sucursal_seleccionada %}selected{% endif %}>Todas las Sucursales</option>
+            {% for sucursal in sucursales %}
+            <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
     <h2>Lista de Empleados</h2>
     <table class="table">
         <thead>

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render,get_object_or_404, redirect
 from .models import *
 from django.contrib import messages
 from iniciar_sesion import super_user
@@ -41,6 +41,8 @@ def listar_sucursales_view(request):
 
     return render(request, "gestion_de_sucursales/listar_sucursales.html", context)
 
+
+
 @super_user 
 def eliminar_sucursal_view (request):
     sucursales = Sucursal.objects.all()
@@ -74,11 +76,40 @@ def delete_sucursal_view(request):
         return redirect('eliminar_sucursal')
     
 @super_user 
-def gestion_de_empleados_view (request):
+def gestion_de_empleados_view(request):
     empleados = PerfilEmpleado.objects.all()
+
+    # Obtener el nombre de la sucursal seleccionada si existe
+    nombre_sucursal_seleccionada = request.GET.get('sucursal')
+
+    # Filtrar empleados por sucursal si se proporciona el nombre de la sucursal
+    if nombre_sucursal_seleccionada:
+        sucursal_seleccionada = get_object_or_404(Sucursal, nombre=nombre_sucursal_seleccionada)
+        empleados = empleados.filter(sucursal=sucursal_seleccionada)
+    
+    # Obtener todas las sucursales
+    sucursales = Sucursal.objects.all()
+    
     if not empleados:
         messages.info(request, "No hay empleados registrados.")
-    return render(request, "gestion_de_sucursales/gestion_de_empleados.html",{'empleados': empleados})
+    
+    return render(request, "gestion_de_sucursales/gestion_de_empleados.html", {'empleados': empleados, 'nombre_sucursal_seleccionada': nombre_sucursal_seleccionada, 'sucursales': sucursales})
+
+def lista_empleados_view(request):
+    sucursal_seleccionada = request.GET.get('sucursal')
+    
+    if sucursal_seleccionada:
+        empleados = PerfilEmpleado.objects.filter(sucursal_id=sucursal_seleccionada)
+    else:
+        empleados = PerfilEmpleado.objects.all()
+    
+    sucursales = Sucursal.objects.all()
+    
+    return render(request, 'nombre_de_tu_template.html', {
+        'empleados': empleados,
+        'sucursales': sucursales,
+        'sucursal_seleccionada': int(sucursal_seleccionada) if sucursal_seleccionada else None
+    })
 
 @super_user 
 def dar_de_baja_view(request):
@@ -187,3 +218,4 @@ def registrar_empleado (request):
         messages.success(request, "Se registró el usuario y se envió un correo electrónico con los detalles de la cuenta")
 
         return redirect('agregar_empleado')
+    

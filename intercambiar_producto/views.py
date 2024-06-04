@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from mis_productos.models import Producto
 from iniciar_sesion import soy_cliente
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Intercambio
 from .forms import IntercambioForm
 from django.db.models import Q
 from datetime import datetime, timedelta
+from gestion_de_sucursales.models import PerfilEmpleado
+from django.utils import timezone
 
 
 @soy_cliente
@@ -15,7 +17,7 @@ def intercambiar_listar_mis_productos_view(request, slug_intercambio):
     producto_receptor = Producto.objects.get(slug=slug_intercambio)
     
     intercambios_existentes = Intercambio.objects.filter(
-        Q(estado__in=['aceptado']) & (
+        Q(estado__in=['aceptado', 'realizado']) & (
             Q(producto_solicitante__cliente=usuario) |
             Q(producto_receptor__cliente=usuario)
         ) 
@@ -216,7 +218,50 @@ def detalle_intercambio(request, solicitud_id):
     }
     return render(request, 'intercambiar_producto/ver_detalle.html', context)
 
+#Tango
 
+#listar los intercambios por sucursal
+def intercambios_por_sucursal_view(request):
+    try:
+        empleado = PerfilEmpleado.objects.get(usuario=request.user)
+        sucursal = empleado.sucursal
 
+        # Obtener la fecha del formulario si está presente, de lo contrario usar la fecha actual
+        fecha_seleccionada = request.GET.get('fecha')
+        if fecha_seleccionada:
+            fecha_seleccionada = datetime.strptime(fecha_seleccionada, '%Y-%m-%d').date()
+        else:
+            fecha_seleccionada = datetime.now().date()
+
+        # Filtrar los intercambios por sucursal, fecha y estado
+        estados_validos = ['aceptado', 'ausente', 'realizado']
+        intercambios = Intercambio.objects.filter(
+            producto_receptor__sucursal=sucursal,
+            fecha=fecha_seleccionada,
+            estado__in=estados_validos
+        )
+
+        return render(request, 'intercambiar_producto/intercambios_por_sucursal.html', {
+            'sucursal': sucursal,
+            'intercambios': intercambios,
+            'fecha_seleccionada': fecha_seleccionada
+        })
+    except PerfilEmpleado.DoesNotExist:
+        messages.error(request, "El usuario logueado no tiene un perfil de empleado asociado.")
+        return redirect('pagina_de_error')
+   
     
+def confirmar_intercambio_view(request, intercambio_id):
+    print("llego")
+    intercambio = get_object_or_404(Intercambio, id=intercambio_id)
+    intercambio.estado = 'realizado'
+    intercambio.save()
+    messages.success(request, "Intercambio confirmado.")
+    return redirect('intercambios_por_sucursal')
 
+def ausente_intercambio_view(request, intercambio_id):
+    intercambio = get_object_or_404(Intercambio, id=intercambio_id)
+    intercambio.estado = 'ausente'
+    intercambio.save()
+    messages.success(request, "Intercambio marcado como ausente.")
+    return redirect('intercambios_por_sucursal')

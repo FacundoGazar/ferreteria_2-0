@@ -17,7 +17,7 @@ def intercambiar_listar_mis_productos_view(request, slug_intercambio):
     producto_receptor = Producto.objects.get(slug=slug_intercambio)
     
     intercambios_existentes = Intercambio.objects.filter(
-        Q(estado__in=['aceptado']) & (
+        Q(estado__in=['aceptado', 'realizado']) & (
             Q(producto_solicitante__cliente=usuario) |
             Q(producto_receptor__cliente=usuario)
         ) 

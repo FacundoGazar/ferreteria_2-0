@@ -173,7 +173,7 @@ def detalle_intercambio(request, solicitud_id):
                 solicitud.delete()
                 messages.success(request, "Solicitud cancelada con éxito")
             else:
-                messages.error(request, "No se puede cancelar el intercambio con menos de una hora de anticipación")
+                messages.error(request, "No podes cancelar el intercambio con menos de una hora de anticipación. De ausentarse, volveran a ofertarse ambos productos.")
             return redirect('ver_intercambios')
         else:
             messages.error(request, "Algo salió mal")

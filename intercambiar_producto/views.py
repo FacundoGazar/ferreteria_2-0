@@ -102,10 +102,24 @@ def ver_intercambios(request):
     usuario_actual = request.user
     solicitudes_enviadas = Intercambio.objects.filter(cliente_solicitante=usuario_actual,estado="pendiente")
     solicitudes_recibidas = Intercambio.objects.filter(cliente_receptor=usuario_actual,estado="pendiente" )
-    solicitudes_aceptadas = Intercambio.objects.filter(cliente_receptor=usuario_actual,estado="aceptado")
-    solicitudes_realizadas = Intercambio.objects.filter(cliente_receptor=usuario_actual,estado="realizado")
-    solicitudes_canceladas = Intercambio.objects.filter(cliente_receptor=usuario_actual,estado="cancelado")
-    
+
+    # Solicitudes aceptadas
+    solicitudes_aceptadas = Intercambio.objects.filter(
+        Q(cliente_receptor=usuario_actual) | Q(cliente_solicitante=usuario_actual),
+        estado="aceptado"
+    )
+
+    # Solicitudes realizadas
+    solicitudes_realizadas = Intercambio.objects.filter(
+        Q(cliente_receptor=usuario_actual) | Q(cliente_solicitante=usuario_actual),
+        estado="realizado"
+    )
+
+    # Solicitudes canceladas
+    solicitudes_canceladas = Intercambio.objects.filter(
+        Q(cliente_receptor=usuario_actual) | Q(cliente_solicitante=usuario_actual),
+        estado="cancelado"
+    )
     if request.method == 'POST':
         intercambio_id = request.POST.get('intercambio_id')
         if intercambio_id:

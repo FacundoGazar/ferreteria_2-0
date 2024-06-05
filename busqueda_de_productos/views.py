@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from mis_productos.models import Producto
 from django.db.models import Q
+from intercambiar_producto.models import Intercambio
 
 def buscar_productos(request):
     usuario_actual = request.user

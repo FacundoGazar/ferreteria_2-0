@@ -12,6 +12,14 @@ def tu_vista(request):
         lista_productos = Producto.objects.exclude(cliente=request.user)
     else:
         lista_productos = Producto.objects.all()
+    
+    # Excluir productos en intercambios aceptados
+    intercambios_aceptados_o_realizados = Intercambio.objects.filter(estado__in=['aceptado', 'realizado']).values_list('producto_solicitante', 'producto_receptor')
+    productos_excluir = set()
+    for productos in intercambios_aceptados_o_realizados:
+        productos_excluir.update(productos)
+
+    lista_productos = lista_productos.exclude(id__in=productos_excluir)
 
     contexto = {
         'lista_productos': lista_productos

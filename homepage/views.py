@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from gestion_de_sucursales.models import Sucursal
 from mis_productos.models import Producto
+from intercambiar_producto.models import Intercambio
 # Create your views here.
 
 def homepage_view(request):

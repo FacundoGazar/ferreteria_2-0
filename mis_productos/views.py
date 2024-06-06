@@ -8,6 +8,7 @@ from intercambiar_producto.models import Intercambio
 from django.core.exceptions import ValidationError
 from PIL import Image, ImageChops
 import re
+from django.db.models import Q
 
 # Create your views here.
 
@@ -145,9 +146,15 @@ def verificar_formato_imagen(imagen):
 @soy_cliente
 def eliminar_producto_view(request):
     productos = Producto.objects.filter(cliente=request.user)
+    intercambios_aceptados_o_realizados = Intercambio.objects.filter(estado__in=['aceptado', 'realizado'])
+    productos_intercambio_ids = []
+    for intercambio in intercambios_aceptados_o_realizados:
+        productos_intercambio_ids.append(intercambio.producto_solicitante_id)
+        productos_intercambio_ids.append(intercambio.producto_receptor_id)
+    productos = productos.exclude(id__in=productos_intercambio_ids)
     if request.method == 'POST':
         producto_id = request.POST.get('producto_id')
-
+        
         if producto_id:
             producto = Producto.objects.get(id=producto_id)
             producto.delete()

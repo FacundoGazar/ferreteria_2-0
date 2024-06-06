@@ -57,12 +57,6 @@
                     <div class="mb-4">
                         <h8 class="display-8">Categoría: {{ solicitud.producto_solicitante.categoria }}</h8>
                     </div>
-                    <div class="mb-4">
-                        <h8 class="display-8">Día y horario de disponibilidad: {{ solicitud.producto_solicitante.dias }} de {{ solicitud.producto_solicitante.horario_inicio }} a {{ solicitud.producto_solicitante.horario_fin }}</h8>
-                    </div>
-                    <div class="mb-4">
-                        <h8 class="display-8">Sucursal: {% if not solicitud.producto_solicitante.sucursal %}Sucursal Inactiva{% else %}{{ solicitud.producto_solicitante.sucursal.nombre }} - {{ solicitud.producto_solicitante.sucursal.ciudad }}{% endif %}</h8>
-                    </div>
                 </div>
             </div>
         </div>
@@ -114,12 +108,6 @@
                     <div class="mb-4">
                         <h8 class="display-8">Categoría: {{ solicitud.producto_receptor.categoria }}</h8>
                     </div>
-                    <div class="mb-4">
-                        <h8 class="display-8">Día y horario de disponibilidad: {{ solicitud.producto_receptor.dias }} de {{ solicitud.producto_receptor.horario_inicio }} a {{ solicitud.producto_receptor.horario_fin }}</h8>
-                    </div>
-                    <div class="mb-4">
-                        <h8 class="display-8">Sucursal: {% if not solicitud.producto_receptor.sucursal %}Sucursal Inactiva{% else %}{{ solicitud.producto_receptor.sucursal.nombre }} - {{ solicitud.producto_receptor.sucursal.ciudad }}{% endif %}</h8>
-                    </div>
                 </div>
             </div>
         </div>
@@ -130,7 +118,7 @@
   <p></p>
   <p></p>
   <p></p>
-  ...
+
   <div class="text-center">
     {% if solicitud.estado == 'pendiente' %}
       <form method="post">

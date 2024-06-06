@@ -18,6 +18,7 @@ class Producto(models.Model):
     imagen_extra2 = models.ImageField(upload_to='imagenes/', blank=True, null=True)
     imagen_extra3 = models.ImageField(upload_to='imagenes/', blank=True, null=True)
     slug = models.SlugField(null=True, blank=True)
+    visible = models.BooleanField(default=True)
 
 
     def save(self, *args, **kwargs):

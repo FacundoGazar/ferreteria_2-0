@@ -234,6 +234,14 @@ def confirmar_intercambio_view(request, intercambio_id):
     print("llego")
     intercambio = get_object_or_404(Intercambio, id=intercambio_id)
     intercambio.estado = 'realizado'
+    producto_receptorr = get_object_or_404(Producto, id=intercambio.producto_receptor.id)
+    producto_solicitantee = get_object_or_404(Producto, id=intercambio.producto_solicitante.id)
+    
+    producto_receptorr.visible = False
+    producto_solicitantee.visible = False
+    
+    producto_receptorr.save()
+    producto_solicitantee.save()
     intercambio.save()
     messages.success(request, "Intercambio confirmado.")
     return redirect('intercambios_por_sucursal')

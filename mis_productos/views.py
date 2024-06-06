@@ -160,7 +160,7 @@ def eliminar_producto_view(request):
 @soy_cliente
 def listar_mis_productos_view(request):
     usuario = request.user
-    queryset = Producto.objects.filter(cliente=usuario)
+    queryset = Producto.objects.filter(cliente=usuario, visible=True)
     if queryset.filter(sucursal__isnull=True).exists():
         messages.warning(request, "Tenes al menos un producto en una sucursal inactiva. Por favor, asignale una nueva sucursal.")
 

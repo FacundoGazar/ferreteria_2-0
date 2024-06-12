@@ -188,10 +188,12 @@ def ver_detalle_view(request, slug):
        producto_receptor=producto
     ).exists()
     
-    return render(request, 'mis_productos/ver_detalle.html', {
+    context = {
         'producto': producto,
         'tiene_intercambio': tiene_intercambio
-    })
+    }
+    
+    return render(request, 'mis_productos/ver_detalle.html', context)
 
 @soy_cliente
 def modificar_producto_view(request, slug):

@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "mis_productos",
     "busqueda_de_productos",
     "intercambiar_producto",
+    "gestion_de_datos",
+    "gestion_de_servicios",
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,29 @@
+{% extends "homepage/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title></title>
+    {% block content %}
+</head>
+
+<body>
+    <div>
+        <section class="vh-100 gradient-custom d-flex justify-content-center align-items-center">
+            <div class="card text-center bg-dark" style="width: 300px;">
+                <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
+                    <a type="button" class="btn btn-primary" href="{% url 'estadisticas_intercambios' %}">Ver estadisticas intercambios</a>
+                    <a type="button" class="btn btn-primary" href="{% url 'estadisticas_servicios' %}">Ver estadisticas servicios</a>
+                    <a type="button" class="btn btn-primary" href="{% url 'estadisticas_generales' %}">Ver estadisticas generales</a>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+{% endblock %}
+
+</html>

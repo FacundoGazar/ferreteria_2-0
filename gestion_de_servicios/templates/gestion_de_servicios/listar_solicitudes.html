@@ -12,13 +12,13 @@
         {% block content %}
         <div class="row row-cols-1 row-cols-md-3 g-4">
             {% if lista %}
-                {% for producto in lista %}
+                {% for servicio in lista %}
                     <div class="col">
                         <div class="card">
-                            <img src="{{ producto.imagen_principal.url }}" class="card-img-top img-thumbnail" alt="{{ producto.nombre }}" style="height: 300px;">
+                            <img src="{{ servicio.imagen.url }}" class="card-img-top img-thumbnail" style="height: 300px;">
                             <div class="card-body">
-                                <h5 class="card-title">{{ producto.nombre }}</h5>
-                                <a href="{% url 'ver_imagen' producto.slug %}" class="btn btn-primary stretched-link">Ver estado</a>
+                                <h5 class="card-title"></h5>
+                                <a href="{% url 'ver_imagen' servicio.slug %}" class="btn btn-primary stretched-link">Ver estado</a>
                             </div>
                         </div>
                     </div>

@@ -16,14 +16,14 @@
         <section class="vh-100 gradient-custom d-flex justify-content-center align-items-center">
             <div class="card-body">
                 <div class="mb-4">
-                    <h5 class="display-5">Nombre: {{ producto.nombre }}</h5>
+                    <h5 class="display-5">Monto {{ servicio.monto }}</h5>
                     <section class="gradient-custom">
                         <div class="container my-5 py-5">
                           <div class="row d-flex justify-content-center py-5">
                             <div class="col-md-7 col-lg-5 col-xl-4">
                               <div class="card" style="border-radius: 15px;">
                                 <div class="card-body p-4">
-                                    <form method="post" action="{% url 'pagar_publicacion' slug=producto.slug %}">
+                                    <form method="post" action="{% url 'pagar_publicacion' slug=servicio.slug %}">
                                         {% csrf_token %}
                                         <div>
                                             <img src="https://img.icons8.com/color/48/000000/visa.png" alt="visa" width="64px" />

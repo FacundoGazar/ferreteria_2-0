@@ -1,0 +1,76 @@
+{% extends "homepage/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title></title>
+    {% block content %}
+</head>
+
+<body>
+    <div>
+        <section class="vh-100 gradient-custom d-flex justify-content-center align-items-center">
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5 class="display-5">Nombre: {{ producto.nombre }}</h5>
+                    <section class="gradient-custom">
+                        <div class="container my-5 py-5">
+                          <div class="row d-flex justify-content-center py-5">
+                            <div class="col-md-7 col-lg-5 col-xl-4">
+                              <div class="card" style="border-radius: 15px;">
+                                <div class="card-body p-4">
+                                    <form method="post" action="{% url 'pagar_publicacion' slug=producto.slug %}">
+                                        {% csrf_token %}
+                                        <div>
+                                            <img src="https://img.icons8.com/color/48/000000/visa.png" alt="visa" width="64px" />
+                                            <img src="https://img.icons8.com/color/48/000000/mastercard.png" alt="mastercard" width="64px" />
+                                        </div> 
+                                        <div class="d-flex justify-content-between align-items-center mb-3">             
+                                        <div data-mdb-input-init class="form-outline">
+                                        <input type="text" id="typeText" name="numero_tarjeta" class="form-control form-control-lg" siez="17"
+                                          placeholder="1234 5678 9012 3457" minlength="19" maxlength="19" />
+                                        <label class="form-label" for="typeText">Numero de tarjeta</label>
+                                      </div>
+                                    </div>
+                      
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                      <div data-mdb-input-init class="form-outline">
+                                        <input type="text" id="typeName" name="nombre_dueño" class="form-control form-control-lg" siez="17"
+                                          placeholder="Nombre" />
+                                        <label class="form-label" for="typeName">Nombre del dueño</label>
+                                      </div>
+                                    </div>
+                      
+                                    <div class="d-flex justify-content-between align-items-center pb-2">
+                                      <div data-mdb-input-init class="form-outline">
+                                        <input type="text" id="typeExp" name="fecha_vencimiento" class="form-control form-control-lg" placeholder="MM/AAAA"
+                                          size="7" id="exp" minlength="7" maxlength="7" />
+                                        <label class="form-label" for="typeExp">Fecha de vencimiento</label>
+                                      </div>
+                                      <div data-mdb-input-init class="form-outline">
+                                        <input type="password" id="typeText2" name="codigo_seguridad" class="form-control form-control-lg"
+                                          placeholder="&#9679;&#9679;&#9679;" size="1" minlength="3" maxlength="3" />
+                                        <label class="form-label" for="typeText2">Codigo de seguridad</label>
+                                      </div>                               
+                                    </div>
+                                    <button  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-info btn-lg btn-rounded">
+                                        <i class="fas fa-arrow-right"></i>Pagar
+                                    </button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </section>
+                </div>
+        </section>
+    </div>
+</body>
+{% endblock %}
+
+</html>

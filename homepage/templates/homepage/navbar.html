@@ -96,9 +96,12 @@
         {% if request.user.is_superuser %}
         <li><a class="dropdown-item" href="{% url 'gestion_de_sucursales' %}">Gestión de sucursales</a></li>
         <li><a class="dropdown-item" href="{% url 'gestion_de_empleados' %}">Gestión de empleados</a></li>
+        <li><a class="dropdown-item" href="{% url 'gestion_de_datos' %}">Gestión de datos</a></li>
+        <li><a class="dropdown-item" href="{% url 'listar_solicitudes' %}">Gestión de servicios</a></li>
         {% elif not request.user.is_staff %}
         <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis Productos</a></li>
         <li><a class="dropdown-item" href="{% url 'ver_intercambios' %}">Mis Intercambios</a></li>
+        <li><a class="dropdown-item" href="{% url 'mis_servicios' %}">Mis servicios</a></li>
         {% endif %}
         {% if not request.user.is_superuser and request.user.is_staff %}
         <li><a class="dropdown-item" href="{% url 'intercambios_por_sucursal' %}">Intercambios por sucursal</a>

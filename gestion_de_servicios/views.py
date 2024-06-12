@@ -1,8 +1,12 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from mis_productos.models import Producto
-from .models import PagoServicio
+from gestion_de_sucursales.models import Sucursal
+from .models import PagoServicio, Servicio
 from datetime import datetime
 from django.contrib import messages
+from .forms import ServicioForm
+from django.core.exceptions import ValidationError
+from PIL import Image, ImageChops
 
 # Create your views here.
 def mis_servicios_view(request):
@@ -10,29 +14,102 @@ def mis_servicios_view(request):
 
 def listar_solicitudes_view(request):    
     usuario = request.user
-    queryset = Producto.objects.filter(cliente=usuario, visible=True)
+    queryset = Servicio.objects.filter(cliente=usuario)
     context = {
         "lista": queryset
     }
     
     return render(request, "gestion_de_servicios/listar_solicitudes.html", context)
 
-def solicitar_servicio_view(request):    
-    return render(request, "gestion_de_servicios/solicitar_servicio.html")
+def subir_servicio_view(request):
+    sucursales = Sucursal.objects.all()
+
+    if request.method == "POST":
+        form = ServicioForm(request.POST, request.FILES)
+
+        imagen = request.FILES.get('imagen')
+        if imagen:
+            formato_valido, mensaje_error = verificar_formato_imagen(imagen)
+            if not formato_valido:
+                messages.error(request, mensaje_error)
+                return render(request, "solicitar_servicio/solicitar_servicio.html", {
+                    "form": form,
+                    "sucursales": sucursales,
+                })
+        else:
+            messages.error(request, "Es obligatorio subir la imagen del flyer del servicio.")
+            return render(request, "solicitar_servicio/solicitar_servicio.html", {
+                    "form": form,
+                    "sucursales": sucursales,
+                })
+        
+        if form.is_valid():          
+            servicio = form.save(commit=False)
+            servicio.cliente = request.user
+            servicio.save()
+            
+            if are_images_equal(servicio.id):
+                servicio.delete()
+                messages.error(request, "¡Este servicio ya fue ofertado en el sitio!")
+            else:
+                messages.success(request, "¡Se ha solicitado la publicacion del servicio correctamente!")
+            return redirect("mis_servicios")
+        
+    else:
+        form = ServicioForm()
+        
+    return render(request, "gestion_de_servicios/solicitar_servicio.html", {
+        "form": form,
+        "sucursales": sucursales,
+    })
+
+def are_images_equal(servicio_slug):
+    servicio = Servicio.objects.get(id=servicio_slug)
+    comparativas = Servicio.objects.exclude(id=servicio_slug)
+
+    image_one = Image.open(servicio.imagen.path).convert('RGB')
+
+    for servicio_comp in comparativas:
+        try:
+            image_two = Image.open(servicio_comp.imagen.path).convert('RGB')
+            diff = ImageChops.difference(image_one, image_two)
+            if not diff.getbbox():
+                return True
+
+        except FileNotFoundError:
+            continue
+
+    return False
+
+def verificar_formato_imagen(imagen):
+    try:
+        formato = imagen.name.split('.')[-1].lower()
+        if formato not in ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tif', 'tiff', 'webp', 'ico', 'svg']:
+            mensaje_error = "Formato de imagen inválido. Los formatos admitidos son: .jpg, .jpeg, .png, .gif, .bmp, .tif, .tiff, .webp, .ico, .svg"
+            return False, mensaje_error
+        return True, None
+    except AttributeError:
+        raise ValidationError("Se produjo un error al verificar el formato de la imagen.")   
+    
+    
+    
 
 def ver_imagen_view(request, slug):
-    producto = Producto.objects.get(slug=slug)
+    servicio = Servicio.objects.get(slug=slug)
    
     context = {
-        'producto': producto,
+        'servicio': servicio,
     }
     return render(request, "gestion_de_servicios/ver_imagen.html", context)
+
 
 def aprobar_solicitud_view(request):
     return render(request, "gestion_de_servicios/ver_imagen.html")
 
+
+
 def pagar_publicacion_view(request, slug):
-    producto = Producto.objects.get(slug=slug)
+    servicio = Servicio.objects.get(slug=slug)
     if request.method == 'POST':
         numero_tarjeta = request.POST.get('numero_tarjeta')
         nombre_dueño = request.POST.get('nombre_dueño')
@@ -58,11 +135,13 @@ def pagar_publicacion_view(request, slug):
             monto=monto,
             fecha=datetime.now().date()  # Establecer la fecha actual para el pago
         )
+        servicio.estado = 'publicado'
+        servicio.save()
         pago.save()
 
         messages.success(request, "Pago realizado con éxito.")
         return redirect('listar_solicitudes')  # Redirige a una página de éxito o donde desees
     context = {
-        'producto': producto,
+        'servicio': servicio,
     }
     return render(request, "gestion_de_servicios/pagar_publicacion.html", context)

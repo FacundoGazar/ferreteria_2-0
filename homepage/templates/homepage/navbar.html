@@ -13,6 +13,16 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
+          <form class="d-flex flex-column flex-md-row" method="GET" action=#>
+            <div class="mb-3 d-flex align-items-center me-md-3">
+              <button class="btn btn-primary" type="submit">Ver catalogo</button>
+          </div>
+          {% if request.user.is_authenticated %}
+          <form class="d-flex flex-column flex-md-row" method="GET" action=#>
+            <div class="mb-3 d-flex align-items-center me-md-3">
+              <button class="btn btn-primary" type="submit">Subir producto al catalogo</button>
+            </div>
+          {% endif %}
           <!-- Barra de búsqueda -->
           {% if not request.user.is_staff %}
           <form class="d-flex flex-column flex-md-row" method="GET" action="{% url 'buscar_productos' %}">

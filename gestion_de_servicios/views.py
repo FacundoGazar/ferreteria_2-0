@@ -7,6 +7,7 @@ from django.contrib import messages
 from .forms import ServicioForm
 from django.core.exceptions import ValidationError
 from PIL import Image, ImageChops
+from django.core.mail import send_mail
 
 # Create your views here.
 def mis_servicios_view(request):
@@ -145,3 +146,42 @@ def pagar_publicacion_view(request, slug):
         'servicio': servicio,
     }
     return render(request, "gestion_de_servicios/pagar_publicacion.html", context)
+
+def listar_solicitudes_clientes_view(request):    
+    queryset = Servicio.objects.filter(estado = "pendiente")
+    context = {
+        "lista": queryset
+    }
+    
+    return render(request, "gestion_de_servicios/listar_solicitudes_clientes.html", context)
+
+def evaluar_servicio_view(request, slug):
+    servicio = Servicio.objects.get(slug=slug)
+    if request.method == "POST":
+        accion = request.POST.get('accion')
+        if accion == 'aceptar':
+            servicio.estado = "aceptado"
+            messages.success(request, "El servicio ha sido aceptado.")
+        servicio.save()
+    context = {
+        'servicio': servicio,
+    }
+    return render(request, "gestion_de_servicios/evaluar_servicio.html", context)
+
+def mandar_motivo_view(request, slug):
+    if request.method == "POST":
+        motivo = request.POST.get('motivo')
+        if not motivo.strip():
+            messages.error(request, "Completa la casilla de texto, el motivo no puede estar vacio")
+        else:
+            servicio = Servicio.objects.get(slug=slug)
+            servicio.estado = "rechazado"
+            servicio.save()
+            cliente = servicio.cliente
+            subject = 'Registro de empleado en Ferreplus'
+            message = f'Hola {cliente.username},\n\nTu solicitud de publicacion ha sido rechazada, este es el motivo:\n\n{motivo}\n\n'
+            from_email = 'noreply@ferreplus.com'
+            to_email = [cliente.email]
+            send_mail(subject, message, from_email, to_email)
+            return redirect("listar_solicitudes_clientes")
+    return render(request, "gestion_de_servicios/mandar_motivo.html")

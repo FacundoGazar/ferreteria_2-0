@@ -13,6 +13,16 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
+          <form class="d-flex flex-column flex-md-row" method="GET" action=#>
+            <div class="mb-3 d-flex align-items-center me-md-3">
+              <button class="btn btn-primary" type="submit">Ver catalogo</button>
+          </div>
+          {% if request.user.is_authenticated %}
+          <form class="d-flex flex-column flex-md-row" method="GET" action=#>
+            <div class="mb-3 d-flex align-items-center me-md-3">
+              <button class="btn btn-primary" type="submit">Subir producto al catalogo</button>
+            </div>
+          {% endif %}
           <!-- Barra de búsqueda -->
           {% if not request.user.is_staff %}
           <form class="d-flex flex-column flex-md-row" method="GET" action="{% url 'buscar_productos' %}">
@@ -96,9 +106,12 @@
         {% if request.user.is_superuser %}
         <li><a class="dropdown-item" href="{% url 'gestion_de_sucursales' %}">Gestión de sucursales</a></li>
         <li><a class="dropdown-item" href="{% url 'gestion_de_empleados' %}">Gestión de empleados</a></li>
+        <li><a class="dropdown-item" href="{% url 'gestion_de_datos' %}">Gestión de datos</a></li>
+        <li><a class="dropdown-item" href="{% url 'listar_solicitudes_clientes' %}">Gestión de servicios</a></li>
         {% elif not request.user.is_staff %}
         <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis Productos</a></li>
         <li><a class="dropdown-item" href="{% url 'ver_intercambios' %}">Mis Intercambios</a></li>
+        <li><a class="dropdown-item" href="{% url 'mis_servicios' %}">Mis servicios</a></li>
         {% endif %}
         {% if not request.user.is_superuser and request.user.is_staff %}
         <li><a class="dropdown-item" href="{% url 'intercambios_por_sucursal' %}">Intercambios por sucursal</a>

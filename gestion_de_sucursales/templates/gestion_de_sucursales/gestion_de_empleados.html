@@ -4,7 +4,7 @@
     <form method="get" action="{% url 'gestion_de_empleados' %}">
         <label for="sucursal">Filtrar por Sucursal:</label>
         <select id="sucursal" name="sucursal">
-            <option value="" {% if not sucursal_seleccionada %}selected{% endif %}>Todas las Sucursales</option>
+            <option value="" selected disabled>Seleccionar Sucursal</option>
             {% for sucursal in sucursales %}
             <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
             {% endfor %}

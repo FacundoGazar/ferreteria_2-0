@@ -1,0 +1,32 @@
+{% extends "homepage/base.html" %}
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        {% block content %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% if lista %}
+                {% for servicio in lista %}
+                    <div class="col">
+                        <div class="card">
+                            <img src="{{ servicio.imagen.url }}" class="card-img-top img-thumbnail" style="height: 300px;">
+                            <div class="card-body">
+                                <h5 class="card-title"></h5>
+                                <a href="{% url 'evaluar_servicio' servicio.slug %}" class="btn btn-primary stretched-link">Evaluar</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h1 class="display-1">No hay solicitudes pendientes</h1>
+            {% endif %}
+        </div>
+    {% endblock %}
+    </body>
+</html>

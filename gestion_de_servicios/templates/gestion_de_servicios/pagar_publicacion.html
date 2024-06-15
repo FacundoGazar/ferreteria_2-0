@@ -1,14 +1,5 @@
 {% extends "homepage/base.html" %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-    <title></title>
-    {% block content %}
+{% block content %}
 </head>
 
 <body>
@@ -31,16 +22,16 @@
                                         </div> 
                                         <div class="d-flex justify-content-between align-items-center mb-3">             
                                         <div data-mdb-input-init class="form-outline">
-                                        <input type="text" id="typeText" name="numero_tarjeta" class="form-control form-control-lg" siez="17"
-                                          placeholder="1234 5678 9012 3457" minlength="19" maxlength="19" />
+                                        <input type="tel" id="typeText" name="numero_tarjeta" class="form-control form-control-lg" size="19"
+                                          placeholder="1234 5678 9012 3457" minlength="19" maxlength="19" pattern="\d{4} \d{4} \d{4} \d{4}" required />
                                         <label class="form-label" for="typeText">Numero de tarjeta</label>
                                       </div>
                                     </div>
                       
                                     <div class="d-flex justify-content-between align-items-center mb-4">
                                       <div data-mdb-input-init class="form-outline">
-                                        <input type="text" id="typeName" name="nombre_dueño" class="form-control form-control-lg" siez="17"
-                                          placeholder="Nombre" />
+                                        <input type="text" id="typeName" name="nombre_dueño" class="form-control form-control-lg" size="17"
+                                          placeholder="Nombre" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑüÜçÇ\s]+" required />
                                         <label class="form-label" for="typeName">Nombre del dueño</label>
                                       </div>
                                     </div>
@@ -48,12 +39,12 @@
                                     <div class="d-flex justify-content-between align-items-center pb-2">
                                       <div data-mdb-input-init class="form-outline">
                                         <input type="text" id="typeExp" name="fecha_vencimiento" class="form-control form-control-lg" placeholder="MM/AAAA"
-                                          size="7" id="exp" minlength="7" maxlength="7" />
+                                          size="7" minlength="7" maxlength="7" pattern="(0[1-9]|1[0-2])\/[0-9]{4}" required />
                                         <label class="form-label" for="typeExp">Fecha de vencimiento</label>
                                       </div>
                                       <div data-mdb-input-init class="form-outline">
                                         <input type="password" id="typeText2" name="codigo_seguridad" class="form-control form-control-lg"
-                                          placeholder="&#9679;&#9679;&#9679;" size="1" minlength="3" maxlength="3" />
+                                          placeholder="&#9679;&#9679;&#9679;" size="3" minlength="3" maxlength="3" pattern="\d{3}" required />
                                         <label class="form-label" for="typeText2">Codigo de seguridad</label>
                                       </div>                               
                                     </div>
@@ -70,6 +61,48 @@
                 </div>
         </section>
     </div>
+
+    <!-- JavaScript para validaciones adicionales -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tarjetaInput = document.querySelector('input[name="numero_tarjeta"]');
+            const expInput = document.querySelector('input[name="fecha_vencimiento"]');
+            const codigoSeguridadInput = document.querySelector('input[name="codigo_seguridad"]');
+            const nombreInput = document.querySelector('input[name="nombre_dueño"]');
+
+            // Validar número de tarjeta para solo números naturales y agregar espacio después de cada 4 dígitos
+            tarjetaInput.addEventListener('input', function () {
+                let inputVal = this.value.replace(/\D/g, ''); // Eliminar caracteres no numéricos
+                if (inputVal.length > 16) {
+                    inputVal = inputVal.slice(0, 16); // Limitar a 16 caracteres
+                }
+                this.value = inputVal.replace(/(\d{4})(?=\d)/g, '$1 '); // Insertar espacio cada 4 dígitos
+            });
+
+            // Validar fecha de vencimiento para solo números y agregar '/' después de los primeros 2 dígitos
+            expInput.addEventListener('input', function () {
+                let inputVal = this.value.replace(/[^\d]/g, ''); // Eliminar caracteres no numéricos
+                if (inputVal.length > 6) {
+                    inputVal = inputVal.slice(0, 6); // Limitar a 6 caracteres (MMYYYY)
+                }
+                if (inputVal.length > 2) {
+                    this.value = `${inputVal.slice(0, 2)}/${inputVal.slice(2)}`; // Insertar '/' después de los primeros 2 dígitos
+                } else {
+                    this.value = inputVal; // Caso cuando aún no se ingresaron 2 dígitos completos
+                }
+            });
+
+            // Validar código de seguridad para solo números
+            codigoSeguridadInput.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '');
+            });
+
+            // Validar nombre para permitir letras, tildes y caracteres internacionales comunes
+            nombreInput.addEventListener('input', function () {
+                this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜçÇ\s]/g, '');
+            });
+        });
+    </script>
 </body>
 {% endblock %}
 

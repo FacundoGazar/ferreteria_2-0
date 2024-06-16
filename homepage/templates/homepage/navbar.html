@@ -13,16 +13,20 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <form class="d-flex flex-column flex-md-row" method="GET" action=#>
-            <div class="mb-3 d-flex align-items-center me-md-3">
-              <button class="btn btn-primary" type="submit">Ver catalogo</button>
-          </div>
-          {% if request.user.is_authenticated %}
-          <form class="d-flex flex-column flex-md-row" method="GET" action=#>
-            <div class="mb-3 d-flex align-items-center me-md-3">
-              <button class="btn btn-primary" type="submit">Subir producto al catalogo</button>
+          <form class="d-flex flex-column flex-md-row align-items-center" method="GET" action="{% url 'listar_catalogo' %}">
+            <div class="mb-3 me-md-3">
+              <button class="btn btn-primary" type="submit">Ver catálogo</button>
             </div>
+          </form>
+          
+          {% if request.user.is_authenticated %}
+          <form class="d-flex flex-column flex-md-row align-items-center" method="GET" action="{% url 'subir_producto_catalogo' %}">
+            <div class="mb-3 me-md-3">
+              <button class="btn btn-primary" type="submit">Subir producto al catálogo</button>
+            </div>
+          </form>
           {% endif %}
+        </li>
           <!-- Barra de búsqueda -->
           {% if not request.user.is_staff %}
           <form class="d-flex flex-column flex-md-row" method="GET" action="{% url 'buscar_productos' %}">
@@ -108,6 +112,7 @@
         <li><a class="dropdown-item" href="{% url 'gestion_de_empleados' %}">Gestión de empleados</a></li>
         <li><a class="dropdown-item" href="{% url 'gestion_de_datos' %}">Gestión de datos</a></li>
         <li><a class="dropdown-item" href="{% url 'listar_solicitudes_clientes' %}">Gestión de servicios</a></li>
+        <li><a class="dropdown-item" href="{% url 'ver_historial' %}">Historial de productos</a></li>
         {% elif not request.user.is_staff %}
         <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis Productos</a></li>
         <li><a class="dropdown-item" href="{% url 'ver_intercambios' %}">Mis Intercambios</a></li>

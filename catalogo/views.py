@@ -49,20 +49,20 @@ def ver_historial(request):
     context = {
         'catalogo': catalogo,
     }
-    return render(request, "catalogo/listar_catalogo.html", context)
+    return render(request, "catalogo/historial_productos.html", context)
 
 
 def eliminar_producto(request, slug):
     producto = ProductoCatalogo.objects.get(slug=slug)
     producto.visible = False
     producto.save()
-    return render(request, "catalogo/listar_catalogo.html", {'producto': producto})
+    return render(request, "catalogo/listar_catalogo.html")
 
 def restaurar_producto(request, slug):
     producto = ProductoCatalogo.objects.get(slug=slug)
     producto.visible = True
     producto.save()
-    return render(request, "catalogo/listar_catalogo.html", {'producto': producto})
+    return render(request, "catalogo/historial_productos.html")
 
 def editar_producto(request, slug):
     producto = ProductoCatalogo.objects.get(slug=slug)

@@ -45,7 +45,6 @@
             {% if request.user.is_superuser %}
             <a href="{% url 'restaurar_producto' slug=producto.slug %}" class="btn btn-danger btn-sm mt-2" onclick="return confirm('¿Estás seguro de que deseas restaurar este producto?');">Restaurar</a>
             {% endif %}
-          </li>
         {% empty %}
           <li class="list-group-item">No hay productos en el historial.</li>
         {% endfor %}

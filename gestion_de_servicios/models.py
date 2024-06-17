@@ -26,11 +26,12 @@ class Servicio(models.Model):
     sucursal = models.ForeignKey(Sucursal, on_delete=models.CASCADE)    
     monto = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True) 
     imagen = models.ImageField(upload_to='imagenes/')
+    descripcion = models.TextField(null=True, blank=True)
     slug = models.SlugField(null=True, blank=True)    
     pago = models.ForeignKey(PagoServicio, on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(str(self.id) + "-" + str(self.imagen))
+        self.slug = slugify(str(self.id) + "-" + str(self.imagen) + str(self.descripcion))
         return super().save(*args , **kwargs)
 
     def __str__(self):

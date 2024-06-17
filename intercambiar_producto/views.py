@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from mis_productos.models import Producto
-from iniciar_sesion import soy_cliente
+from iniciar_sesion import *
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Intercambio
@@ -200,6 +200,7 @@ def detalle_intercambio(request, solicitud_id):
 #Tango
 
 #listar los intercambios por sucursal
+@soy_staff
 def intercambios_por_sucursal_view(request):
     try:
         empleado = PerfilEmpleado.objects.get(usuario=request.user)
@@ -229,7 +230,7 @@ def intercambios_por_sucursal_view(request):
         messages.error(request, "El usuario logueado no tiene un perfil de empleado asociado.")
         return redirect('pagina_de_error')
    
-    
+@soy_staff    
 def confirmar_intercambio_view(request, intercambio_id):
     print("llego")
     intercambio = get_object_or_404(Intercambio, id=intercambio_id)
@@ -246,6 +247,7 @@ def confirmar_intercambio_view(request, intercambio_id):
     messages.success(request, "Intercambio confirmado.")
     return redirect('intercambios_por_sucursal')
 
+@soy_staff
 def ausente_intercambio_view(request, intercambio_id):
     intercambio = get_object_or_404(Intercambio, id=intercambio_id)
     intercambio.estado = 'ausente'

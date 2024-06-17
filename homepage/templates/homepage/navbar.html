@@ -13,22 +13,30 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
+          {% if not request.user.is_superuser and request.user.is_staff %}
+          <form class="mb-3 me-md-3" method="GET" action="{% url 'intercambios_por_sucursal' %}">
+            <button class="btn btn-primary" type="submit">Intercambios</button>
+          </form>
+          {% endif %}
+        </li>
+        <li class="nav-item">
         <!-- Barra de admins -->
         <div class="d-flex flex-wrap justify-content-center">
           <!-- Formulario 1: Ver catálogo -->
+          {% if not request.user.is_staff or request.user.is_superuser %}
           <form class="mb-3 me-md-3" method="GET" action="{% url 'listar_catalogo' %}">
               <button class="btn btn-primary" type="submit">Ver catálogo</button>
           </form>
-      
+          {% endif %}
           <!-- Formulario 2: Subir producto al catálogo -->
-          {% if request.user.is_authenticated %}
+          {% if request.user.is_superuser %}
           <form class="mb-3 me-md-3" method="GET" action="{% url 'subir_producto_catalogo' %}">
               <button class="btn btn-primary" type="submit">Subir producto al catálogo</button>
           </form>
           {% endif %}
       
           <!-- Formulario 3: Historial del catálogo -->
-          {% if request.user.is_authenticated %}
+          {% if request.user.is_superuser %}
           <form class="mb-3 me-md-3" method="GET" action="{% url 'ver_historial' %}">
               <button class="btn btn-primary" type="submit">Historial del catálogo</button>
           </form>
@@ -125,10 +133,6 @@
         <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis Productos</a></li>
         <li><a class="dropdown-item" href="{% url 'ver_intercambios' %}">Mis Intercambios</a></li>
         <li><a class="dropdown-item" href="{% url 'mis_servicios' %}">Mis servicios</a></li>
-        {% endif %}
-        {% if not request.user.is_superuser and request.user.is_staff %}
-        <li><a class="dropdown-item" href="{% url 'intercambios_por_sucursal' %}">Intercambios por sucursal</a>
-        </li>
         {% endif %}
         <li>
           <hr class="dropdown-divider">

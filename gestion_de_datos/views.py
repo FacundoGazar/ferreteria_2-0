@@ -6,15 +6,17 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from gestion_de_servicios.models import PagoServicio
 import pandas as pd
+from iniciar_sesion import *
 
 
 # Create your views here.
+@super_user
 def gestion_de_datos_view(request):
     return render(request, "gestion_de_datos/gestion_datos.html")
 def estadisticas_intercambios_view(request):    
     return render(request, "gestion_de_datos/estadisticas_intercambios.html")
 
-
+@super_user
 def estadisticas_servicios_view(request):    
     # Rango de fechas - ejemplo: del 1 de enero de 2023 al 31 de diciembre de 2023
     fecha_inicio = request.GET.get('fecha_inicio', '01-01-2024')
@@ -63,6 +65,6 @@ def estadisticas_servicios_view(request):
     }
     return render(request, "gestion_de_datos/estadisticas_servicios.html", context)
 
-
+@super_user
 def estadisticas_generales_view(request):
     return render(request, "gestion_de_datos/estadisticas_generales.html")

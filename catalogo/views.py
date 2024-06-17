@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from catalogo.models import ProductoCatalogo
 from catalogo.forms import ProductoForm
-
+from iniciar_sesion import *
+@super_user 
 def subir_producto(request):
     if request.method == 'POST':
         # Obtener los datos del formulario enviado por el usuario
@@ -42,7 +43,7 @@ def ver_catalogo(request):
         'catalogo': catalogo,
     }
     return render(request, "catalogo/listar_catalogo.html", context)
-
+@super_user 
 def ver_historial(request):
     catalogo = ProductoCatalogo.objects.filter(visible=False)
     
@@ -51,19 +52,19 @@ def ver_historial(request):
     }
     return render(request, "catalogo/historial_productos.html", context)
 
-
+@super_user 
 def eliminar_producto(request, slug):
     producto = ProductoCatalogo.objects.get(slug=slug)
     producto.visible = False
     producto.save()
     return render(request, "catalogo/listar_catalogo.html")
-
+@super_user 
 def restaurar_producto(request, slug):
     producto = ProductoCatalogo.objects.get(slug=slug)
     producto.visible = True
     producto.save()
     return render(request, "catalogo/historial_productos.html")
-
+@super_user 
 def editar_producto(request, slug):
     producto = ProductoCatalogo.objects.get(slug=slug)
     

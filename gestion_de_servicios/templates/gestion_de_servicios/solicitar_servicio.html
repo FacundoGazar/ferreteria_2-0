@@ -17,7 +17,7 @@
 
             <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-              
+                    
                     <div class="mr-3">
                         <label for="sucursal" class="mr-3">Selecciona la sucursal donde podrán encontrar tu servicio</label>
                         <select class="form-select" id="sucursal" name="sucursal" required>
@@ -31,6 +31,12 @@
                 <div class="custom-file">
                     <input type="file" id="id_imagen" name="imagen" class="custom-file-input">
                     <label class="custom-file-label" for="id_imagen"> Selecciona el flyer para tu servicio. <strong> Recorda que debe tener algun medio para contactarte. </strong></label>
+                </div>
+                <div>
+                    <label> Descripcion de tu producto (opcional). <strong> También podés agregar acá un medio para contactarte. </strong> </label>
+                    {{ form.descripcion.label_tag }}
+                    {{ form.descripcion }}
+                    
                 </div>
                 <br></br> 
                 <input type="submit" value="Solicitar" class="btn btn-dark">

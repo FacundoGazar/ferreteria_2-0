@@ -8,11 +8,13 @@ from .forms import ServicioForm
 from django.core.exceptions import ValidationError
 from PIL import Image, ImageChops
 from django.core.mail import send_mail
+from iniciar_sesion import *
 
 # Create your views here.
+@soy_cliente
 def mis_servicios_view(request):
     return render(request, "gestion_de_servicios/mis_servicios.html")
-
+@soy_cliente
 def listar_solicitudes_view(request):    
     usuario = request.user
     queryset = Servicio.objects.filter(cliente=usuario)
@@ -21,7 +23,7 @@ def listar_solicitudes_view(request):
     }
     
     return render(request, "gestion_de_servicios/listar_solicitudes.html", context)
-
+@soy_cliente
 def subir_servicio_view(request):
     sucursales = Sucursal.objects.all()
 
@@ -91,10 +93,7 @@ def verificar_formato_imagen(imagen):
         return True, None
     except AttributeError:
         raise ValidationError("Se produjo un error al verificar el formato de la imagen.")   
-    
-    
-    
-
+@soy_cliente
 def ver_imagen_view(request, slug):
     servicio = Servicio.objects.get(slug=slug)
    
@@ -103,12 +102,7 @@ def ver_imagen_view(request, slug):
     }
     return render(request, "gestion_de_servicios/ver_imagen.html", context)
 
-
-def aprobar_solicitud_view(request):
-    return render(request, "gestion_de_servicios/ver_imagen.html")
-
-
-
+@soy_cliente
 def pagar_publicacion_view(request, slug):
     servicio = Servicio.objects.get(slug=slug)
     if request.method == 'POST':
@@ -147,6 +141,7 @@ def pagar_publicacion_view(request, slug):
     }
     return render(request, "gestion_de_servicios/pagar_publicacion.html", context)
 
+@super_user 
 def listar_solicitudes_clientes_view(request):    
     queryset = Servicio.objects.filter(estado = "pendiente")
     context = {
@@ -154,7 +149,7 @@ def listar_solicitudes_clientes_view(request):
     }
     
     return render(request, "gestion_de_servicios/listar_solicitudes_clientes.html", context)
-
+@super_user 
 def evaluar_servicio_view(request, slug):
     servicio = Servicio.objects.get(slug=slug)
     if request.method == "POST":
@@ -167,7 +162,7 @@ def evaluar_servicio_view(request, slug):
         'servicio': servicio,
     }
     return render(request, "gestion_de_servicios/evaluar_servicio.html", context)
-
+@super_user 
 def mandar_motivo_view(request, slug):
     if request.method == "POST":
         motivo = request.POST.get('motivo')

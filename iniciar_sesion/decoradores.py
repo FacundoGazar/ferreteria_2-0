@@ -70,3 +70,13 @@ def soy_cliente(view_func):
             return redirect("homepage")
         
     return wrapper_func
+
+def soy_staff(view_func):
+    def wrapper_func(request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.is_staff and not request.user.is_superuser :
+            return view_func(request, *args, **kwargs)
+           
+        else:
+            return redirect("homepage")
+        
+    return wrapper_func

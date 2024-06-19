@@ -31,8 +31,13 @@ class Servicio(models.Model):
     pago = models.ForeignKey(PagoServicio, on_delete=models.CASCADE, null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(str(self.id) + "-" + str(self.imagen) + str(self.descripcion))
-        return super().save(*args , **kwargs)
+        # Guardar por primera vez para obtener un ID
+        if not self.id:
+            super().save(*args, **kwargs)
+        # Generar el slug si no existe
+        if not self.slug:
+            self.slug = slugify(str(self.id) + "-" + str(self.imagen))
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return str(self.id) 

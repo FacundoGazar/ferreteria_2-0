@@ -8,7 +8,7 @@ from .forms import ServicioForm
 from django.core.exceptions import ValidationError
 from PIL import Image, ImageChops
 from django.core.mail import send_mail
-from iniciar_sesion import *
+from iniciar_sesion.decoradores import *
 
 # Create your views here.
 @soy_cliente
@@ -157,6 +157,7 @@ def listar_solicitudes_clientes_view(request):
     }
     
     return render(request, "gestion_de_servicios/listar_solicitudes_clientes.html", context)
+
 @super_user 
 def evaluar_servicio_view(request, slug):
     servicio = Servicio.objects.get(slug=slug)
@@ -173,23 +174,24 @@ def evaluar_servicio_view(request, slug):
         'servicio': servicio,
     }
     return render(request, "gestion_de_servicios/evaluar_servicio.html", context)
+
 @super_user 
-def mandar_motivo_view(request, slug):    
+def mandar_motivo_view(request, slug):
     servicio = Servicio.objects.get(slug=slug)
     if request.method == "POST":
         motivo = request.POST.get('motivo')
         if not motivo.strip():
             messages.error(request, "Completa la casilla de texto, el motivo no puede estar vacio")
         else:
-            servicio = Servicio.objects.get(slug=slug)
             servicio.estado = 'rechazado'
             servicio.save()
             cliente = servicio.cliente
-            subject = 'Registro de empleado en Ferreplus'
+            subject = 'Rechazo de Servicio'
             message = f'Hola {cliente.username},\n\nTu solicitud de publicacion ha sido rechazada, este es el motivo:\n\n{motivo}\n\n'
             from_email = 'noreply@ferreplus.com'
             to_email = [cliente.email]
             send_mail(subject, message, from_email, to_email)
+            messages.success(request, "El servicio ha sido rechazado.")
             return redirect("listar_solicitudes_clientes")
     context = {
         'servicio': servicio

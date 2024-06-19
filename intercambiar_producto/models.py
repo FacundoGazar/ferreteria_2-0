@@ -22,6 +22,7 @@ class Intercambio(models.Model):
     dia = models.CharField(max_length=20, blank=True)
     fecha = models.DateField(null=True, blank=True)
     horario = models.IntegerField()
+    venta_realizada = models.BooleanField(null=True, blank=True, default=None)
     def save(self, *args, **kwargs):
         if not self.dia:  
             self.dia = self.producto_receptor.dias  

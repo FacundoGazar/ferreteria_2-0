@@ -14,6 +14,7 @@ from iniciar_sesion import *
 @soy_cliente
 def mis_servicios_view(request):
     return render(request, "gestion_de_servicios/mis_servicios.html")
+
 @soy_cliente
 def listar_solicitudes_view(request):    
     usuario = request.user
@@ -23,6 +24,7 @@ def listar_solicitudes_view(request):
     }
     
     return render(request, "gestion_de_servicios/listar_solicitudes.html", context)
+
 @soy_cliente
 def subir_servicio_view(request):
     sucursales = Sucursal.objects.all()
@@ -35,13 +37,13 @@ def subir_servicio_view(request):
             formato_valido, mensaje_error = verificar_formato_imagen(imagen)
             if not formato_valido:
                 messages.error(request, mensaje_error)
-                return render(request, "solicitar_servicio/solicitar_servicio.html", {
+                return render(request, "gestion_de_servicios/solicitar_servicio.html", {
                     "form": form,
                     "sucursales": sucursales,
                 })
         else:
             messages.error(request, "Es obligatorio subir la imagen del flyer del servicio.")
-            return render(request, "solicitar_servicio/solicitar_servicio.html", {
+            return render(request, "gestion_de_servicios/solicitar_servicio.html", {
                     "form": form,
                     "sucursales": sucursales,
                 })
@@ -93,10 +95,16 @@ def verificar_formato_imagen(imagen):
         return True, None
     except AttributeError:
         raise ValidationError("Se produjo un error al verificar el formato de la imagen.")   
+    
 @soy_cliente
 def ver_imagen_view(request, slug):
     servicio = Servicio.objects.get(slug=slug)
-   
+    if request.method == "POST":
+        accion = request.POST.get('accion')
+        if accion == 'cancelar':
+            servicio.delete()
+            messages.success(request, "Publicacion de servicio cancelada con éxito")
+            return redirect("listar_solicitudes")
     context = {
         'servicio': servicio,
     }
@@ -155,22 +163,26 @@ def evaluar_servicio_view(request, slug):
     if request.method == "POST":
         accion = request.POST.get('accion')
         if accion == 'aceptar':
-            servicio.estado = "aceptado"
+            servicio.estado = 'aceptado'
+            servicio.save()
             messages.success(request, "El servicio ha sido aceptado.")
-        servicio.save()
+            return redirect("listar_solicitudes_clientes")
+        elif accion == 'rechazar':
+            return redirect("mandar_motivo", slug=slug)
     context = {
         'servicio': servicio,
     }
     return render(request, "gestion_de_servicios/evaluar_servicio.html", context)
 @super_user 
-def mandar_motivo_view(request, slug):
+def mandar_motivo_view(request, slug):    
+    servicio = Servicio.objects.get(slug=slug)
     if request.method == "POST":
         motivo = request.POST.get('motivo')
         if not motivo.strip():
             messages.error(request, "Completa la casilla de texto, el motivo no puede estar vacio")
         else:
             servicio = Servicio.objects.get(slug=slug)
-            servicio.estado = "rechazado"
+            servicio.estado = 'rechazado'
             servicio.save()
             cliente = servicio.cliente
             subject = 'Registro de empleado en Ferreplus'
@@ -179,4 +191,7 @@ def mandar_motivo_view(request, slug):
             to_email = [cliente.email]
             send_mail(subject, message, from_email, to_email)
             return redirect("listar_solicitudes_clientes")
-    return render(request, "gestion_de_servicios/mandar_motivo.html")
+    context = {
+        'servicio': servicio
+    }
+    return render(request, "gestion_de_servicios/mandar_motivo.html", context)

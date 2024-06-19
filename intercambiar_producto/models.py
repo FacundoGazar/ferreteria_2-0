@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from mis_productos.models import Producto
-
+from catalogo.models import ProductoCatalogo
 class Intercambio(models.Model):
     ESTADOS = (
         ('pendiente', 'Pendiente'),
@@ -29,3 +29,19 @@ class Intercambio(models.Model):
         super().save(*args, **kwargs) 
     def __str__(self):
         return f"{self.producto_solicitante} <-> {self.producto_receptor} ({self.dia}) ({self.fecha}) ({self.horario}) ({self.estado})"
+
+class Venta(models.Model):
+    productos = models.ManyToManyField(ProductoCatalogo, through='ProductoVenta')
+    fecha = models.DateTimeField(auto_now_add=True)
+    monto_total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Venta {self.id} - {self.fecha} - ${self.monto_total}"
+
+class ProductoVenta(models.Model):
+    producto = models.ForeignKey(ProductoCatalogo, on_delete=models.CASCADE)
+    venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+
+    def __str__(self):
+        return f"{self.producto.nombre} - {self.cantidad} unidades"

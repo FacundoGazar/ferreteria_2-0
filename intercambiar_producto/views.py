@@ -3,7 +3,8 @@ from mis_productos.models import Producto
 from iniciar_sesion import *
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .models import Intercambio
+from .models import Intercambio,Venta, ProductoVenta
+from catalogo.models import ProductoCatalogo
 from .forms import IntercambioForm
 from django.db.models import Q
 from datetime import datetime, timedelta
@@ -254,3 +255,60 @@ def ausente_intercambio_view(request, intercambio_id):
     intercambio.save()
     messages.success(request, "Intercambio marcado como ausente.")
     return redirect('intercambios_por_sucursal')
+
+
+@soy_staff
+def marcar_venta_view(request, intercambio_id):
+    intercambio = get_object_or_404(Intercambio, id=intercambio_id)
+    intercambio.venta_realizada = True
+    intercambio.save()
+    messages.success(request, "Venta marcada como realizada.")
+    return redirect('intercambios_por_sucursal')
+
+@soy_staff
+def sin_venta_view(request, intercambio_id):
+    intercambio = get_object_or_404(Intercambio, id=intercambio_id)
+    intercambio.venta_realizada = False
+    intercambio.save()
+    messages.success(request, "Intercambio marcado como sin venta.")
+    return redirect('intercambios_por_sucursal')
+
+
+#terminar
+def registrar_venta_view(request):
+    if request.method == 'POST':
+        productos_id = request.POST.getlist('producto')
+        cantidades = request.POST.getlist('cantidad')
+        monto_total = request.POST.get('monto_total')
+
+        if productos_id and cantidades and monto_total:
+            try:
+                monto_total = float(monto_total)
+            except ValueError:
+                messages.error(request, 'Monto total inválido.')
+                return redirect('registrar_venta')
+
+            venta = Venta.objects.create(monto_total=monto_total)
+            for producto_id, cantidad in zip(productos_id, cantidades):
+                try:
+                    producto = ProductoCatalogo.objects.get(id=producto_id)
+                    cantidad = int(cantidad)
+                    ProductoVenta.objects.create(
+                        producto=producto,
+                        venta=venta,
+                        cantidad=cantidad
+                    )
+                except ProductoCatalogo.DoesNotExist:
+                    messages.error(request, 'Producto no encontrado.')
+                    venta.delete()
+                    return redirect('registrar_venta')
+                except ValueError:
+                    messages.error(request, 'Cantidad inválida.')
+                    venta.delete()
+                    return redirect('registrar_venta')
+
+            messages.success(request, 'Venta registrada exitosamente.')
+            return redirect('nombre_de_tu_vista_de_intercambios')  # Cambia esto al nombre de tu vista de intercambios
+
+    productos = ProductoCatalogo.objects.filter(visible=True)
+    return render(request, 'registrar_venta.html', {'productos': productos})

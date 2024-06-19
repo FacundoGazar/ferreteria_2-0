@@ -49,11 +49,11 @@
                 </form>
                 {% elif intercambio.estado == 'realizado' %}
                 {% if intercambio.venta_realizada is None %}
-                <form method="post" action="#" style="display:inline;">
+                <form method="post" action="{% url 'marcar_venta' intercambio.id %}" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Marcar Venta</button>
                 </form>
-                <form method="post" action="#" style="display:inline;">
+                <form method="post" action="{% url 'sin_venta' intercambio.id %}" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-warning">Sin Venta</button>
                 </form>

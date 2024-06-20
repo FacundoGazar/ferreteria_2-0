@@ -22,13 +22,13 @@
         <li class="nav-item">
           <!-- Barra de admins -->
           <div class="d-flex flex-wrap justify-content-center">
-            <!-- Formulario 1: Ver catálogo -->
+            <!-- Formulario 1: Ver catálogo y servicios -->
             {% if not request.user.is_staff or request.user.is_superuser %}
             <form class="mb-3 me-md-3" method="GET" action="{% url 'listar_catalogo' %}">
               <button class="btn btn-primary" type="submit">Ver catálogo</button>
             </form>
-            <form class="mb-3 me-md-3" method="GET" action="#">
-              <button class="btn btn-primary" type="submit">Clasificados</button>
+            <form class="mb-3 me-md-3" method="GET" action="{% url 'servicios_publicados' %}">
+              <button class="btn btn-primary" type="submit">Ver servicios</button>
             </form>
             {% endif %}
             <!-- Formulario 2: Subir producto al catálogo -->

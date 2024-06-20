@@ -10,4 +10,5 @@ urlpatterns = [
     path("listar_solicitudes_clientes/", listar_solicitudes_clientes_view, name='listar_solicitudes_clientes'),
     path("listar_solicitudes_clientes/<slug:slug>/", evaluar_servicio_view, name='evaluar_servicio'),
     path("listar_solicitudes_clientes/<slug:slug>/motivo", mandar_motivo_view, name='mandar_motivo'),
+    path('servicios_publicados', servicios_publicados_view, name='servicios_publicados'),
 ]

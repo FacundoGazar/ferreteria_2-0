@@ -1,0 +1,38 @@
+{% extends "homepage/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Servicios Publicados</h2>
+    <form class="mb-3" method="GET" action="#">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="nombre">Buscar por nombre:</label>
+                <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Nombre del servicio">
+            </div>
+            <div class="col-md-6">
+                <label for="ciudad">Seleccionar ciudad:</label>
+                <select id="ciudad" name="ciudad" class="form-control">
+                    <option value="">Todas las ciudades</option>
+                    <option value="1">Ciudad 1</option>
+                    <option value="2">Ciudad 2</option>
+                    <option value="3">Ciudad 3</option>
+                    <!-- Agrega más opciones según tus necesidades -->
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Buscar</button>
+    </form>
+
+    {% for servicio in servicios %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ servicio.cliente }}</h5>
+            <p class="card-text">{{ servicio.descripcion }}</p>
+            <img src="{{ servicio.imagen.url }}" alt="{{ servicio.descripcion }}" class="img-fluid">
+            <!-- Otros detalles del servicio -->
+        </div>
+    </div>
+    <hr> <!-- Línea horizontal como separador -->
+    {% endfor %}
+</div>
+{% endblock %}

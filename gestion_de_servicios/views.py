@@ -232,3 +232,8 @@ def mandar_motivo_view(request, slug):
         'servicio': servicio
     }
     return render(request, "gestion_de_servicios/mandar_motivo.html", context)
+
+def servicios_publicados_view(request):
+    print("llego")
+    servicios_publicados = Servicio.objects.filter(estado='publicado')
+    return render(request, 'gestion_de_servicios/servicios_publicados.html', {'servicios': servicios_publicados})

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from mis_productos.models import Producto
 from gestion_de_sucursales.models import Sucursal
-from .models import PagoServicio, Servicio
+from .models import PagoServicio, Servicio, Tarjeta
 from datetime import datetime
 from django.contrib import messages
 from .forms import ServicioForm
@@ -118,32 +118,67 @@ def pagar_publicacion_view(request, slug):
         nombre_dueño = request.POST.get('nombre_dueño')
         fecha_vencimiento = request.POST.get('fecha_vencimiento')
         codigo_seguridad = request.POST.get('codigo_seguridad')
-        monto = 5  # Asumiendo que el modelo Servicio tiene un campo 'precio'
-
+        monto = 100  # Asumiendo que el modelo Servicio tiene un campo 'precio'
+        
         # Validación básica
         if not all([numero_tarjeta, nombre_dueño, fecha_vencimiento, codigo_seguridad]):
             messages.error(request, "Todos los campos son obligatorios.")
             return redirect('pagar_publicacion', slug=slug)
+        
+        
+        if numero_tarjeta[0] in ('4', '5'):        
+            fecha_vencimiento = str(fecha_vencimiento)
+            if isinstance(fecha_vencimiento, str):
+                partes = fecha_vencimiento.split('/')
+                if len(partes) == 2:
+                    mes, año = partes
+                    mes_vencimiento = int(mes)
+                    año_vencimiento = int(año)
+                else:
+                    print(partes)
+                    print(len(partes))
+                    messages.error(request, "Len no es 2.")
+                    return redirect('pagar_publicacion', slug=slug)
+            else:
+                messages.error(request, "No es string.")
+                return redirect('pagar_publicacion', slug=slug)
+            tarjeta = Tarjeta.objects.get(numero=numero_tarjeta)    
+            if (tarjeta):
+                if (tarjeta.nombre_apellido != nombre_dueño): 
+                    messages.error(request, "El nombre ingresado no coincide con el nombre del dueño de la tarjeta.")
+                    return redirect('pagar_publicacion', slug=slug)
+                if (tarjeta.mes_vencimiento != mes_vencimiento or tarjeta.año_vencimiento != año_vencimiento):
+                    messages.error(request, "La fecha ingresada no coincide con la fecha de vencimiento de la tarjeta.")
+                    return redirect('pagar_publicacion', slug=slug)
+                if (tarjeta.mes_vencimiento < 7 and tarjeta.año_vencimiento <= 2024):
+                    messages.error(request, "La tarjeta caducó.")
+                    return redirect('pagar_publicacion', slug=slug)                
+                if (tarjeta.cvv != codigo_seguridad):
+                    messages.error(request, "El codigo ingresado no coincide con el codigo de seguridad de la tarjeta.")
+                    return redirect('pagar_publicacion', slug=slug)
+                if (tarjeta.saldo < monto):
+                    messages.error(request, "El saldo de la tarjeta es insuficiente.")
+                    return redirect('pagar_publicacion', slug=slug)
+            else :
+                messages.error(request, "Esta tarjeta no se encuentra registrada en el sistema.")
+                return redirect('pagar_publicacion', slug=slug)        
+            
+            # Crear una nueva instancia de PagoServicio
+            pago = PagoServicio(
+                cliente=request.user,
+                monto=monto,
+                fecha=datetime.now().date(),  # Establecer la fecha actual para el pago
+                tarjeta=tarjeta
+            )
+            servicio.estado = 'publicado'
+            servicio.save()
+            pago.save()
 
-        # Convertir fecha_vencimiento a un objeto de fecha si es necesario
-        try:
-            fecha_vencimiento = datetime.strptime(fecha_vencimiento, '%m/%Y').date()
-        except ValueError:
-            messages.error(request, "Formato de fecha de vencimiento inválido. Use MM/AAAA.")
+            messages.success(request, "Pago realizado con éxito.")
+            return redirect('listar_solicitudes')  # Redirige a una página de éxito o donde desees
+        else:
+            messages.error(request, "Solo se aceptan tarjetas Visa o MasterCard.")
             return redirect('pagar_publicacion', slug=slug)
-
-        # Crear una nueva instancia de PagoServicio
-        pago = PagoServicio(
-            cliente=request.user,
-            monto=monto,
-            fecha=datetime.now().date()  # Establecer la fecha actual para el pago
-        )
-        servicio.estado = 'publicado'
-        servicio.save()
-        pago.save()
-
-        messages.success(request, "Pago realizado con éxito.")
-        return redirect('listar_solicitudes')  # Redirige a una página de éxito o donde desees
     context = {
         'servicio': servicio,
     }

@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from mis_productos.models import Producto
 from gestion_de_sucursales.models import Sucursal
 from .models import PagoServicio, Servicio, Tarjeta
 from datetime import datetime
@@ -9,6 +8,7 @@ from django.core.exceptions import ValidationError
 from PIL import Image, ImageChops
 from django.core.mail import send_mail
 from iniciar_sesion.decoradores import *
+from django.db.models import Q
 
 # Create your views here.
 @soy_cliente
@@ -28,7 +28,6 @@ def listar_solicitudes_view(request):
 @soy_cliente
 def subir_servicio_view(request):
     sucursales = Sucursal.objects.all()
-
     if request.method == "POST":
         form = ServicioForm(request.POST, request.FILES)
 
@@ -118,9 +117,8 @@ def pagar_publicacion_view(request, slug):
         nombre_dueño = request.POST.get('nombre_dueño')
         fecha_vencimiento = request.POST.get('fecha_vencimiento')
         codigo_seguridad = request.POST.get('codigo_seguridad')
-        monto = 100  # Asumiendo que el modelo Servicio tiene un campo 'precio'
+        monto = 100  # Despues sacar
         
-        # Validación básica
         if not all([numero_tarjeta, nombre_dueño, fecha_vencimiento, codigo_seguridad]):
             messages.error(request, "Todos los campos son obligatorios.")
             return redirect('pagar_publicacion', slug=slug)
@@ -163,11 +161,10 @@ def pagar_publicacion_view(request, slug):
                 messages.error(request, "Esta tarjeta no se encuentra registrada en el sistema.")
                 return redirect('pagar_publicacion', slug=slug)        
             
-            # Crear una nueva instancia de PagoServicio
             pago = PagoServicio(
                 cliente=request.user,
                 monto=monto,
-                fecha=datetime.now().date(),  # Establecer la fecha actual para el pago
+                fecha=datetime.now().date(),  
                 tarjeta=tarjeta
             )
             servicio.estado = 'publicado'
@@ -175,7 +172,7 @@ def pagar_publicacion_view(request, slug):
             pago.save()
 
             messages.success(request, "Pago realizado con éxito.")
-            return redirect('listar_solicitudes')  # Redirige a una página de éxito o donde desees
+            return redirect('listar_solicitudes')  
         else:
             messages.error(request, "Solo se aceptan tarjetas Visa o MasterCard.")
             return redirect('pagar_publicacion', slug=slug)
@@ -186,7 +183,7 @@ def pagar_publicacion_view(request, slug):
 
 @super_user 
 def listar_solicitudes_clientes_view(request):    
-    queryset = Servicio.objects.filter(estado = "pendiente")
+    queryset = Servicio.objects.filter(Q(estado="pendiente") | Q(estado="publicado"))
     context = {
         "lista": queryset
     }

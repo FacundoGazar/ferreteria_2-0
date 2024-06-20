@@ -18,7 +18,9 @@
                             <img src="{{ servicio.imagen.url }}" class="card-img-top img-thumbnail" style="height: 300px;">
                             <div class="card-body">
                                 <h5 class="card-title"></h5>
-                                <a href="{% url 'evaluar_servicio' servicio.slug %}" class="btn btn-primary stretched-link">Evaluar</a>
+                                {% if servicio.estado == 'pendiente' %}
+                                    <a href="{% url 'evaluar_servicio' servicio.slug %}" class="btn btn-primary stretched-link">Evaluar</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

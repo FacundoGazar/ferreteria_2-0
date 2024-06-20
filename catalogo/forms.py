@@ -6,4 +6,4 @@ from .models import ProductoCatalogo
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = ProductoCatalogo
-        fields = ['nombre', 'descripcion', 'imagen_principal', 'imagen_extra1', 'imagen_extra2', 'imagen_extra3']
+        fields = ['descripcion', 'imagen_principal', 'imagen_extra1', 'imagen_extra2', 'imagen_extra3']

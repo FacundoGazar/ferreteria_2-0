@@ -1,50 +1,53 @@
 {% extends "homepage/base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Registrar Venta para el Intercambio {{ intercambio.id }}</h2>
-    <form method="post">
-        {% csrf_token %}
-        <div id="productos-container">
-            <div class="producto-entry">
-                <div class="form-group">
-                    <label for="producto">Producto</label>
-                    <select name="producto" class="form-control">
-                        <option value="">Selecciona un producto</option>
-                        {% for producto in productos %}
-                        <option value="{{ producto.id }}">{{ producto.nombre }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="cantidad">Cantidad</label>
-                    <input type="number" name="cantidad" class="form-control" placeholder="Cantidad" min="1">
-                </div>
-                <button type="button" class="btn btn-danger" onclick="removeProduct(this)">Eliminar</button>
-            </div>
+<h2>Registrar Venta</h2>
+
+<form method="post" action="{% url 'registrar_venta' intercambio.id %}">
+    {% csrf_token %}
+
+    <div id="productos-container">
+        <div class="producto-entry">
+            <label for="producto">Producto:</label>
+            <select name="producto">
+                {% for producto in productos %}
+                <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" name="cantidad" required>
         </div>
-        <button type="button" class="btn btn-secondary" onclick="addProduct()">Agregar Producto</button>
-        <div class="form-group mt-3">
-            <label for="monto_total">Monto Total</label>
-            <input type="number" name="monto_total" class="form-control" placeholder="Monto Total" step="0.01">
-        </div>
-        <button type="submit" class="btn btn-primary">Registrar Venta</button>
-    </form>
-</div>
+    </div>
+
+    <button type="button" onclick="agregarProducto()">Agregar Producto</button>
+
+    <label for="monto_total">Monto Total:</label>
+    <input type="number" step="0.01" name="monto_total" required>
+
+    <button type="submit">Registrar Venta</button>
+</form>
 
 <script>
-    function addProduct() {
-        let container = document.getElementById('productos-container');
-        let newEntry = container.querySelector('.producto-entry').cloneNode(true);
-        newEntry.querySelectorAll('input').forEach(input => input.value = '');
-        container.appendChild(newEntry);
-    }
+    function agregarProducto() {
+        const productosContainer = document.getElementById('productos-container');
+        const newProductoEntry = document.createElement('div');
+        newProductoEntry.classList.add('producto-entry');
 
-    function removeProduct(button) {
-        let container = document.getElementById('productos-container');
-        if (container.querySelectorAll('.producto-entry').length > 1) {
-            button.parentElement.remove();
-        }
+        newProductoEntry.innerHTML = `
+        <label for="producto">Producto:</label>
+        <select name="producto">
+            {% for producto in productos %}
+                <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" name="cantidad" required>
+    `;
+
+        productosContainer.appendChild(newProductoEntry);
     }
 </script>
+
 {% endblock %}

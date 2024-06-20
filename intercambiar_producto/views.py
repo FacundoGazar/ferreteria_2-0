@@ -276,41 +276,22 @@ def sin_venta_view(request, intercambio_id):
 @soy_staff
 def registrar_venta_view(request, intercambio_id):
     intercambio = get_object_or_404(Intercambio, id=intercambio_id)
+    productos = ProductoCatalogo.objects.all()
+
     if request.method == 'POST':
-        productos_id = request.POST.getlist('producto')
-        cantidades = request.POST.getlist('cantidad')
+        productos_vendidos = request.POST.getlist('producto')
+        cantidades_vendidas = request.POST.getlist('cantidad')
         monto_total = request.POST.get('monto_total')
 
-        if productos_id and cantidades and monto_total:
-            try:
-                monto_total = float(monto_total)
-            except ValueError:
-                messages.error(request, 'Monto total inválido.')
-                return redirect('registrar_venta', intercambio_id=intercambio_id)
+        # Crear y guardar la venta
+        venta = Venta.objects.create(monto_total=monto_total)
+        
+        # Asociar productos a la venta
+        for producto_id, cantidad in zip(productos_vendidos, cantidades_vendidas):
+            producto = get_object_or_404(ProductoCatalogo, id=producto_id)
+            ProductoVenta.objects.create(venta=venta, producto=producto, cantidad=cantidad)
+        
+        messages.success(request, "Venta registrada exitosamente.")
+        return redirect('intercambios_por_sucursal')
 
-            venta = Venta.objects.create(monto_total=monto_total)
-            intercambio.venta = venta  # Asocia la venta con el intercambio
-            intercambio.save()
-            for producto_id, cantidad in zip(productos_id, cantidades):
-                try:
-                    producto = ProductoCatalogo.objects.get(id=producto_id)
-                    cantidad = int(cantidad)
-                    ProductoVenta.objects.create(
-                        producto=producto,
-                        venta=venta,
-                        cantidad=cantidad
-                    )
-                except ProductoCatalogo.DoesNotExist:
-                    messages.error(request, 'Producto no encontrado.')
-                    venta.delete()
-                    return redirect('registrar_venta', intercambio_id=intercambio_id)
-                except ValueError:
-                    messages.error(request, 'Cantidad inválida.')
-                    venta.delete()
-                    return redirect('registrar_venta', intercambio_id=intercambio_id)
-
-            messages.success(request, 'Venta registrada exitosamente.')
-            return redirect('intercambios_por_sucursal')
-
-    productos = ProductoCatalogo.objects.filter(visible=True)
-    return render(request, 'registrar_venta.html', {'productos': productos, 'intercambio': intercambio})
+    return render(request, 'intercambiar_producto/registrar_venta.html', {'productos': productos, 'intercambio': intercambio})

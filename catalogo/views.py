@@ -57,13 +57,15 @@ def eliminar_producto(request, slug):
     producto = ProductoCatalogo.objects.get(slug=slug)
     producto.visible = False
     producto.save()
-    return render(request, "catalogo/listar_catalogo.html")
+    return redirect('listar_catalogo')
+    
 @super_user 
 def restaurar_producto(request, slug):
     producto = ProductoCatalogo.objects.get(slug=slug)
     producto.visible = True
     producto.save()
-    return render(request, "catalogo/historial_productos.html")
+   return redirect('ver_historial')
+
 @super_user 
 def editar_producto(request, slug):
     producto = ProductoCatalogo.objects.get(slug=slug)

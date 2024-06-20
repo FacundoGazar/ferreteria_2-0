@@ -94,6 +94,9 @@ def gestion_de_empleados_view(request):
         messages.info(request, "No hay empleados registrados.")
     
     return render(request, "gestion_de_sucursales/gestion_de_empleados.html", {'empleados': empleados, 'nombre_sucursal_seleccionada': nombre_sucursal_seleccionada, 'sucursales': sucursales})
+
+# revisar
+
 @super_user
 def lista_empleados_view(request):
     sucursal_seleccionada = request.GET.get('sucursal')

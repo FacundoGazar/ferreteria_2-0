@@ -1,47 +1,47 @@
+<!-- subir_producto.html -->
+
 {% extends "homepage/base.html" %}
 {% load static %}
 
 {% block content %}
-<h3 class="mt-4">Subir Producto al Catálogo</h3>
-<br>
-<form id="register-form" action="{% url 'subir_producto_catalogo' %}" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="card mx-auto" style="width: 30rem;">
-        <div class="card-body">
-            <h5 class="card-title">Complete todos los campos</h5>
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required>
+<h3 class="mt-4 text-center">Subir Producto al Catálogo</h3>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card bg-dark text-white p-4" style="width: 30rem;">
+        <form id="register-form" action="{% url 'subir_producto_catalogo' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card-body">
+                <h5 class="card-title">Complete todos los campos</h5>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Descripción" required>
+                </div>
+                <div class="custom-file mb-3">
+                    <input type="file" id="id_imagen_principal" name="imagen_principal" class="custom-file-input" accept=".jpg, .jpeg, .png">
+                    <label class="custom-file-label" for="id_imagen_principal"><strong>Selecciona la imagen principal (OBLIGATORIA)</strong></label>
+                </div>
+                <div class="custom-file mb-3">
+                    <input type="file" id="id_imagen_extra1" name="imagen_extra1" class="custom-file-input" disabled accept=".jpg, .jpeg, .png">
+                    <label class="custom-file-label" for="id_imagen_extra1">Selecciona otra imagen <strong>(opcional)</strong></label>
+                </div>
+                <div class="custom-file mb-3">
+                    <input type="file" id="id_imagen_extra2" name="imagen_extra2" class="custom-file-input" disabled accept=".jpg, .jpeg, .png">
+                    <label class="custom-file-label" for="id_imagen_extra2">Selecciona otra imagen <strong>(opcional)</strong></label>
+                </div>
+                <div class="custom-file mb-3">
+                    <input type="file" id="id_imagen_extra3" name="imagen_extra3" class="custom-file-input" disabled accept=".jpg, .jpeg, .png">
+                    <label class="custom-file-label" for="id_imagen_extra3">Selecciona otra imagen <strong>(opcional)</strong></label>
+                </div>
+                <button class="btn btn-primary btn-block mt-4" type="submit">Subir producto</button>
             </div>
-            <div class="form-group">
-                <label for="descripcion">Descripción</label>
-                <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Descripción" required>
-            </div>
-            <button class="btn btn-primary btn-block" type="submit">Subir producto</button>
-        </div>
+        </form>
     </div>
-    <form enctype="multipart/form-data" method="POST">
-        {% csrf_token %}
-        <div class="custom-file">
-            <input type="file" id="id_imagen_principal" name="imagen_principal" class="custom-file-input"  accept=".jpg, .jpeg, .png">
-            <label class="custom-file-label" for="id_imagen_principal"><strong>Selecciona la imagen que presentará tu publicación (OBLIGATORIA)</strong></label>
-        </div>
-        <div class="custom-file">
-            <input type="file" id="id_imagen_extra1" name="imagen_extra1" class="custom-file-input" disabled accept=".jpg, .jpeg, .png">
-            <label class="custom-file-label" for="id_imagen_extra1">Selecciona otra imagen <strong>(opcional)</strong></label>
-        </div>
-        <div class="custom-file">
-            <input type="file" id="id_imagen_extra2" name="imagen_extra2" class="custom-file-input" disabled accept=".jpg, .jpeg, .png">
-            <label class="custom-file-label" for="id_imagen_extra2">Selecciona otra imagen <strong>(opcional)</strong></label>
-        </div>
-        <div class="custom-file">
-            <input type="file" id="id_imagen_extra3" name="imagen_extra3" class="custom-file-input" disabled accept=".jpg, .jpeg, .png">
-            <label class="custom-file-label" for="id_imagen_extra3">Selecciona otra imagen <strong>(opcional)</strong></label>
-        </div>                
-    </form>    
-            
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
         $('#id_imagen_principal').change(function() {
@@ -56,3 +56,4 @@
     });
 </script>
 {% endblock %}
+

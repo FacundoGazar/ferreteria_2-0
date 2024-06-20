@@ -263,7 +263,7 @@ def marcar_venta_view(request, intercambio_id):
     intercambio.venta_realizada = True
     intercambio.save()
     messages.success(request, "Venta marcada como realizada.")
-    return redirect('intercambios_por_sucursal')
+    return redirect('registrar_venta', intercambio_id=intercambio.id)
 
 @soy_staff
 def sin_venta_view(request, intercambio_id):
@@ -273,9 +273,9 @@ def sin_venta_view(request, intercambio_id):
     messages.success(request, "Intercambio marcado como sin venta.")
     return redirect('intercambios_por_sucursal')
 
-
-#terminar
-def registrar_venta_view(request):
+@soy_staff
+def registrar_venta_view(request, intercambio_id):
+    intercambio = get_object_or_404(Intercambio, id=intercambio_id)
     if request.method == 'POST':
         productos_id = request.POST.getlist('producto')
         cantidades = request.POST.getlist('cantidad')
@@ -286,9 +286,11 @@ def registrar_venta_view(request):
                 monto_total = float(monto_total)
             except ValueError:
                 messages.error(request, 'Monto total inválido.')
-                return redirect('registrar_venta')
+                return redirect('registrar_venta', intercambio_id=intercambio_id)
 
             venta = Venta.objects.create(monto_total=monto_total)
+            intercambio.venta = venta  # Asocia la venta con el intercambio
+            intercambio.save()
             for producto_id, cantidad in zip(productos_id, cantidades):
                 try:
                     producto = ProductoCatalogo.objects.get(id=producto_id)
@@ -301,14 +303,14 @@ def registrar_venta_view(request):
                 except ProductoCatalogo.DoesNotExist:
                     messages.error(request, 'Producto no encontrado.')
                     venta.delete()
-                    return redirect('registrar_venta')
+                    return redirect('registrar_venta', intercambio_id=intercambio_id)
                 except ValueError:
                     messages.error(request, 'Cantidad inválida.')
                     venta.delete()
-                    return redirect('registrar_venta')
+                    return redirect('registrar_venta', intercambio_id=intercambio_id)
 
             messages.success(request, 'Venta registrada exitosamente.')
-            return redirect('nombre_de_tu_vista_de_intercambios')  # Cambia esto al nombre de tu vista de intercambios
+            return redirect('intercambios_por_sucursal')
 
     productos = ProductoCatalogo.objects.filter(visible=True)
-    return render(request, 'registrar_venta.html', {'productos': productos})
+    return render(request, 'registrar_venta.html', {'productos': productos, 'intercambio': intercambio})

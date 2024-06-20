@@ -51,7 +51,7 @@ def ver_historial(request):
         'catalogo': catalogo,
     }
     return render(request, "catalogo/historial_productos.html", context)
-
+'''
 @super_user 
 def eliminar_producto(request, slug):
     producto = ProductoCatalogo.objects.get(slug=slug)
@@ -79,3 +79,4 @@ def editar_producto(request, slug):
         form = ProductoForm(instance=producto)
     
     return render(request, 'catalogo/editar_producto.html', {'form': form, 'producto': producto})
+'''

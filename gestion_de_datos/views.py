@@ -65,7 +65,7 @@ def estadisticas_intercambios_view(request):
         'fecha_inicio': fecha_inicio_str,
         'fecha_fin': fecha_fin_str
     }
-    return render(request, "gestion_de_datos/estadisticas_intercambios.html", context)
+    return render(request, "gestion_de_datos/intercambios_por_sucursal.html", context)
 
 @super_user
 def estadisticas_intercambios_por_fecha_view(request):
@@ -94,7 +94,7 @@ def estadisticas_intercambios_por_fecha_view(request):
 
         # Generar el gráfico de barras
         plt.figure(figsize=(12, 6))
-        plt.bar(intercambios_por_fecha.index.strftime('%Y-%m-%d'), intercambios_por_fecha.values, color='skyblue')
+        plt.bar(intercambios_por_fecha.index.strftime('%Y-%m-%d'), intercambios_por_fecha.values.round().astype(int), color='skyblue')
         plt.xlabel('Fecha')
         plt.ylabel('Cantidad de Intercambios')
         plt.title('Cantidad de Intercambios por Fecha')
@@ -117,7 +117,7 @@ def estadisticas_intercambios_por_fecha_view(request):
         'fecha_inicio': fecha_inicio_str,
         'fecha_fin': fecha_fin_str
     }
-    return render(request, "gestion_de_datos/estadisticas_intercambios.html", context)
+    return render(request, "gestion_de_datos/intercambios_por_fecha.html", context)
 
 @super_user
 def estadisticas_servicios_view(request):    
@@ -167,6 +167,62 @@ def estadisticas_servicios_view(request):
         'fecha_fin': fecha_fin.strftime('%d-%m-%Y')
     }
     return render(request, "gestion_de_datos/estadisticas_servicios.html", context)
+
+# Vista para estadísticas de intercambios por sucursal y fecha
+def estadisticas_intercambios_sucursal_fecha_view(request):
+    # Obtener la sucursal seleccionada del formulario (si se envía)
+    sucursal_seleccionada = request.GET.get('sucursal', None)
+
+    # Rango de fechas - ejemplo: del 1 de enero de 2024 al 31 de diciembre de 2024
+    fecha_inicio = request.GET.get('fecha_inicio', '01-01-2024')
+    fecha_fin = request.GET.get('fecha_fin', '31-12-2024')
+
+    # Convertir a objetos de fecha
+    fecha_inicio = datetime.strptime(fecha_inicio, '%d-%m-%Y').date()
+    fecha_fin = datetime.strptime(fecha_fin, '%d-%m-%Y').date()
+
+    # Filtrar intercambios por sucursal y rango de fechas
+    intercambios = Intercambio.objects.filter(
+        producto_receptor__sucursal=sucursal_seleccionada,
+        fecha__range=(fecha_inicio, fecha_fin),
+        estado = "realizado"
+    )
+   
+    # Crear un DataFrame con los datos
+    data = {
+        'Fecha': [intercambio.fecha.strftime('%d-%m-%Y') for intercambio in intercambios],
+        'Cantidad': [1 for _ in intercambios]  # Cada intercambio cuenta como uno
+    }
+    df = pd.DataFrame(data)
+    
+    # Agrupar por fecha y sumar las cantidades
+    df = df.groupby('Fecha').sum().reset_index()
+
+    # Generar el gráfico
+    fig, ax = plt.subplots()
+    ax.bar(df['Fecha'], df['Cantidad'])
+    ax.set_xlabel('Fecha')
+    ax.set_ylabel('Cantidad de Intercambios')
+    ax.set_title(f'Cantidad de Intercambios para {sucursal_seleccionada} por fecha')
+
+    # Convertir el gráfico a una imagen en formato base64
+    buffer = io.BytesIO()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    fig.savefig(buffer, format='png')
+    buffer.seek(0)
+    image_png = buffer.getvalue()
+    buffer.close()
+
+    graphic = base64.b64encode(image_png).decode('utf-8')
+
+    context = {
+        'graphic': graphic,
+        'fecha_inicio': fecha_inicio.strftime('%d-%m-%Y'),
+        'fecha_fin': fecha_fin.strftime('%d-%m-%Y'),
+        'sucursal_seleccionada': sucursal_seleccionada,
+    }
+    return render(request, "gestion_de_datos/intercambios_sucursal_fecha.html", context)
 
 @super_user
 def estadisticas_generales_view(request):

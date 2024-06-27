@@ -26,6 +26,14 @@
         <input class="form-check-input" type="checkbox" id="toggleCanceladas" checked>
         <label class="form-check-label" for="toggleCanceladas">Solicitudes Canceladas</label>
       </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="toggleAusentes" checked>
+        <label class="form-check-label" for="toggleAusentes">Solicitudes Ausentes</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" id="toggleRechazadas" checked>
+        <label class="form-check-label" for="toggleRechazadas">Solicitudes Rechazadas</label>
+      </div>
       <button class="btn btn-primary btn-sm ml-2" onclick="actualizarVisibilidad()">Actualizar</button>
     </div>
   </div>
@@ -127,6 +135,52 @@
       </ul>
     </div>
 
+        <!-- Solicitudes Rechazada -->
+        <div class="col-md-6" id="solicitudesRealizadas">
+          <h3>Solicitudes Rechazadas</h3>
+          <ul class="list-group">
+            {% for solicitud in solicitudes_rechazada %}
+              <li class="list-group-item">
+                <strong>Producto Solicitante:</strong> {{ solicitud.producto_solicitante.nombre }} <br>
+                <strong>Producto Receptor:</strong> {{ solicitud.producto_receptor.nombre }} <br>
+                <strong>Estado:</strong> {{ solicitud.estado }} <br>
+                <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
+                <strong>Día:</strong> {{ solicitud.dia }} {{ solicitud.fecha }} <br>
+                <strong>Horario:</strong> {{ solicitud.horario }} hs <br>
+                <strong>Sucursal:</strong> {{ solicitud.producto_solicitante.sucursal }} <strong>Ciudad:</strong> {{ solicitud.producto_solicitante.sucursal.ciudad }} <br>
+                <div class="btn-group" role="group" aria-label="Acciones">
+                  <a href="{% url 'ver_detalle' solicitud.id %}" class="btn btn-primary">Ver Detalle</a>
+                </div>
+              </li>
+            {% empty %}
+              <li class="list-group-item">No tienes ninguna solicitud rechazada.</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Solicitudes Ausente -->
+        <div class="col-md-6" id="solicitudesRealizadas">
+          <h3>Solicitudes Ausentes</h3>
+          <ul class="list-group">
+            {% for solicitud in solicitudes_ausente %}
+              <li class="list-group-item">
+                <strong>Producto Solicitante:</strong> {{ solicitud.producto_solicitante.nombre }} <br>
+                <strong>Producto Receptor:</strong> {{ solicitud.producto_receptor.nombre }} <br>
+                <strong>Estado:</strong> {{ solicitud.estado }} <br>
+                <strong>Fecha de Solicitud:</strong> {{ solicitud.fecha_solicitud }} <br>
+                <strong>Día:</strong> {{ solicitud.dia }} {{ solicitud.fecha }} <br>
+                <strong>Horario:</strong> {{ solicitud.horario }} hs <br>
+                <strong>Sucursal:</strong> {{ solicitud.producto_solicitante.sucursal }} <strong>Ciudad:</strong> {{ solicitud.producto_solicitante.sucursal.ciudad }} <br>
+                <div class="btn-group" role="group" aria-label="Acciones">
+                  <a href="{% url 'ver_detalle' solicitud.id %}" class="btn btn-primary">Ver Detalle</a>
+                </div>
+              </li>
+            {% empty %}
+              <li class="list-group-item">No tienes ninguna solicitud ausente.</li>
+            {% endfor %}
+          </ul>
+        </div>
+
     <!-- Solicitudes Canceladas -->
     <div class="col-md-6" id="solicitudesCanceladas">
       <h3>Solicitudes Canceladas</h3>
@@ -159,12 +213,16 @@
     var mostrarAceptadas = document.getElementById('toggleAceptadas').checked;
     var mostrarRealizadas = document.getElementById('toggleRealizadas').checked;
     var mostrarCanceladas = document.getElementById('toggleCanceladas').checked;
+    var mostrarRechazadas = document.getElementById('toggleRechazadas').checked;
+    var mostrarAusentes = document.getElementById('toggleAusentes').checked;
 
     document.getElementById('solicitudesEnviadas').style.display = mostrarEnviadas ? 'block' : 'none';
     document.getElementById('solicitudesRecibidas').style.display = mostrarRecibidas ? 'block' : 'none';
     document.getElementById('solicitudesAceptadas').style.display = mostrarAceptadas ? 'block' : 'none';
     document.getElementById('solicitudesRealizadas').style.display = mostrarRealizadas ? 'block' : 'none';
     document.getElementById('solicitudesCanceladas').style.display = mostrarCanceladas ? 'block' : 'none';
+    document.getElementById('solicitudesRechazadas').style.display = mostrarRechazadas ? 'block' : 'none';
+    document.getElementById('solicitudesAusentes').style.display = mostrarAusentes ? 'block' : 'none';
   }
 
   // Inicializar la visibilidad al cargar la página

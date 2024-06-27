@@ -24,7 +24,7 @@ def estadisticas_intercambios_view(request):
     fecha_fin = datetime.strptime(fecha_fin_str, '%d-%m-%Y').date()
 
     # Obtener intercambios en el rango de fechas
-    intercambios = Intercambio.objects.filter(fecha__range=(fecha_inicio, fecha_fin))
+    intercambios = Intercambio.objects.filter(estado="realizado",fecha__range=(fecha_inicio, fecha_fin))
 
     if intercambios.exists():
         # Crear un DataFrame con los datos
@@ -52,6 +52,58 @@ def estadisticas_intercambios_view(request):
         buffer = io.BytesIO()
         plt.tight_layout()
         fig.savefig(buffer, format='png')
+        buffer.seek(0)
+        image_png = buffer.getvalue()
+        buffer.close()
+
+        graphic = base64.b64encode(image_png).decode('utf-8')
+    else:
+        graphic = None  # No hay datos para mostrar
+
+    context = {
+        'graphic': graphic,
+        'fecha_inicio': fecha_inicio_str,
+        'fecha_fin': fecha_fin_str
+    }
+    return render(request, "gestion_de_datos/estadisticas_intercambios.html", context)
+
+@super_user
+def estadisticas_intercambios_por_fecha_view(request):
+    fecha_inicio_str = request.GET.get('fecha_inicio', '01-01-2024')
+    fecha_fin_str = request.GET.get('fecha_fin', '31-12-2024')
+
+    # Convertir a objetos de fecha
+    fecha_inicio = datetime.strptime(fecha_inicio_str, '%d-%m-%Y').date()
+    fecha_fin = datetime.strptime(fecha_fin_str, '%d-%m-%Y').date()
+
+    # Obtener intercambios en el rango de fechas
+    intercambios = Intercambio.objects.filter(estado="realizado",fecha__range=(fecha_inicio, fecha_fin))
+
+    if intercambios.exists():
+        # Crear un DataFrame con los datos
+        data = {
+            'Fecha': [intercambio.fecha for intercambio in intercambios]
+        }
+        df = pd.DataFrame(data)
+
+        # Convertir la columna 'Fecha' a tipo datetime si no lo está
+        df['Fecha'] = pd.to_datetime(df['Fecha'])
+
+        # Contar intercambios por fecha
+        intercambios_por_fecha = df['Fecha'].value_counts().sort_index()
+
+        # Generar el gráfico de barras
+        plt.figure(figsize=(12, 6))
+        plt.bar(intercambios_por_fecha.index.strftime('%Y-%m-%d'), intercambios_por_fecha.values, color='skyblue')
+        plt.xlabel('Fecha')
+        plt.ylabel('Cantidad de Intercambios')
+        plt.title('Cantidad de Intercambios por Fecha')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        # Convertir el gráfico a una imagen en formato base64
+        buffer = io.BytesIO()
+        plt.savefig(buffer, format='png')
         buffer.seek(0)
         image_png = buffer.getvalue()
         buffer.close()

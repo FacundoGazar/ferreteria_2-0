@@ -5,9 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-    <title></title>
+    <title>Gestión de Datos</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     {% block content %}
 </head>
 
@@ -15,14 +14,39 @@
     <div>
         <section class="vh-100 gradient-custom d-flex justify-content-center align-items-center">
             <div class="card text-center bg-dark" style="width: 300px;">
-                <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
-                    <a type="button" class="btn btn-primary" href="{% url 'estadisticas_intercambios' %}">Ver estadisticas intercambios</a>
-                    <a type="button" class="btn btn-primary" href="{% url 'estadisticas_servicios' %}">Ver estadisticas servicios</a>
-                    <a type="button" class="btn btn-primary" href="{% url 'estadisticas_generales' %}">Ver estadisticas generales</a>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="verEstadisticasDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Ver estadísticas intercambios
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="verEstadisticasDropdown">
+                        <a class="dropdown-item" href="{% url 'estadisticas_intercambios' %}">Intercambios por sucursal</a>
+                        <a class="dropdown-item" href=#>Intercambios por fechas</a>
+                        <a class="dropdown-item" href=#>Intercambios de una sucursal</a>
+                    </div>
+                </div>
+                <div class="dropdown mt-3">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="estadisticasServiciosDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Ver estadísticas servicios
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="estadisticasServiciosDropdown">
+                        <a class="dropdown-item" href="{% url 'estadisticas_servicios' %}">Ver estadísticas servicios</a>
+                    </div>
+                </div>
+                <div class="dropdown mt-3">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="estadisticasGeneralesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Ver estadísticas generales
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="estadisticasGeneralesDropdown">
+                        <a class="dropdown-item" href="{% url 'estadisticas_generales' %}">Ver estadísticas generales</a>
+                    </div>
                 </div>
             </div>
         </section>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 {% endblock %}
 

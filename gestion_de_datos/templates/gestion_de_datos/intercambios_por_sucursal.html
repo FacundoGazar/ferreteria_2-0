@@ -1,15 +1,15 @@
 {% extends "homepage/base.html" %}
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4 text-center">Gráfico de Intercambios por sucursal</h1>
+    <h1 class="mb-4 text-center">Gráfico de intercambios por fechas</h1>
     <form class="form-inline mb-4" method="get" id="dateForm">
         <div class="form-group mr-3">
             <label for="fecha_inicio" class="mr-2">Fecha inicio:</label>
-            <input type="text" id="fecha_inicio" name="fecha_inicio" class="form-control datepicker" value="{{ fecha_inicio }}" placeholder="DD-MM-YYYY" autocomplete="off">
+            <input type="text" id="fecha_inicio" name="fecha_inicio" class="form-control datepicker" value="{{ fecha_inicio }}" placeholder="Seleccione una fecha" autocomplete="off">
         </div>
         <div class="form-group mr-3">
             <label for="fecha_fin" class="mr-2">Fecha fin:</label>
-            <input type="text" id="fecha_fin" name="fecha_fin" class="form-control datepicker" value="{{ fecha_fin }}" placeholder="DD-MM-YYYY" autocomplete="off">
+            <input type="text" id="fecha_fin" name="fecha_fin" class="form-control datepicker" value="{{ fecha_fin }}" placeholder="Seleccione una fecha" autocomplete="off">
         </div>
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </form>

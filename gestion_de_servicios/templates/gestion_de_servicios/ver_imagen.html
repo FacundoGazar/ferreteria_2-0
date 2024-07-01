@@ -11,42 +11,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
-  {% block content %}
-    <style> 
-      .carousel-item {
-        justify-content: center; 
-        align-items: center; 
-        height: 50vh; 
-    }
-  
-      .carousel-item img {
-          max-width: 100%; 
-          max-height: 100%; 
-          object-fit: contain; 
+      {% block content %}
+      <style> 
+        .carousel-item {
+          justify-content: center; 
+          align-items: center; 
+          height: 50vh; 
       }
-    </style>
-  
-    <div id="carouselExample" class="carousel slide">
-      <div class="carousel-inner">
-          <div class="carousel-item active">
-              <img src="{{ servicio.imagen.url }}" class="d-block w-100" alt="...">
-          </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-      </button>
-    </div>
-      <div class="card-body">
+    
+        .carousel-item img {
+            max-width: 100%; 
+            max-height: 100%; 
+            object-fit: contain; 
+        }
+      </style>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{{ servicio.imagen.url }}" class="d-block w-100" alt="...">
+            </div>
+        </div>
+        <div class="card-body">
 
         <div class="mb-4">
-            <h8 class="display-8">Sucursal a publicar: {{ servicio.sucursal.nombre }} - {{ servicio.sucursal.ciudad }}</h8>
+          {% if servicio.descripcion %}
+          <h6 class="display-8">Descripcion: {{ servicio.descripcion }}</h6>
+          {% endif %}
         </div>
-
+        <div class="mb-4">
+            <h8 class="display-8">Ciudad a publicar: {{ servicio.ciudad }}</h8>
+        </div>      
         <div class="mb-4">
             <h8 class="display-8">Estado: {% if servicio.estado == 'pendiente' %} Pendiente de aprobacion 
               {% elif servicio.estado == 'aceptado' %} Aceptado, ya podes pagarlo para publicarlo
@@ -56,6 +49,12 @@
 
         {% if servicio.estado == 'aceptado' %}
             <a href="{% url 'pagar_publicacion' servicio.slug %}" class="btn btn-primary">Pagar</a>
+        {% endif %}
+        {% if servicio.estado == 'pendiente' %}
+            <form method="post">
+              {% csrf_token %}
+              <button type="submit" name="accion" value="cancelar" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas Cancelar esta publicacion de Servicio?')">Cancelar</button>
+            </form>
         {% endif %}
       </div>
           

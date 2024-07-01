@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from mis_productos.models import Producto
-from iniciar_sesion import soy_cliente
+from iniciar_sesion import *
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .models import Intercambio
+from .models import Intercambio,Venta, ProductoVenta
+from catalogo.models import ProductoCatalogo
 from .forms import IntercambioForm
 from django.db.models import Q
 from datetime import datetime, timedelta
@@ -120,6 +121,19 @@ def ver_intercambios(request):
         Q(cliente_receptor=usuario_actual) | Q(cliente_solicitante=usuario_actual),
         estado="cancelado"
     )
+
+    # Solicitudes ausentes
+    solicitudes_ausentes = Intercambio.objects.filter(
+        Q(cliente_receptor=usuario_actual) | Q(cliente_solicitante=usuario_actual),
+        estado="ausente"
+    )
+
+    # Solicitudes rechazadas
+    solicitudes_rechazadas = Intercambio.objects.filter(
+        Q(cliente_receptor=usuario_actual) | Q(cliente_solicitante=usuario_actual),
+        estado="rechazada"
+    )
+
     if request.method == 'POST':
         intercambio_id = request.POST.get('intercambio_id')
         if intercambio_id:
@@ -138,6 +152,8 @@ def ver_intercambios(request):
         'solicitudes_aceptadas': solicitudes_aceptadas,
         'solicitudes_realizadas': solicitudes_realizadas,
         'solicitudes_canceladas': solicitudes_canceladas,
+        'solicitudes_ausentes': solicitudes_ausentes, 
+        'solicitudes_rechazadas': solicitudes_rechazadas, 
     }
     return render(request, "intercambiar_producto/ver_intercambios.html", context)
 
@@ -200,6 +216,7 @@ def detalle_intercambio(request, solicitud_id):
 #Tango
 
 #listar los intercambios por sucursal
+@soy_staff
 def intercambios_por_sucursal_view(request):
     try:
         empleado = PerfilEmpleado.objects.get(usuario=request.user)
@@ -229,7 +246,7 @@ def intercambios_por_sucursal_view(request):
         messages.error(request, "El usuario logueado no tiene un perfil de empleado asociado.")
         return redirect('pagina_de_error')
    
-    
+@soy_staff    
 def confirmar_intercambio_view(request, intercambio_id):
     print("llego")
     intercambio = get_object_or_404(Intercambio, id=intercambio_id)
@@ -246,9 +263,50 @@ def confirmar_intercambio_view(request, intercambio_id):
     messages.success(request, "Intercambio confirmado.")
     return redirect('intercambios_por_sucursal')
 
+@soy_staff
 def ausente_intercambio_view(request, intercambio_id):
     intercambio = get_object_or_404(Intercambio, id=intercambio_id)
     intercambio.estado = 'ausente'
     intercambio.save()
     messages.success(request, "Intercambio marcado como ausente.")
     return redirect('intercambios_por_sucursal')
+
+
+@soy_staff
+def marcar_venta_view(request, intercambio_id):
+    intercambio = get_object_or_404(Intercambio, id=intercambio_id)
+    intercambio.venta_realizada = True
+    intercambio.save()
+    messages.success(request, "Venta marcada como realizada.")
+    return redirect('registrar_venta', intercambio_id=intercambio.id)
+
+@soy_staff
+def sin_venta_view(request, intercambio_id):
+    intercambio = get_object_or_404(Intercambio, id=intercambio_id)
+    intercambio.venta_realizada = False
+    intercambio.save()
+    messages.success(request, "Intercambio marcado como sin venta.")
+    return redirect('intercambios_por_sucursal')
+
+@soy_staff
+def registrar_venta_view(request, intercambio_id):
+    intercambio = get_object_or_404(Intercambio, id=intercambio_id)
+    productos = ProductoCatalogo.objects.all()
+
+    if request.method == 'POST':
+        productos_vendidos = request.POST.getlist('producto')
+        cantidades_vendidas = request.POST.getlist('cantidad')
+        monto_total = request.POST.get('monto_total')
+
+        # Crear y guardar la venta
+        venta = Venta.objects.create(monto_total=monto_total)
+        
+        # Asociar productos a la venta
+        for producto_id, cantidad in zip(productos_vendidos, cantidades_vendidas):
+            producto = get_object_or_404(ProductoCatalogo, id=producto_id)
+            ProductoVenta.objects.create(venta=venta, producto=producto, cantidad=cantidad)
+        
+        messages.success(request, "Venta registrada exitosamente.")
+        return redirect('intercambios_por_sucursal')
+
+    return render(request, 'intercambiar_producto/registrar_venta.html', {'productos': productos, 'intercambio': intercambio})

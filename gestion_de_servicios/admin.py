@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import PagoServicio, Servicio
+from .models import PagoServicio, Servicio, Tarjeta
 
 # Register your models here.
 admin.site.register(PagoServicio)
 admin.site.register(Servicio)
+admin.site.register(Tarjeta)

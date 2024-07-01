@@ -1,0 +1,53 @@
+{% extends "homepage/base.html" %}
+
+{% block content %}
+<h2>Registrar Venta</h2>
+
+<form method="post" action="{% url 'registrar_venta' intercambio.id %}">
+    {% csrf_token %}
+
+    <div id="productos-container">
+        <div class="producto-entry">
+            <label for="producto">Producto:</label>
+            <select name="producto">
+                {% for producto in productos %}
+                <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" name="cantidad" required>
+        </div>
+    </div>
+
+    <button type="button" onclick="agregarProducto()">Agregar Producto</button>
+
+    <label for="monto_total">Monto Total:</label>
+    <input type="number" step="0.01" name="monto_total" required>
+
+    <button type="submit">Registrar Venta</button>
+</form>
+
+<script>
+    function agregarProducto() {
+        const productosContainer = document.getElementById('productos-container');
+        const newProductoEntry = document.createElement('div');
+        newProductoEntry.classList.add('producto-entry');
+
+        newProductoEntry.innerHTML = `
+        <label for="producto">Producto:</label>
+        <select name="producto">
+            {% for producto in productos %}
+                <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" name="cantidad" required>
+    `;
+
+        productosContainer.appendChild(newProductoEntry);
+    }
+</script>
+
+{% endblock %}

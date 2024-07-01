@@ -13,60 +13,91 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <form class="d-flex flex-column flex-md-row" method="GET" action=#>
-            <div class="mb-3 d-flex align-items-center me-md-3">
-              <button class="btn btn-primary" type="submit">Ver catalogo</button>
-          </div>
-          {% if request.user.is_authenticated %}
-          <form class="d-flex flex-column flex-md-row" method="GET" action=#>
-            <div class="mb-3 d-flex align-items-center me-md-3">
-              <button class="btn btn-primary" type="submit">Subir producto al catalogo</button>
-            </div>
+          {% if not request.user.is_superuser and request.user.is_staff %}
+          <form class="mb-3 me-md-3" method="GET" action="{% url 'intercambios_por_sucursal' %}">
+            <button class="btn btn-primary" type="submit">Intercambios</button>
+          </form>
           {% endif %}
-          <!-- Barra de búsqueda -->
-          {% if not request.user.is_staff %}
-          <form class="d-flex flex-column flex-md-row" method="GET" action="{% url 'buscar_productos' %}">
-            <div class="mb-3 d-flex align-items-center me-md-3">
-              <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" name="busqueda">
-              <button class="btn btn-primary" type="submit">Buscar</button>
-            </div>
-            <!-- Botones de filtros -->
-            <div class="dropdown">
-              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                Categorías
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                {% for categoria in categorias_list %}
-                <li>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{ categoria }}"
-                      id="categoria{{ forloop.counter }}" name="categorias">
-                    <label class="form-check-label" for="categoria{{ forloop.counter }}">{{ categoria }}</label>
-                  </div>
-                </li>
-                {% endfor %}
-              </ul>
-            </div>
-            <!-- Menú desplegable para Estado -->
-            <div class="dropdown mt-2 mt-md-0 ms-md-3">
-              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuEstado"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                Estado
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuEstado">
-                {% for estado in estados_list %}
-                <li>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="{{ estado }}"
-                      id="estado{{ forloop.counter }}" name="estados">
-                    <label class="form-check-label" for="estado{{ forloop.counter }}">{{ estado }}</label>
-                  </div>
-                </li>
-                {% endfor %}
-              </ul>
-            </div>
-             <!-- Menú desplegable para Sucursal -->
+        </li>
+        <li class="nav-item">
+          <!-- Barra de admins -->
+          <div class="d-flex flex-wrap justify-content-center">
+            <!-- Formulario 1: Ver catálogo y servicios -->
+            {% if not request.user.is_staff or request.user.is_superuser %}
+            <form class="mb-3 me-md-3" method="GET" action="{% url 'listar_catalogo' %}">
+              <button class="btn btn-primary" type="submit">Ver catálogo</button>
+            </form>
+            <form class="mb-3 me-md-3" method="GET" action="{% url 'servicios_publicados' %}">
+              <button class="btn btn-primary" type="submit">Ver servicios</button>
+            </form>
+            {% endif %}
+            <!-- Formulario 2: Subir producto al catálogo -->
+            {% if request.user.is_superuser %}
+            <form class="mb-3 me-md-3" method="GET" action="{% url 'subir_producto_catalogo' %}">
+              <button class="btn btn-primary" type="submit">Subir producto al catálogo</button>
+            </form>
+            {% endif %}
+
+            <!-- Formulario 3: Historial del catálogo -->
+            {% if request.user.is_superuser %}
+            <form class="mb-3 me-md-3" method="GET" action="{% url 'ver_historial' %}">
+              <button class="btn btn-primary" type="submit">Historial del catálogo</button>
+            </form>
+            {% endif %}
+
+            <!-- Formulario 4: Historial del servicios -->
+             {% if request.user.is_superuser %}
+             <form class="mb-3 me-md-3" method="GET" action="{% url 'ver_historial_servicios' %}">
+               <button class="btn btn-primary" type="submit">Historial de servicios</button>
+             </form>
+             {% endif %}
+          </div>
+
+        </li>
+        <!-- Barra de búsqueda -->
+        {% if not request.user.is_staff %}
+        <form class="d-flex flex-column flex-md-row" method="GET" action="{% url 'buscar_productos' %}">
+          <div class="mb-3 d-flex align-items-center me-md-3">
+            <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar" name="busqueda">
+            <button class="btn btn-primary" type="submit">Buscar</button>
+          </div>
+          <!-- Botones de filtros -->
+          <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Categorías
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              {% for categoria in categorias_list %}
+              <li>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="{{ categoria }}"
+                    id="categoria{{ forloop.counter }}" name="categorias">
+                  <label class="form-check-label" for="categoria{{ forloop.counter }}">{{ categoria }}</label>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          <!-- Menú desplegable para Estado -->
+          <div class="dropdown mt-2 mt-md-0 ms-md-3">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuEstado"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              Estado
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuEstado">
+              {% for estado in estados_list %}
+              <li>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="{{ estado }}" id="estado{{ forloop.counter }}"
+                    name="estados">
+                  <label class="form-check-label" for="estado{{ forloop.counter }}">{{ estado }}</label>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          <!-- Menú desplegable para Sucursal -->
           <div class="dropdown mt-2 mt-md-0 ms-md-3">
             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuSucursal"
               data-bs-toggle="dropdown" aria-expanded="false">
@@ -84,8 +115,8 @@
               {% endfor %}
             </ul>
           </div>
-          </form>
-          {% endif %}
+        </form>
+        {% endif %}
         </li>
         {% if not request.user.is_authenticated %}
         <li class="nav-item">
@@ -112,10 +143,6 @@
         <li><a class="dropdown-item" href="{% url 'mis_productos' %}">Mis Productos</a></li>
         <li><a class="dropdown-item" href="{% url 'ver_intercambios' %}">Mis Intercambios</a></li>
         <li><a class="dropdown-item" href="{% url 'mis_servicios' %}">Mis servicios</a></li>
-        {% endif %}
-        {% if not request.user.is_superuser and request.user.is_staff %}
-        <li><a class="dropdown-item" href="{% url 'intercambios_por_sucursal' %}">Intercambios por sucursal</a>
-        </li>
         {% endif %}
         <li>
           <hr class="dropdown-divider">

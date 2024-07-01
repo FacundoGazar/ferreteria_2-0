@@ -1,0 +1,16 @@
+<!-- editar_producto.html -->
+
+{% extends "homepage/base.html" %}
+{% block content %}
+<h2 class="text-center">Editar Producto</h2>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="card bg-light shadow p-4" style="background-color: rgba(255, 255, 255, 0.8);">
+    <h2 class="text-center">{{ producto.nombre }}</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary w-100">Guardar Cambios</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -17,20 +17,26 @@
 
             <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-              
-                    <div class="mr-3">
-                        <label for="sucursal" class="mr-3">Selecciona la sucursal donde podrán encontrar tu servicio</label>
-                        <select class="form-select" id="sucursal" name="sucursal" required>
-                            <option value="" selected disabled>Seleccionar Sucursal</option>
-                            {% for sucursal in sucursales %}
-                            <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>       
+                    
+                <div class="mb-3">
+                    <label for="ciudad" class="form-label">Ciudad:</label>
+                    <select class="form-select" id="ciudad" name="ciudad" required>
+                        <option value="" selected disabled>Seleccionar Ciudad</option>
+                        {% for sucursal in sucursales %}
+                        <option value="{{ sucursal.ciudad }}">{{ sucursal.ciudad }}</option>
+                        {% endfor %}
+                    </select>
+                </div>      
                 <label><strong> Formatos de imágenes admitidos: .jpg, .jpeg, .png, .gif, .bmp, .tif, .tiff, .webp, .ico, .svg </strong></label>              
                 <div class="custom-file">
                     <input type="file" id="id_imagen" name="imagen" class="custom-file-input">
-                    <label class="custom-file-label" for="id_imagen"> Selecciona el flyer para tu servicio. <strong> Recorda que debe tener algun medio para contactarte. </strong></label>
+                    <label class="custom-file-label" for="id_imagen"> Selecciona el flyer para tu servicio. <strong> Recorda agregar algun medio para contactarte. </strong></label>
+                </div>
+                <div>
+                    <label> Descripcion de tu servicio (opcional). <strong> También podés agregar acá un medio para contactarte. </strong> </label>
+                    {{ form.descripcion.label_tag }}
+                    {{ form.descripcion }}
+                    
                 </div>
                 <br></br> 
                 <input type="submit" value="Solicitar" class="btn btn-dark">

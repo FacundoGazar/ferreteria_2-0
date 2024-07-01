@@ -1,53 +1,67 @@
 {% extends "homepage/base.html" %}
-<!DOCTYPE html>
-<html lang="en">
+{% block content %}
+<style>
+    .card {
+        background-color: transparent !important; /* Hacer el fondo del card transparente */
+        border: none !important; /* Quitar el borde */
+        box-shadow: none !important; /* Quitar la sombra */
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Datos</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    {% block content %}
-</head>
+    .dropdown-menu {
+        background-color: #343a40 !important; /* Color de fondo del menú desplegable */
+        border: none !important; /* Quitar el borde */
+        box-shadow: none !important; /* Quitar la sombra */
+    }
 
-<body>
-    <div>
-        <section class="vh-100 gradient-custom d-flex justify-content-center align-items-center">
-            <div class="card text-center bg-dark" style="width: 300px;">
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="verEstadisticasDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Ver estadísticas intercambios
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="verEstadisticasDropdown">
-                        <a class="dropdown-item" href="{% url 'intercambios_por_sucursal' %}">Intercambios por sucursal</a>
-                        <a class="dropdown-item" href="{% url 'intercambios_por_fecha' %}">Intercambios por fechas</a>
-                        <a class="dropdown-item" href="{% url 'intercambios_sucursal_fecha' %}">Intercambios de una sucursal</a>
+    .dropdown-menu .dropdown-item {
+        color: #ffffff !important; /* Color de texto para los items */
+    }
+
+    .dropdown-item:hover {
+        background-color: transparent !important; /* Quitar el color de fondo al hacer hover */
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Gestión de Datos</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card text-center bg-dark">
+                <div class="card-body">
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="verEstadisticasDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Ver estadísticas intercambios
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="verEstadisticasDropdown">
+                            <a class="dropdown-item" href="{% url 'intercambios_por_sucursal' %}">Intercambios por sucursal</a>
+                            <a class="dropdown-item" href="{% url 'intercambios_por_fecha' %}">Intercambios por fechas</a>
+                            <a class="dropdown-item" href="{% url 'intercambios_sucursal_fecha' %}">Intercambios de una sucursal</a>
+                        </div>
                     </div>
-                </div>
-                <div class="dropdown mt-3">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="estadisticasServiciosDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Ver estadísticas servicios
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="estadisticasServiciosDropdown">
-                        <a class="dropdown-item" href="{% url 'estadisticas_servicios' %}">Ver estadísticas servicios</a>
+                    <div class="dropdown mt-3">
+                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="estadisticasServiciosDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Ver estadísticas servicios
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="estadisticasServiciosDropdown">
+                            <a class="dropdown-item" href="{% url 'estadisticas_servicios' %}">Ver estadísticas servicios</a>
+                        </div>
                     </div>
-                </div>
-                <div class="dropdown mt-3">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="estadisticasGeneralesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Ver estadísticas generales
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="estadisticasGeneralesDropdown">
-                        <a class="dropdown-item" href="{% url 'estadisticas_generales' %}">Ver estadísticas generales</a>
+                    <div class="dropdown mt-3">
+                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="estadisticasGeneralesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Ver estadísticas generales
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="estadisticasGeneralesDropdown">
+                            <a class="dropdown-item" href="{% url 'estadisticas_generales' %}">Ver estadísticas generales</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
+</div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 {% endblock %}
-
-</html>

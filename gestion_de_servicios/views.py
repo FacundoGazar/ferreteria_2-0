@@ -183,12 +183,26 @@ def pagar_publicacion_view(request, slug):
 
 @super_user 
 def listar_solicitudes_clientes_view(request):    
-    queryset = Servicio.objects.filter(Q(estado="pendiente") | Q(estado="publicado"))
+    queryset = Servicio.objects.filter(visible=True, estado__in=['pendiente', 'publicado'])
     context = {
         "lista": queryset
     }
-    
     return render(request, "gestion_de_servicios/listar_solicitudes_clientes.html", context)
+
+@super_user 
+def eliminar_servicio_view(request, slug):
+    servicio = Servicio.objects.get(slug=slug)
+    servicio.visible = False
+    servicio.save()
+    return redirect('listar_solicitudes_clientes')
+
+@super_user 
+def ver_historial_view(request):    
+    queryset = Servicio.objects.filter(visible=False)
+    context = {
+        "lista": queryset
+    }
+    return render(request, "gestion_de_servicios/ver_historial.html", context)
 
 @super_user 
 def evaluar_servicio_view(request, slug):

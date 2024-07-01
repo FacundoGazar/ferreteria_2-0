@@ -41,11 +41,20 @@ class Servicio(models.Model):
     descripcion = models.TextField(null=True, blank=True)
     slug = models.SlugField(null=True, blank=True)    
     pago = models.ForeignKey(PagoServicio, on_delete=models.CASCADE, null=True, blank=True)
+    fechaFin = models.DateField(null=True, blank=True)
+    visible = models.BooleanField(default=True)  
 
     def save(self, *args, **kwargs):
+        self.fechaFin = timezone.now().date() + timedelta(days=30)
         self.slug = slugify(str(self.id) + "-" + str(self.imagen))
         return super().save(*args , **kwargs)
 
     def __str__(self):
         return str(self.id) 
+    
+    @property
+    def puede_eliminar(self):
+        if self.fechaFin:
+            return self.fechaFin <= timezone.now().date()
+        return False
     

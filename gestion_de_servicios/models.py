@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User 
 from django.utils.text import slugify 
 from gestion_de_sucursales.models import Sucursal 
+from django.utils import timezone
+from datetime import timedelta
 
 class Tarjeta(models.Model):
     id = models.AutoField(primary_key=True)

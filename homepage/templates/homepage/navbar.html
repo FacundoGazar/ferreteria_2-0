@@ -44,6 +44,13 @@
               <button class="btn btn-primary" type="submit">Historial del catálogo</button>
             </form>
             {% endif %}
+
+            <!-- Formulario 4: Historial del servicios -->
+             {% if request.user.is_superuser %}
+             <form class="mb-3 me-md-3" method="GET" action="{% url 'ver_historial_servicios' %}">
+               <button class="btn btn-primary" type="submit">Historial de servicios</button>
+             </form>
+             {% endif %}
           </div>
 
         </li>

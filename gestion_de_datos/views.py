@@ -372,7 +372,6 @@ def estadisticas_intercambios_sucursal_fecha_view(request):
     return render(request, "gestion_de_datos/intercambios_sucursal_fecha.html", context)
 
 @super_user
-@super_user
 def estadisticas_intercambios_por_categoria_view(request):
     fecha_inicio_str = request.GET.get('fecha_inicio')
     fecha_fin_str = request.GET.get('fecha_fin')
@@ -402,14 +401,12 @@ def estadisticas_intercambios_por_categoria_view(request):
                 total_intercambios = intercambios_por_categoria.sum()
                 porcentajes = (intercambios_por_categoria / total_intercambios) * 100
 
+                # Crear etiquetas con el nombre de la categoría y el porcentaje
+                etiquetas = [f'{categoria} ({porcentaje:.1f}%)' for categoria, porcentaje in zip(intercambios_por_categoria.index, porcentajes)]
+
                 # Generar el gráfico de barras
                 plt.figure(figsize=(12, 6))
-                bars = plt.bar(intercambios_por_categoria.index, intercambios_por_categoria.values, color=['skyblue', 'orange', 'green', 'red', 'purple', 'brown'])
-
-                # Añadir etiquetas con el porcentaje encima de cada barra
-                for bar, porcentaje in zip(bars, porcentajes):
-                    yval = bar.get_height()
-                    plt.text(bar.get_x() + bar.get_width() / 2, yval + 0.5, f'{yval} ({porcentaje:.1f}%)', ha='center', va='bottom', fontsize=10)
+                plt.bar(etiquetas, intercambios_por_categoria.values, color=['skyblue', 'orange', 'green', 'red', 'purple', 'brown'])
 
                 plt.xlabel('Categoría', fontsize=12)
                 plt.ylabel('Cantidad de Intercambios', fontsize=12)
@@ -442,7 +439,80 @@ def estadisticas_intercambios_por_categoria_view(request):
     }
     return render(request, "gestion_de_datos/intercambios_por_categoria.html", context)
 
+@super_user
+def estadisticas_intercambios_por_categoria_sucursal_view(request):
+    # Obtener la sucursal seleccionada del formulario (si se envía)
+    sucursal_seleccionada = request.GET.get('sucursal', None)
+    
+    fecha_inicio_str = request.GET.get('fecha_inicio')
+    fecha_fin_str = request.GET.get('fecha_fin')
 
+    graphic = None
+
+    if sucursal_seleccionada and fecha_inicio_str and fecha_fin_str:
+        try:
+            # Convertir a objetos de fecha
+            fecha_inicio = datetime.strptime(fecha_inicio_str, '%d-%m-%Y').date()
+            fecha_fin = datetime.strptime(fecha_fin_str, '%d-%m-%Y').date()
+
+            # Obtener intercambios en el rango de fechas
+            intercambios = Intercambio.objects.filter(producto_receptor__sucursal=sucursal_seleccionada,
+                                                      estado="realizado", fecha__range=(fecha_inicio, fecha_fin))
+
+            if intercambios.exists():
+                # Crear un DataFrame con los datos
+                data = {
+                    'Categoria': [intercambio.producto_solicitante.categoria for intercambio in intercambios]
+                }
+                df = pd.DataFrame(data)
+
+                # Contar intercambios por categoría
+                intercambios_por_categoria = df['Categoria'].value_counts().sort_index()
+
+                # Calcular el porcentaje de intercambios por categoría
+                total_intercambios = intercambios_por_categoria.sum()
+                porcentajes = (intercambios_por_categoria / total_intercambios) * 100
+
+                # Crear etiquetas con el nombre de la categoría y el porcentaje
+                etiquetas = [f'{categoria} ({porcentaje:.1f}%)' for categoria, porcentaje in zip(intercambios_por_categoria.index, porcentajes)]
+
+                # Generar el gráfico de barras
+                plt.figure(figsize=(12, 6))
+                plt.bar(etiquetas, intercambios_por_categoria.values, color=['skyblue', 'orange', 'green', 'red', 'purple', 'brown'])
+
+                plt.xlabel('Categoría', fontsize=12)
+                plt.ylabel('Cantidad de Intercambios', fontsize=12)
+                plt.title(f'Cantidad de Intercambios de la sucursal {sucursal_seleccionada} por Categoría', fontsize=14)
+                plt.xticks(rotation=45, fontsize=10)
+                plt.yticks(fontsize=10)
+                plt.grid(True, axis='y', linestyle='--', linewidth=0.5, alpha=0.7)  # Añadir rejilla horizontal
+                plt.tight_layout()
+
+                # Convertir el gráfico a una imagen en formato base64
+                buffer = io.BytesIO()
+                plt.savefig(buffer, format='png')
+                buffer.seek(0)
+                image_png = buffer.getvalue()
+                buffer.close()
+
+                graphic = base64.b64encode(image_png).decode('utf-8')
+        except ValueError:
+            messages.error(request, 'Formato de fecha incorrecto. Use DD-MM-YYYY.')
+    else:
+        if not sucursal_seleccionada:
+            messages.error(request, 'Por favor, seleccione una sucursal.')
+        if not fecha_inicio_str:
+            messages.error(request, 'Por favor, complete la fecha de inicio.')
+        if not fecha_fin_str:
+            messages.error(request, 'Por favor, complete la fecha de fin.')
+
+    context = {
+        'graphic': graphic,
+        'fecha_inicio': fecha_inicio_str or '',
+        'fecha_fin': fecha_fin_str or '',
+        'sucursal_seleccionada': sucursal_seleccionada,
+    }
+    return render(request, "gestion_de_datos/intercambios_por_categoria_sucursal.html", context)
 
 @super_user
 def estadisticas_generales_view(request):

@@ -11,4 +11,5 @@ urlpatterns = [
     path("servicios_ciudad_tiempo/", servicios_ciudad_tiempo_view, name='servicios_ciudad_tiempo'),
     path("estadisticas_generales/", estadisticas_generales_view, name='estadisticas_generales'),
     path("intercambios_categoria/", estadisticas_intercambios_por_categoria_view, name='intercambios_categoria'),
+    path("intercambios_categoria_sucursal/", estadisticas_intercambios_por_categoria_sucursal_view, name='intercambios_categoria_sucursal'),
 ]

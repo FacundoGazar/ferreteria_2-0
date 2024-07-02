@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from mis_productos.models import Producto
 from catalogo.models import ProductoCatalogo
+from gestion_de_sucursales.models import Sucursal
 class Intercambio(models.Model):
     ESTADOS = (
         ('pendiente', 'Pendiente'),
@@ -34,7 +35,7 @@ class Venta(models.Model):
     productos = models.ManyToManyField(ProductoCatalogo, through='ProductoVenta')
     fecha = models.DateTimeField(auto_now_add=True)
     monto_total = models.DecimalField(max_digits=10, decimal_places=2)
-
+    sucursal = models.ForeignKey(Sucursal, on_delete=models.CASCADE,null=True, blank=True)
     def __str__(self):
         return f"Venta {self.id} - {self.fecha} - ${self.monto_total}"
 

@@ -5,10 +5,11 @@ from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from gestion_de_servicios.models import *
-from intercambiar_producto.models import Intercambio
+from intercambiar_producto.models import Intercambio,Venta
 import pandas as pd
 from iniciar_sesion import *
 from django.contrib import messages
+
 
 # Create your views here.
 @super_user
@@ -517,3 +518,19 @@ def estadisticas_intercambios_por_categoria_sucursal_view(request):
 @super_user
 def estadisticas_generales_view(request):
     return render(request, "gestion_de_datos/estadisticas_generales.html")
+
+def ventas_dashboard_view(request):
+    total_ventas = Venta.objects.count()
+    total_trueques = Intercambio.objects.count()
+    
+    if total_trueques > 0:
+        relacion_trueques_ventas = total_ventas / total_trueques
+    else:
+        relacion_trueques_ventas = None  
+
+    context = {
+        'total_ventas': total_ventas,
+        'total_trueques': total_trueques,
+        'relacion_trueques_ventas': relacion_trueques_ventas,
+    }
+    return render(request, 'gestion_de_datos/ventas_dashboard.html', context)

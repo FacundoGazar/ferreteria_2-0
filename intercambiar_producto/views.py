@@ -10,6 +10,7 @@ from django.db.models import Q
 from datetime import datetime, timedelta
 from gestion_de_sucursales.models import PerfilEmpleado
 from django.utils import timezone
+from gestion_de_sucursales.models import Sucursal
 
 
 @soy_cliente
@@ -218,7 +219,6 @@ def detalle_intercambio(request, solicitud_id):
 #listar los intercambios por sucursal
 @soy_staff
 def intercambios_por_sucursal_view(request):
-    print("llego")
     try:
         empleado = PerfilEmpleado.objects.get(usuario=request.user)
         sucursal = empleado.sucursal
@@ -297,9 +297,12 @@ def registrar_venta_view(request, intercambio_id):
         productos_vendidos = request.POST.getlist('producto')
         cantidades_vendidas = request.POST.getlist('cantidad')
         monto_total = request.POST.get('monto_total')
+        sucursal_id = request.POST.get('sucursal')  # Obtener la sucursal seleccionada
 
-        # Crear y guardar la venta
-        venta = Venta.objects.create(monto_total=monto_total)
+        sucursal = get_object_or_404(Sucursal, id=sucursal_id)  # Obtener la instancia de la sucursal
+
+        # Crear y guardar la venta con la sucursal
+        venta = Venta.objects.create(monto_total=monto_total, sucursal=sucursal)
         
         # Asociar productos a la venta
         for producto_id, cantidad in zip(productos_vendidos, cantidades_vendidas):
@@ -309,4 +312,5 @@ def registrar_venta_view(request, intercambio_id):
         messages.success(request, "Venta registrada exitosamente.")
         return redirect('intercambios_por_sucursal')
 
-    return render(request, 'intercambiar_producto/registrar_venta.html', {'productos': productos, 'intercambio': intercambio})
+    sucursales = Sucursal.objects.all()  # Obtener todas las sucursales para el formulario
+    return render(request, 'intercambiar_producto/registrar_venta.html', {'productos': productos, 'intercambio': intercambio, 'sucursales': sucursales})

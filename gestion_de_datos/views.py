@@ -260,7 +260,6 @@ def estadisticas_intercambios_sucursal_fecha_view(request):
     return render(request, "gestion_de_datos/intercambios_sucursal_fecha.html", context)
 
 @super_user
-@super_user
 def estadisticas_intercambios_por_categoria_view(request):
     fecha_inicio_str = request.GET.get('fecha_inicio')
     fecha_fin_str = request.GET.get('fecha_fin')
@@ -290,14 +289,12 @@ def estadisticas_intercambios_por_categoria_view(request):
                 total_intercambios = intercambios_por_categoria.sum()
                 porcentajes = (intercambios_por_categoria / total_intercambios) * 100
 
+                # Crear etiquetas con el nombre de la categoría y el porcentaje
+                etiquetas = [f'{categoria} ({porcentaje:.1f}%)' for categoria, porcentaje in zip(intercambios_por_categoria.index, porcentajes)]
+
                 # Generar el gráfico de barras
                 plt.figure(figsize=(12, 6))
-                bars = plt.bar(intercambios_por_categoria.index, intercambios_por_categoria.values, color=['skyblue', 'orange', 'green', 'red', 'purple', 'brown'])
-
-                # Añadir etiquetas con el porcentaje encima de cada barra
-                for bar, porcentaje in zip(bars, porcentajes):
-                    yval = bar.get_height()
-                    plt.text(bar.get_x() + bar.get_width() / 2, yval + 0.5, f'{yval} ({porcentaje:.1f}%)', ha='center', va='bottom', fontsize=10)
+                plt.bar(etiquetas, intercambios_por_categoria.values, color=['skyblue', 'orange', 'green', 'red', 'purple', 'brown'])
 
                 plt.xlabel('Categoría', fontsize=12)
                 plt.ylabel('Cantidad de Intercambios', fontsize=12)

@@ -218,10 +218,10 @@ def detalle_intercambio(request, solicitud_id):
 #listar los intercambios por sucursal
 @soy_staff
 def intercambios_por_sucursal_view(request):
+    print("llego")
     try:
         empleado = PerfilEmpleado.objects.get(usuario=request.user)
         sucursal = empleado.sucursal
-
         # Obtener la fecha del formulario si está presente, de lo contrario usar la fecha actual
         fecha_seleccionada = request.GET.get('fecha')
         if fecha_seleccionada:

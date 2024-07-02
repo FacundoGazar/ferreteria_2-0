@@ -15,7 +15,7 @@
         <li class="nav-item">
           {% if not request.user.is_superuser and request.user.is_staff %}
           <form class="mb-3 me-md-3" method="GET" action="{% url 'intercambios_por_sucursal' %}">
-            <button class="btn btn-primary" type="submit">Intercambios</button>
+            <button class="btn btn-primary" type="submit">Test</button>
           </form>
           {% endif %}
         </li>
@@ -46,11 +46,11 @@
             {% endif %}
 
             <!-- Formulario 4: Historial del servicios -->
-             {% if request.user.is_superuser %}
-             <form class="mb-3 me-md-3" method="GET" action="{% url 'ver_historial_servicios' %}">
-               <button class="btn btn-primary" type="submit">Historial de servicios</button>
-             </form>
-             {% endif %}
+            {% if request.user.is_superuser %}
+            <form class="mb-3 me-md-3" method="GET" action="{% url 'ver_historial_servicios' %}">
+              <button class="btn btn-primary" type="submit">Historial de servicios</button>
+            </form>
+            {% endif %}
           </div>
 
         </li>

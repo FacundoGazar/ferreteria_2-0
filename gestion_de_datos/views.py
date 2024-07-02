@@ -4,7 +4,7 @@ import base64
 from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
-from gestion_de_servicios.models import PagoServicio
+from gestion_de_servicios.models import *
 from intercambiar_producto.models import Intercambio
 import pandas as pd
 from iniciar_sesion import *
@@ -141,53 +141,165 @@ def estadisticas_intercambios_por_fecha_view(request):
     return render(request, "gestion_de_datos/intercambios_por_fecha.html", context)
 
 @super_user
-def estadisticas_servicios_view(request):    
-    # Rango de fechas - ejemplo: del 1 de enero de 2023 al 31 de diciembre de 2023
-    fecha_inicio = request.GET.get('fecha_inicio', '01-01-2024')
-    fecha_fin = request.GET.get('fecha_fin', '31-12-2024')
+def servicios_tiempo_view(request):    
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+    graphic = None
+    if fecha_inicio and fecha_fin:
+        try:
+            fecha_inicio = datetime.strptime(fecha_inicio, '%d-%m-%Y').date()
+            fecha_fin = datetime.strptime(fecha_fin, '%d-%m-%Y').date()
 
-    # Convertir a objetos de fecha
-    fecha_inicio = datetime.strptime(fecha_inicio, '%d-%m-%Y').date()
-    fecha_fin = datetime.strptime(fecha_fin, '%d-%m-%Y').date()
+            pagos = PagoServicio.objects.filter(fecha__range=(fecha_inicio, fecha_fin))
 
-    # Obtener pagos en el rango de fechas
-    pagos = PagoServicio.objects.filter(fecha__range=(fecha_inicio, fecha_fin))
+            data = {
+                'Fecha': [pago.fecha.strftime('%d-%m-%Y') for pago in pagos],
+                'Monto': [pago.monto for pago in pagos]
+            }
+            df = pd.DataFrame(data)
+            
+            df = df.groupby('Fecha').sum().reset_index()
 
-    # Crear un DataFrame con los datos
-    data = {
-        'Fecha': [pago.fecha.strftime('%d-%m-%Y') for pago in pagos],
-        'Monto': [pago.monto for pago in pagos]
-    }
-    df = pd.DataFrame(data)
-    
-    # Agrupar por fecha y sumar los montos
-    df = df.groupby('Fecha').sum().reset_index()
+            fig, ax = plt.subplots()
+            ax.bar(df['Fecha'], df['Monto'])
+            ax.set_xlabel('Fecha')
+            ax.set_ylabel('Monto acumulado')
+            ax.set_title('Monto acumulado por fecha')
 
-    # Generar el gráfico
-    fig, ax = plt.subplots()
-    ax.bar(df['Fecha'], df['Monto'])
-    ax.set_xlabel('Fecha')
-    ax.set_ylabel('Monto acumulado')
-    ax.set_title('Monto acumulado por fecha')
+            buffer = io.BytesIO()
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            fig.savefig(buffer, format='png')
+            buffer.seek(0)
+            image_png = buffer.getvalue()
+            buffer.close()
 
-    # Convertir el gráfico a una imagen en formato base64
-    buffer = io.BytesIO()
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    fig.savefig(buffer, format='png')
-    buffer.seek(0)
-    image_png = buffer.getvalue()
-    buffer.close()
-
-    graphic = base64.b64encode(image_png)
-    graphic = graphic.decode('utf-8')
+            graphic = base64.b64encode(image_png)
+            graphic = graphic.decode('utf-8')
+        except ValueError:
+            messages.error(request, 'Formato de fecha incorrecto. Use DD-MM-YYYY.')
+    else:
+        if not fecha_inicio:
+            messages.error(request, 'Por favor, complete la fecha de inicio.')
+        if not fecha_fin:
+            messages.error(request, 'Por favor, complete la fecha de fin.')
 
     context = {
         'graphic': graphic,
-        'fecha_inicio': fecha_inicio.strftime('%d-%m-%Y'),
-        'fecha_fin': fecha_fin.strftime('%d-%m-%Y')
+        'fecha_inicio': fecha_inicio or '',
+        'fecha_fin': fecha_fin or ''
     }
-    return render(request, "gestion_de_datos/estadisticas_servicios.html", context)
+    return render(request, "gestion_de_datos/servicios_tiempo.html", context)
+
+
+@super_user
+def servicios_ciudad_view(request):    
+    ciudad_seleccionada = request.GET.get('ciudad', None)    
+    sucursales = Sucursal.objects.all()
+    graphic = None
+    if ciudad_seleccionada:
+        try:
+            servicios = Servicio.objects.filter(ciudad=ciudad_seleccionada,estado="publicado")
+            if servicios.exists():
+                data = {
+                    'Ciudad': [servicio.ciudad for servicio in servicios],
+                    'Monto': [servicio.pago.monto for servicio in servicios]
+                }
+                df = pd.DataFrame(data)
+                
+                df = df.groupby('Ciudad').sum().reset_index()
+
+                # Generar el gráfico de torta
+                fig, ax = plt.subplots()
+                pie = ax.pie(df['Monto'], labels=df['Ciudad'], autopct='%1.1f%%', startangle=90)
+                ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+                ax.set_title(f'Proporción de Ingresos de servicios en la ciudad {ciudad_seleccionada}')
+                
+                # Agregar la cantidad de intercambios al lado del gráfico
+                total_monto = sum(df['Monto'])
+                legend_labels = [f'{ciudad}: {monto} servicios' for ciudad, monto in zip(df['Ciudad'], df['Cantidad'])]
+                ax.legend(pie[0], legend_labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+
+                # Convertir el gráfico a una imagen en formato base64
+                buffer = io.BytesIO()
+                plt.tight_layout()
+                fig.savefig(buffer, format='png')
+                buffer.seek(0)
+                image_png = buffer.getvalue()
+                buffer.close()
+
+                graphic = base64.b64encode(image_png).decode('utf-8')
+        except ValueError:
+            messages.error(request, 'Hubo un error')
+    else:
+        if not ciudad_seleccionada:
+            messages.error(request, 'Por favor, complete la ciudad.')
+
+    context = {
+        'graphic': graphic,
+        'ciudad_seleccionada': ciudad_seleccionada,
+        "sucursales": sucursales
+    }
+    return render(request, "gestion_de_datos/servicios_ciudad.html", context)
+
+
+@super_user
+def servicios_ciudad_tiempo_view(request):        
+    ciudad_seleccionada = request.GET.get('ciudad', None)    
+    sucursales = Sucursal.objects.all()
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+    graphic = None
+    if fecha_inicio and fecha_fin and ciudad_seleccionada:
+        try:
+            fecha_inicio = datetime.strptime(fecha_inicio, '%d-%m-%Y').date()
+            fecha_fin = datetime.strptime(fecha_fin, '%d-%m-%Y').date()
+
+            servicios = Servicio.objects.filter(ciudad=ciudad_seleccionada,estado="publicado")
+            if servicios.exists():
+                data = {
+                    'Fecha': [servicio.fecha.strftime('%d-%m-%Y') for servicio in servicios],
+                    'Ciudad': [servicio.ciudad for servicio in servicios],
+                    'Monto': [servicio.pago.monto for servicio in servicios]
+                }
+                df = pd.DataFrame(data)
+                
+                df = df.groupby('Fecha').sum().reset_index()
+
+                fig, ax = plt.subplots()
+                ax.bar(df['Fecha'], df['Monto'])
+                ax.set_xlabel('Fecha')
+                ax.set_ylabel('Monto acumulado')
+                ax.set_title('Monto acumulado por fecha')
+
+                buffer = io.BytesIO()
+                plt.xticks(rotation=45)
+                plt.tight_layout()
+                fig.savefig(buffer, format='png')
+                buffer.seek(0)
+                image_png = buffer.getvalue()
+                buffer.close()
+
+                graphic = base64.b64encode(image_png)
+                graphic = graphic.decode('utf-8')
+        except ValueError:
+            messages.error(request, 'Formato de fecha incorrecto. Use DD-MM-YYYY.')
+    else:
+        if not fecha_inicio:
+            messages.error(request, 'Por favor, complete la fecha de inicio.')
+        if not fecha_fin:
+            messages.error(request, 'Por favor, complete la fecha de fin.')
+        if not ciudad_seleccionada:
+            messages.error(request, 'Por favor, complete la ciudad.')
+
+    context = {
+        'graphic': graphic,
+        'fecha_inicio': fecha_inicio or '',
+        'fecha_fin': fecha_fin or '',        
+        'ciudad_seleccionada': ciudad_seleccionada,
+        "sucursales": sucursales
+    }
+    return render(request, "gestion_de_datos/servicios_ciudad_tiempo.html", context)
 
 # Vista para estadísticas de intercambios por sucursal y fecha
 @super_user

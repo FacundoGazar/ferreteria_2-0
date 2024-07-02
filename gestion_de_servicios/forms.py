@@ -1,7 +1,14 @@
 from django import forms
 from django.forms import ModelForm
 from .models import Servicio
+from .models import ConfiguracionServicio
 
+class ConfiguracionServicioForm(forms.ModelForm):
+    class Meta:
+        model = ConfiguracionServicio
+        fields = ['costo_publicacion', 'duracion_publicacion_dias']
+
+        
 class ServicioForm(ModelForm):
     class Meta():
         model = Servicio

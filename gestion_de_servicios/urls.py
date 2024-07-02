@@ -13,4 +13,5 @@ urlpatterns = [
     path('servicios_publicados', servicios_publicados_view, name='servicios_publicados'),
     path("historial_servicios/", ver_historial_view, name='ver_historial_servicios'),
     path("eliminar_servicio/<slug:slug>/", eliminar_servicio_view, name='eliminar_servicio'),
+    path('configuracion-servicio/', configuracion_servicio, name='configuracion_servicio'),
 ]

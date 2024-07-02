@@ -5,6 +5,20 @@ from gestion_de_sucursales.models import Sucursal
 from django.utils import timezone
 from datetime import timedelta
 
+class ConfiguracionServicio(models.Model):
+    costo_publicacion = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    duracion_publicacion_dias = models.IntegerField(default=30)
+
+    def __str__(self):
+        return f"Configuración de Servicio"
+
+    @classmethod
+    def get_solo_instance(cls):
+        # Obtener o crear la única instancia de ConfiguracionServicio
+        instance, created = cls.objects.get_or_create(pk=1)
+        return instance
+
+
 class Tarjeta(models.Model):
     id = models.AutoField(primary_key=True)
     nombre_apellido = models.CharField(max_length=100)

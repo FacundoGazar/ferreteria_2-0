@@ -9,6 +9,8 @@ from PIL import Image, ImageChops
 from django.core.mail import send_mail
 from iniciar_sesion.decoradores import *
 from django.db.models import Q
+from .models import ConfiguracionServicio
+from .forms import ConfiguracionServicioForm
 
 # Create your views here.
 @soy_cliente
@@ -245,6 +247,17 @@ def mandar_motivo_view(request, slug):
     return render(request, "gestion_de_servicios/mandar_motivo.html", context)
 
 def servicios_publicados_view(request):
-    print("llego")
     servicios_publicados = Servicio.objects.filter(estado='publicado')
     return render(request, 'gestion_de_servicios/servicios_publicados.html', {'servicios': servicios_publicados})
+
+def configuracion_servicio(request):
+    configuracion = ConfiguracionServicio.get_solo_instance()
+    if request.method == 'POST':
+        form = ConfiguracionServicioForm(request.POST, instance=configuracion)
+        if form.is_valid():
+            form.save()
+            return redirect('configuracion_servicio')
+    else:
+        form = ConfiguracionServicioForm(instance=configuracion)
+    
+    return render(request, 'gestion_de_servicios/config.html', {'form': form})

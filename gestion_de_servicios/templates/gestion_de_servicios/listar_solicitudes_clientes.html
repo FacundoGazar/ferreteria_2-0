@@ -1,6 +1,7 @@
 {% extends "homepage/base.html" %}
 
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,31 +9,36 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+
 <body>
-{% block content %}
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    {% if lista %}
+    {% block content %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% if lista %}
         {% for servicio in lista %}
-            <div class="col">
-                <div class="card">
-                    <img src="{{ servicio.imagen.url }}" class="card-img-top img-thumbnail" style="height: 300px;">
-                    <div class="card-body">
-                        <h5 class="card-title"></h5>
-                        {% if servicio.estado == 'pendiente' %}
-                            <a href="{% url 'evaluar_servicio' servicio.slug %}" class="btn btn-primary stretched-link">Evaluar</a>
-                        {% endif %}
-                        {% if servicio.estado == 'publicado' and servicio.puede_eliminar %}
-                            <a href="{% url 'eliminar_servicio' servicio.slug %}" class="btn btn-danger btn-sm mt-2" onclick="return confirm('¿Estás seguro de que deseas eliminar el servicio?');">Eliminar</a>
-                        {% endif %}
-                        <p><strong>Fecha de Fin:</strong> {{ servicio.fechaFin }}</p>
-                    </div>
+        <div class="col">
+            <div class="card">
+                <img src="{{ servicio.imagen.url }}" class="card-img-top img-thumbnail" style="height: 300px;">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    {% if servicio.estado == 'pendiente' %}
+                    <a href="{% url 'evaluar_servicio' servicio.slug %}"
+                        class="btn btn-primary stretched-link">Evaluar</a>
+                    {% endif %}
+                    {% if servicio.estado == 'publicado' and servicio.puede_eliminar %}
+                    <a href="{% url 'eliminar_servicio' servicio.slug %}" class="btn btn-danger btn-sm mt-2"
+                        onclick="return confirm('¿Estás seguro de que deseas eliminar el servicio?');">Eliminar</a>
+                    {% endif %}
+                    <p><strong>Fecha de Fin:</strong> {{ servicio.fechaFin }}</p>
                 </div>
             </div>
+        </div>
         {% endfor %}
-    {% else %}
+        {% else %}
         <h1 class="display-1">No hay solicitudes pendientes</h1>
-    {% endif %}
-</div>
-{% endblock %}
+        {% endif %}
+    </div>
+    <a href="{% url 'configuracion_servicio'  %}" class="btn btn-primary stretched-link">Configuración</a>
+    {% endblock %}
 </body>
+
 </html>

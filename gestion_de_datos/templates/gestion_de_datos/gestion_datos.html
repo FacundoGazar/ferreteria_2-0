@@ -2,23 +2,47 @@
 {% block content %}
 <style>
     .card {
-        background-color: transparent !important; /* Hacer el fondo del card transparente */
-        border: none !important; /* Quitar el borde */
-        box-shadow: none !important; /* Quitar la sombra */
+        background-color: transparent !important;
+        /* Hacer el fondo del card transparente */
+        border: none !important;
+        /* Quitar el borde */
+        box-shadow: none !important;
+        /* Quitar la sombra */
     }
 
     .dropdown-menu {
-        background-color: #343a40 !important; /* Color de fondo del menú desplegable */
-        border: none !important; /* Quitar el borde */
-        box-shadow: none !important; /* Quitar la sombra */
+        background-color: #343a40 !important;
+        /* Color de fondo del menú desplegable */
+        border: none !important;
+        /* Quitar el borde */
+        box-shadow: none !important;
+        /* Quitar la sombra */
     }
 
     .dropdown-menu .dropdown-item {
-        color: #ffffff !important; /* Color de texto para los items */
+        color: #ffffff !important;
+        /* Color de texto para los items */
     }
 
     .dropdown-item:hover {
-        background-color: transparent !important; /* Quitar el color de fondo al hacer hover */
+        background-color: transparent !important;
+        /* Quitar el color de fondo al hacer hover */
+    }
+
+    .button-container {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        text-align: center;
+    }
+
+    .btn-large {
+        width: 300px;
+        height: 70px;
+        font-size: 24px;
+        margin-bottom: 300px;
     }
 </style>
 
@@ -29,41 +53,60 @@
             <div class="card text-center bg-dark">
                 <div class="card-body">
                     <div class="dropdown">
-                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="verEstadisticasDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button"
+                            id="verEstadisticasDropdown" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
                             Ver estadísticas intercambios
                         </button>
                         <div class="dropdown-menu" aria-labelledby="verEstadisticasDropdown">
-                            <a class="dropdown-item" href="{% url 'intercambios_por_sucursal' %}">Intercambios por sucursal</a>
-                            <a class="dropdown-item" href="{% url 'intercambios_por_fecha' %}">Intercambios por fechas</a>
-                            <a class="dropdown-item" href="{% url 'intercambios_sucursal_fecha' %}">Intercambios de una sucursal</a>
-                            <a class="dropdown-item" href="{% url 'intercambios_categoria' %}">Intercambios por categoria</a>
-                            <a class="dropdown-item" href="{% url 'intercambios_categoria_sucursal' %}">Intercambios por categoria de una sucursal</a>
+                            <a class="dropdown-item" href="{% url 'intercambios_por_sucursal' %}">Intercambios por
+                                sucursal</a>
+                            <a class="dropdown-item" href="{% url 'intercambios_por_fecha' %}">Intercambios por
+                                fechas</a>
+                            <a class="dropdown-item" href="{% url 'intercambios_sucursal_fecha' %}">Intercambios de una
+                                sucursal</a>
+                            <a class="dropdown-item" href="{% url 'intercambios_categoria' %}">Intercambios por
+                                categoria</a>
+                            <a class="dropdown-item" href="{% url 'intercambios_categoria_sucursal' %}">Intercambios por
+                                categoria de una sucursal</a>
                         </div>
                     </div>
                     <div class="dropdown mt-3">
-                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="estadisticasServiciosDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button"
+                            id="estadisticasServiciosDropdown" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
                             Ver estadísticas servicios
                         </button>
                         <div class="dropdown-menu" aria-labelledby="estadisticasServiciosDropdown">
-                            <a class="dropdown-item" href="{% url 'servicios_tiempo' %}">Ingresos por servicios en el tiempo</a>
-                            <a class="dropdown-item" href="{% url 'servicios_ciudad' %}">Ingresos por servicios por ciudad</a>
-                            <a class="dropdown-item" href="{% url 'servicios_ciudad_tiempo' %}">Ingresos por servicios por ciudad en el tiempo</a>
+                            <a class="dropdown-item" href="{% url 'servicios_tiempo' %}">Ingresos por servicios en el
+                                tiempo</a>
+                            <a class="dropdown-item" href="{% url 'servicios_ciudad' %}">Ingresos por servicios por
+                                ciudad</a>
+                            <a class="dropdown-item" href="{% url 'servicios_ciudad_tiempo' %}">Ingresos por servicios
+                                por ciudad en el tiempo</a>
                         </div>
                     </div>
                     <div class="dropdown mt-3">
-                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button" id="estadisticasGeneralesDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button"
+                            id="estadisticasGeneralesDropdown" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
                             Ver estadísticas generales
                         </button>
                         <div class="dropdown-menu" aria-labelledby="estadisticasGeneralesDropdown">
-                            <a class="dropdown-item" href="{% url 'estadisticas_generales' %}">Ver estadísticas generales</a>
+                            <a class="dropdown-item" href="{% url 'estadisticas_generales' %}">Ver estadísticas
+                                generales</a>
                         </div>
+
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
+<div class="button-container">
+    <button class="btn btn-primary btn-large">Ingresos via trueques</button>
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

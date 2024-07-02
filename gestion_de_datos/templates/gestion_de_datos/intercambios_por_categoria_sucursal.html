@@ -1,7 +1,7 @@
 {% extends "homepage/base.html" %}
 {% block content %}
 <div class="container mt-5">
-    <h1 class="mb-4 text-center">Gráfico de categorias intercambiadas por fechas</h1>
+    <h1 class="mb-4 text-center">Gráfico de categorias intercambiadas por fechas en una sucursal</h1>
     <form class="form-inline mb-4" method="get" id="dateForm">
         <div class="form-group mr-3">
             <label for="fecha_inicio" class="mr-2">Fecha inicio:</label>
@@ -10,6 +10,17 @@
         <div class="form-group mr-3">
             <label for="fecha_fin" class="mr-2">Fecha fin:</label>
             <input type="text" id="fecha_fin" name="fecha_fin" class="form-control datepicker" value="{{ fecha_fin }}" placeholder="Seleccione una fecha" autocomplete="off">
+        </div>
+        <div class="form-group mr-3">
+            <label for="sucursal" class="mr-2">Sucursal:</label>
+            <select id="sucursal" name="sucursal" class="form-control">
+                {% if sucursales %}
+                    <option value="" selected disabled>Selecciona una sucursal</option>
+                {% endif %}
+                {% for sucursal in sucursales %}
+                    <option value="{{ sucursal }}" {% if sucursal_seleccionada == sucursal %}selected{% endif %}>{{ sucursal }}</option>
+                {% endfor %}
+            </select>
         </div>
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </form>
@@ -67,9 +78,13 @@ $(document).ready(function() {
     $('#dateForm').submit(function(event) {
         var startDate = startDateInput.datepicker('getDate');
         var endDate = endDateInput.datepicker('getDate');
+        
 
         if (!startDate) {
             alert('Por favor, complete la fecha de inicio.');
+            event.preventDefault();
+        } else if (!sucursal) {
+            alert('Por favor, seleccione una sucursal.');
             event.preventDefault();
         } else if (!endDate) {
             alert('Por favor, complete la fecha de fin.');

@@ -134,6 +134,15 @@ def ver_intercambios(request):
         Q(cliente_receptor=usuario_actual) | Q(cliente_solicitante=usuario_actual),
         estado="rechazada"
     )
+    no_hay_intercambios = (
+        not solicitudes_enviadas.exists() and
+        not solicitudes_recibidas.exists() and
+        not solicitudes_aceptadas.exists() and
+        not solicitudes_realizadas.exists() and
+        not solicitudes_canceladas.exists() and
+        not solicitudes_rechazadas.exists() and
+        not solicitudes_ausentes.exists()
+    )
 
     if request.method == 'POST':
         intercambio_id = request.POST.get('intercambio_id')
@@ -155,6 +164,7 @@ def ver_intercambios(request):
         'solicitudes_canceladas': solicitudes_canceladas,
         'solicitudes_ausentes': solicitudes_ausentes, 
         'solicitudes_rechazadas': solicitudes_rechazadas, 
+        'no_hay_intercambios': no_hay_intercambios,
     }
     return render(request, "intercambiar_producto/ver_intercambios.html", context)
 

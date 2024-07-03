@@ -18,20 +18,6 @@
     </style>
     <div class="container mt-5">
         <h1 class="mb-4 text-center">Gráfico de ingresos por servicios por ciudad</h1>
-    <form class="form-inline mb-4" method="get" id="dateForm">
-        <div class="form-group mr-3">
-            <label for="ciudad" class="mr-2">Ciudad:</label>
-            <select id="ciudad" name="ciudad" class="form-control">
-                {% if sucursales %}
-                    <option value="" selected disabled>Selecciona una ciudad</option>
-                {% endif %}
-                {% for sucursal in sucursales %}
-                    <option value="{{ sucursal.ciudad }}">{{ sucursal.ciudad }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-    </form>
         <div class="card text-center">
             <div class="card-body">
                 {% if graphic %}

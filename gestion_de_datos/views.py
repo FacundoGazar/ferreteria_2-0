@@ -200,55 +200,48 @@ def servicios_tiempo_view(request):
 
 
 @super_user
-def servicios_ciudad_view(request):    
-    ciudad_seleccionada = request.GET.get('ciudad', None)    
+def servicios_ciudad_view(request):
     sucursales = Sucursal.objects.all()
+    servicios = Servicio.objects.filter(estado="publicado")
     graphic = None
-    if ciudad_seleccionada:
-        try:
-            servicios = Servicio.objects.filter(ciudad=ciudad_seleccionada,estado="publicado")
-            if servicios.exists():
+
+    if servicios.exists():
+        try:            
                 data = {
                     'Ciudad': [servicio.ciudad for servicio in servicios],
                     'Monto': [servicio.pago.monto for servicio in servicios]
                 }
                 df = pd.DataFrame(data)
-                
+            
                 df = df.groupby('Ciudad').sum().reset_index()
 
-                # Generar el gráfico de torta
                 fig, ax = plt.subplots()
-                pie = ax.pie(df['Monto'], labels=df['Ciudad'], autopct='%1.1f%%', startangle=90)
-                ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-                ax.set_title(f'Proporción de Ingresos de servicios en la ciudad {ciudad_seleccionada}')
-                
-                # Agregar la cantidad de intercambios al lado del gráfico
-                total_monto = sum(df['Monto'])
-                legend_labels = [f'{ciudad}: {monto} servicios' for ciudad, monto in zip(df['Ciudad'], df['Cantidad'])]
-                ax.legend(pie[0], legend_labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+                ax.bar(df['Ciudad'], df['Monto'])
+                ax.set_xlabel('Ciudad')
+                ax.set_ylabel('Monto acumulado')
+                ax.set_title('Monto acumulado por ciudad')
 
-                # Convertir el gráfico a una imagen en formato base64
                 buffer = io.BytesIO()
+                plt.xticks(rotation=45)
                 plt.tight_layout()
                 fig.savefig(buffer, format='png')
                 buffer.seek(0)
                 image_png = buffer.getvalue()
                 buffer.close()
 
-                graphic = base64.b64encode(image_png).decode('utf-8')
+                graphic = base64.b64encode(image_png)
+                graphic = graphic.decode('utf-8')
         except ValueError:
-            messages.error(request, 'Hubo un error')
+            messages.error(request, 'Hubo un error procesando los datos.')
     else:
-        if not ciudad_seleccionada:
-            messages.error(request, 'Por favor, complete la ciudad.')
+        messages.error(request, 'No hay servicios.')
 
     context = {
         'graphic': graphic,
-        'ciudad_seleccionada': ciudad_seleccionada,
+        "servicios": servicios,
         "sucursales": sucursales
     }
     return render(request, "gestion_de_datos/servicios_ciudad.html", context)
-
 
 @super_user
 def servicios_ciudad_tiempo_view(request):        
@@ -262,10 +255,11 @@ def servicios_ciudad_tiempo_view(request):
             fecha_inicio = datetime.strptime(fecha_inicio, '%d-%m-%Y').date()
             fecha_fin = datetime.strptime(fecha_fin, '%d-%m-%Y').date()
 
-            servicios = Servicio.objects.filter(ciudad=ciudad_seleccionada,estado="publicado")
+            servicios = Servicio.objects.filter(ciudad=ciudad_seleccionada,estado="publicado", pago__fecha__range=(fecha_inicio, fecha_fin))
+            
             if servicios.exists():
                 data = {
-                    'Fecha': [servicio.fecha.strftime('%d-%m-%Y') for servicio in servicios],
+                    'Fecha': [servicio.pago.fecha.strftime('%d-%m-%Y') for servicio in servicios],
                     'Ciudad': [servicio.ciudad for servicio in servicios],
                     'Monto': [servicio.pago.monto for servicio in servicios]
                 }
@@ -277,7 +271,7 @@ def servicios_ciudad_tiempo_view(request):
                 ax.bar(df['Fecha'], df['Monto'])
                 ax.set_xlabel('Fecha')
                 ax.set_ylabel('Monto acumulado')
-                ax.set_title('Monto acumulado por fecha')
+                ax.set_title(f'Monto acumulado por fecha para la ciudad {ciudad_seleccionada}')
 
                 buffer = io.BytesIO()
                 plt.xticks(rotation=45)

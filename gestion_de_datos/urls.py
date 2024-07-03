@@ -19,4 +19,7 @@ urlpatterns = [
     path('ingresos_por_sucursal_tiempo/', ingresos_por_sucursal_tiempo, name='ingresos_por_sucursal_tiempo'),
     path('productos_mas_vendidos/', productos_mas_vendidos, name='productos_mas_vendidos'),
     path('relacion_intercambio_venta/', relacion_intercambio_venta, name='relacion_intercambio_venta'),
+    path('estadistica_productos_vendidos_por_sucursales/', estadisticas_productos_vendidos_por_sucursal_view, name='productos_vendidos_por_sucursales'),
+    path('estadistica_ventas_totales_sucursales/', estadisticas_ventas_totales_por_sucursal_view, name='ventas_totales_en_las_sucursales'),
+    path('estadistica_ingresos_totales_tiempo/', estadisticas_ingresos_totales_en_el_tiempo_view, name='ingresos_totales_en_el_tiempo'),
 ]

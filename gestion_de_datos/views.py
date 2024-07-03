@@ -2,13 +2,12 @@ import matplotlib.pyplot as plt
 import io
 import base64
 import json
-
+from io import BytesIO
 from datetime import datetime,date
 from django.shortcuts import render
 from django.http import HttpResponse
 from gestion_de_servicios.models import *
-from intercambiar_producto.models import Intercambio,Venta
-from intercambiar_producto.models import Venta
+from intercambiar_producto.models import Intercambio,Venta,ProductoVenta
 import pandas as pd
 from iniciar_sesion import *
 from django.contrib import messages
@@ -439,6 +438,177 @@ def estadisticas_intercambios_por_categoria_view(request):
         'fecha_fin': fecha_fin_str or ''
     }
     return render(request, "gestion_de_datos/intercambios_por_categoria.html", context)
+
+@super_user
+def estadisticas_productos_vendidos_por_sucursal_view(request):
+    sucursales = Sucursal.objects.all()
+    graphic = None
+
+    try:
+        # Obtener las ventas agrupadas por sucursal y producto
+        productos_vendidos = ProductoVenta.objects.values('venta__sucursal__nombre', 'producto__nombre') \
+                                                  .annotate(cantidad_vendida=Count('producto')) \
+                                                  .order_by('venta__sucursal__nombre', 'producto__nombre')
+
+        if productos_vendidos:
+            data = {
+                'Sucursal': [],
+                'Producto': [],
+                'Cantidad': []
+            }
+            for producto in productos_vendidos:
+                data['Sucursal'].append(producto['venta__sucursal__nombre'])
+                data['Producto'].append(producto['producto__nombre'])
+                data['Cantidad'].append(producto['cantidad_vendida'])
+            
+            df = pd.DataFrame(data)
+            
+            # Generar el gráfico de barras dividido por productos
+            fig, ax = plt.subplots(figsize=(12, 8))
+            df.pivot(index='Sucursal', columns='Producto', values='Cantidad').plot(kind='bar', stacked=True, ax=ax)
+            ax.set_xlabel('Sucursal')
+            ax.set_ylabel('Cantidad de Productos Vendidos')
+            ax.set_title('Cantidad de Productos Vendidos por Sucursal')
+            ax.legend(title='Producto', bbox_to_anchor=(1.05, 1), loc='upper left')
+
+            buffer = io.BytesIO()
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            fig.savefig(buffer, format='png')
+            buffer.seek(0)
+            image_png = buffer.getvalue()
+            buffer.close()
+
+            graphic = base64.b64encode(image_png).decode('utf-8')
+        else:
+            messages.error(request, 'No hay ventas relacionadas con los productos.')
+    except ValueError:
+        messages.error(request, 'Hubo un error procesando los datos.')
+
+    context = {
+        'graphic': graphic,
+        'sucursales': sucursales,
+    }
+    return render(request, "gestion_de_datos/estadistica_productos_vendidos_en_las_sucursales.html", context)
+
+@super_user
+def estadisticas_ventas_totales_por_sucursal_view(request):
+    sucursales = Sucursal.objects.all()
+    graphic = None
+
+    try:
+        # Obtener las ventas agrupadas por sucursal
+        ventas_por_sucursal = Venta.objects.values('sucursal__nombre') \
+                                           .annotate(cantidad_ventas=Count('id')) \
+                                           .order_by('sucursal__nombre')
+
+        if ventas_por_sucursal:
+            data = {
+                'Sucursal': [],
+                'Cantidad de Ventas': []
+            }
+            for venta in ventas_por_sucursal:
+                data['Sucursal'].append(venta['sucursal__nombre'])
+                data['Cantidad de Ventas'].append(venta['cantidad_ventas'])
+            
+            df = pd.DataFrame(data)
+            
+            # Generar el gráfico de barras
+            fig, ax = plt.subplots(figsize=(12, 8))
+            ax.bar(df['Sucursal'], df['Cantidad de Ventas'])
+            ax.set_xlabel('Sucursal')
+            ax.set_ylabel('Cantidad de Ventas')
+            ax.set_title('Cantidad de Ventas por Sucursal')
+
+            buffer = io.BytesIO()
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+            fig.savefig(buffer, format='png')
+            buffer.seek(0)
+            image_png = buffer.getvalue()
+            buffer.close()
+
+            graphic = base64.b64encode(image_png).decode('utf-8')
+        else:
+            messages.error(request, 'No hay ventas registradas.')
+    except ValueError:
+        messages.error(request, 'Hubo un error procesando los datos.')
+
+    context = {
+        'graphic': graphic,
+        'sucursales': sucursales,
+    }
+    return render(request, "gestion_de_datos/estadistica_ventas_totales_en_las_sucursales.html", context)
+
+@super_user
+def estadisticas_ingresos_totales_en_el_tiempo_view(request):
+    fecha_inicio_str = request.GET.get('fecha_inicio')
+    fecha_fin_str = request.GET.get('fecha_fin')
+    graphic = None
+
+    if fecha_inicio_str and fecha_fin_str:
+        try:
+            # Convertir a objetos de fecha
+            fecha_inicio = datetime.strptime(fecha_inicio_str, '%d-%m-%Y').date()
+            fecha_fin = datetime.strptime(fecha_fin_str, '%d-%m-%Y').date()
+
+            # Obtener pagos por servicios en el rango de fechas
+            pagos_servicios = PagoServicio.objects.filter(fecha__range=(fecha_inicio, fecha_fin)).values('fecha', 'monto')
+            df_servicios = pd.DataFrame(list(pagos_servicios))
+            df_servicios['fecha'] = pd.to_datetime(df_servicios['fecha']).dt.strftime('%d-%m-%Y')
+
+            # Obtener ventas en intercambios en el rango de fechas
+            ventas_intercambios = Venta.objects.filter(fecha__range=(fecha_inicio, fecha_fin)).values('fecha', 'monto_total')
+            df_ventas = pd.DataFrame(list(ventas_intercambios))
+            df_ventas['fecha'] = pd.to_datetime(df_ventas['fecha']).dt.strftime('%d-%m-%Y')
+
+            # Agrupar y sumar los ingresos por fecha
+            ingresos_servicios = df_servicios.groupby('fecha')['monto'].sum().reset_index()
+            ingresos_ventas = df_ventas.groupby('fecha')['monto_total'].sum().reset_index()
+
+            # Combinar los DataFrames de servicios y ventas
+            df_completo = pd.merge(ingresos_servicios, ingresos_ventas, on='fecha', how='outer').fillna(0)
+            df_completo['monto_total'] = df_completo['monto'] + df_completo['monto_total']
+
+            # Graficar usando Matplotlib
+            plt.figure(figsize=(12, 6))
+            bars = plt.bar(df_completo['fecha'], df_completo['monto_total'], color='blue')
+            plt.xlabel('Fecha')
+            plt.ylabel('Monto acumulado ($)')
+            plt.title('Monto acumulado por Servicios y Ventas en Intercambios por Fecha')
+            plt.xticks(rotation=45)
+            plt.tight_layout()
+
+            # Agregar etiquetas con los valores exactos de ingresos en cada barra
+            for bar, monto in zip(bars, df_completo['monto_total']):
+                plt.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), '${:.2f}'.format(monto),
+                         ha='center', va='bottom', fontsize=9)
+
+            # Convertir el gráfico a una imagen en formato base64
+            buffer = io.BytesIO()
+            plt.savefig(buffer, format='png')
+            buffer.seek(0)
+            image_png = buffer.getvalue()
+            buffer.close()
+
+            graphic = base64.b64encode(image_png).decode('utf-8')
+            graphic = 'data:image/png;base64,{}'.format(graphic)
+
+        except ValueError:
+            messages.error(request, 'Formato de fecha incorrecto. Use DD-MM-YYYY.')
+
+    else:
+        if not fecha_inicio_str:
+            messages.error(request, 'Por favor, complete la fecha de inicio.')
+        if not fecha_fin_str:
+            messages.error(request, 'Por favor, complete la fecha de fin.')
+
+    context = {
+        'graphic': graphic,
+        'fecha_inicio': fecha_inicio_str or '',
+        'fecha_fin': fecha_fin_str or ''
+    }
+    return render(request, "gestion_de_datos/estadisticas_generales.html", context)
 
 @super_user
 def estadisticas_intercambios_por_categoria_sucursal_view(request):

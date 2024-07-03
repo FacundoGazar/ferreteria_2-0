@@ -3,15 +3,17 @@ import io
 import base64
 import json
 
-from datetime import datetime
+from datetime import datetime,date
 from django.shortcuts import render
 from django.http import HttpResponse
 from gestion_de_servicios.models import *
 from intercambiar_producto.models import Intercambio,Venta
+from intercambiar_producto.models import Venta
 import pandas as pd
 from iniciar_sesion import *
 from django.contrib import messages
 from django.db.models import Sum
+from django.db.models import Count
 from django.http import JsonResponse
 
 
@@ -547,60 +549,152 @@ def ingresos_por_sucursal(request):
         fecha_fin = request.POST.get('fecha_fin')
 
         if fecha_inicio and fecha_fin:
-            # Convertir fechas de string a objetos datetime
-            fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
-            fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
+            try:
+                # Convertir fechas de string a objetos datetime
+                fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+                fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
 
-            # Obtener todas las sucursales
-            sucursales = Sucursal.objects.all()
+                # Obtener todas las sucursales
+                sucursales = Sucursal.objects.all()
 
-            # Inicializar listas para almacenar los datos de ingresos por sucursal
-            sucursales_nombres = []
-            ingresos_por_sucursal = []
+                # Inicializar listas para almacenar los datos de ingresos por sucursal
+                sucursales_nombres = []
+                ingresos_por_sucursal = []
 
-            # Calcular ingresos por cada sucursal entre las fechas seleccionadas
-            for sucursal in sucursales:
-                ingresos = Venta.objects.filter(sucursal=sucursal, fecha__range=[fecha_inicio, fecha_fin]).aggregate(Sum('monto_total'))['monto_total__sum']
-                ingresos = float(ingresos) if ingresos else 0.0
-                sucursales_nombres.append(sucursal.nombre)
-                ingresos_por_sucursal.append(ingresos)
+                # Si la fecha de fin es el día actual, ajustarla al día actual exacto
+                if fecha_fin.date() == date.today():
+                    fecha_fin = timezone.now()
 
-            # Convertir listas a JSON para pasar a la plantilla
-            data = {
-                'sucursales': sucursales_nombres,
-                'ingresos_por_sucursal': ingresos_por_sucursal,
-            }
-            return JsonResponse(data)
+                # Calcular ingresos por cada sucursal entre las fechas seleccionadas
+                for sucursal in sucursales:
+                    ingresos = Venta.objects.filter(sucursal=sucursal, fecha__range=[fecha_inicio, fecha_fin]).aggregate(Sum('monto_total'))['monto_total__sum']
+                    ingresos = float(ingresos) if ingresos else 0.0
+                    sucursales_nombres.append(sucursal.nombre)
+                    ingresos_por_sucursal.append(ingresos)
+
+                # Convertir listas a JSON para pasar a la plantilla
+                data = {
+                    'sucursales': sucursales_nombres,
+                    'ingresos_por_sucursal': ingresos_por_sucursal,
+                }
+                return JsonResponse(data)
+
+            except ValueError:
+                messages.error(request, 'Formato de fecha incorrecto. Use el formato YYYY-MM-DD.')
+
         else:
             # Si no se seleccionaron fechas, mostrar mensaje de error
-            message = "Por favor, seleccione un período de tiempo."
-            return render(request, 'gestion_de_datos/chart_ingresos_por_sucursal.html', {'message': message})
+            messages.error(request, 'Por favor, seleccione un período de tiempo válido.')
 
-    # Si es GET o no hay datos, renderizar la página con mensaje predeterminado
-    message = "Por favor, seleccione un período de tiempo."
-    return render(request, 'gestion_de_datos/chart_ingresos_por_sucursal.html', {'message': message})
-    
-def ingresos_por_tiempo(request):
-    # Datos de ejemplo
-    fechas = ["Enero", "Febrero", "Marzo", "Abril"]
-    ingresos_por_tiempo = [1000, 1500, 2000, 2500]
-    
-    context = {
-        'fechas': fechas,
-        'ingresos_por_tiempo': ingresos_por_tiempo,
-    }
-    return render(request, 'gestion_de_datos/chart_ingresos_por_tiempo.html', context)
+    else:
+        # Si la solicitud es GET, enviar mensaje informativo
+        messages.info(request, 'Ingrese fecha de inicio y fin válidas para visualizar los ingresos por sucursal.')
+
+    return render(request, 'gestion_de_datos/chart_ingresos_por_sucursal.html')
 
 def ventas_por_sucursal(request):
-    # Datos de ejemplo
-    sucursales = ["Sucursal A", "Sucursal B", "Sucursal C"]
-    ventas_por_sucursal = [150, 100, 50]
+    if request.method == 'POST':
+        fecha_inicio = request.POST.get('fecha_inicio')
+        fecha_fin = request.POST.get('fecha_fin')
+
+        if fecha_inicio and fecha_fin:
+            try:
+                # Convertir fechas de string a objetos datetime
+                fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+                fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
+
+                # Obtener todas las sucursales
+                sucursales = Sucursal.objects.all()
+
+                # Inicializar listas para almacenar los datos de ventas por sucursal
+                sucursales_nombres = []
+                ventas_por_sucursal = []
+
+                # Si la fecha de fin es el día actual, ajustarla al día actual exacto
+                if fecha_fin.date() == date.today():
+                    fecha_fin = timezone.now()
+
+                # Calcular cantidad de ventas por cada sucursal entre las fechas seleccionadas
+                for sucursal in sucursales:
+                    ventas = Venta.objects.filter(sucursal=sucursal, fecha__range=[fecha_inicio, fecha_fin]).count()
+                    sucursales_nombres.append(sucursal.nombre)
+                    ventas_por_sucursal.append(ventas)
+
+                # Convertir listas a JSON para pasar a la plantilla
+                data = {
+                    'sucursales': sucursales_nombres,
+                    'ventas_por_sucursal': ventas_por_sucursal,
+                }
+                return JsonResponse(data)
+
+            except ValueError:
+                messages.error(request, 'Formato de fecha incorrecto. Use el formato YYYY-MM-DD.')
+
+        else:
+            # Si no se seleccionaron fechas, mostrar mensaje de error
+            messages.error(request, 'Por favor, seleccione un período de tiempo válido.')
+
+    else:
+        # Si la solicitud es GET, enviar mensaje informativo
+        messages.info(request, 'Ingrese fecha de inicio y fin válidas para visualizar las ventas por sucursal.')
+
+    return render(request, 'gestion_de_datos/chart_ventas_por_sucursal.html')
     
-    context = {
-        'sucursales': sucursales,
-        'ventas_por_sucursal': ventas_por_sucursal,
-    }
-    return render(request, 'gestion_de_datos/chart_ventas_por_sucursal.html', context)
+def ingresos_por_mes(request):
+    if request.method == 'POST':
+        anio_seleccionado = request.POST.get('anio')
+
+        if anio_seleccionado:
+            try:
+                # Convertir el año seleccionado a entero
+                anio_seleccionado = int(anio_seleccionado)
+
+                # Obtener los ingresos por mes para el año seleccionado
+                ingresos_por_mes = Venta.objects.filter(fecha__year=anio_seleccionado) \
+                                                .values('fecha__month') \
+                                                .annotate(ingresos=Sum('monto_total')) \
+                                                .order_by('fecha__month')
+
+                meses = []
+                ingresos_mensuales = [0] * 12  # Inicializar un array de 12 posiciones para cada mes
+
+                # Mapear el número de mes a su nombre (opcional, depende de tus necesidades)
+                nombres_meses = {
+                    1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril',
+                    5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto',
+                    9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
+                }
+
+                # Sumar los ingresos por mes
+                for ingreso in ingresos_por_mes:
+                    mes = ingreso['fecha__month']
+                    ingresos = ingreso['ingresos'] if ingreso['ingresos'] else 0
+                    ingresos_mensuales[mes - 1] = float(ingresos)
+
+                    # Guardar el nombre del mes para mostrar en el gráfico
+                    meses.append(nombres_meses[mes])
+
+                # Preparar datos para enviar como respuesta JSON
+                data = {
+                    'meses': meses,
+                    'ingresos_mensuales': ingresos_mensuales,
+                }
+
+                # Renderizar la plantilla con los datos actuales
+                print("Meses:", meses)
+                print("Ingresos mensuales:", ingresos_mensuales)
+                return JsonResponse(data)
+
+            except ValueError:
+                return JsonResponse({'error': 'El año seleccionado no es válido.'}, status=400)
+
+        else:
+            return JsonResponse({'error': 'Por favor, seleccione un año válido.'}, status=400)
+
+    # Si la solicitud es GET, renderizar la plantilla con un rango predeterminado de años
+    today = datetime.today()
+    current_year = today.year
+    return render(request, 'gestion_de_datos/chart_ingresos_por_tiempo.html', {'years': range(current_year, current_year - 11, -1)})
 
 def ventas_por_tiempo(request):
     # Datos de ejemplo

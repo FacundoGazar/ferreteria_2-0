@@ -2,11 +2,18 @@
 {% block content %}
 
 <div class="chart-container">
-    <h2 style="text-align: center;">Ventas por Mes - Selección de Año</h2>
+    <h2 style="text-align: center;">Ingresos por Sucursal y Mes - Selección de Año</h2>
 
-    <!-- Formulario para selección de año -->
-    <form method="post" id="filtroAnioForm" style="text-align: center;">
+    <!-- Formulario para selección de sucursal y año -->
+    <form method="post" id="filtroSucursalAnioForm" style="text-align: center;">
         {% csrf_token %}
+        <label for="sucursal">Seleccione una sucursal:</label>
+        <select id="sucursal" name="sucursal" class="form-control" required>
+            {% for sucursal in sucursales %}
+            <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
+            {% endfor %}
+        </select>
+        <br>
         <label for="anio">Seleccione un año:</label>
         <select id="anio" name="anio" class="form-control" required>
             {% for year in years %}
@@ -22,9 +29,9 @@
         <p>No hay datos para mostrar.</p>
     </div>
 
-    <!-- Gráfico de ventas por mes -->
+    <!-- Gráfico de ingresos por sucursal y mes -->
     <div class="chart" style="margin: 0 auto; text-align: center;">
-        <canvas id="barChartVentas"></canvas>
+        <canvas id="barChartIngresosSucursal"></canvas>
     </div>
 </div>
 
@@ -52,15 +59,16 @@
 
         $("#anio").val(currentYear);  // Establecer el año actual como valor por defecto
 
-        var barCtxVentas = document.getElementById('barChartVentas').getContext('2d');
-        var barChartVentas = new Chart(barCtxVentas, {
+        var barCtxIngresosSucursal = document.getElementById('barChartIngresosSucursal').getContext('2d');
+        var barChartIngresosSucursal = new Chart(barCtxIngresosSucursal, {
             type: 'bar',
             data: {
-                labels: ['ejemplo', 'ejemplo', 'ejemplo', 'ejemplo'],
+                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
                 datasets: [{
-                    label: 'Ventas por Mes',
-                    data: [10, 30, 60, 100,],  // Ejemplo de cantidad de ventas por mes
-                    backgroundColor: '#4bc0c0'
+                    label: 'Ingresos por Mes',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  // Datos de ejemplo, se actualizarán dinámicamente
+                    backgroundColor: '#36a2eb'
                 }]
             },
             options: {
@@ -93,12 +101,12 @@
             }
         });
 
-        $('#filtroAnioForm').on('submit', function (e) {
+        $('#filtroSucursalAnioForm').on('submit', function (e) {
             e.preventDefault();
             var formData = $(this).serialize();
             $.ajax({
                 type: 'POST',
-                url: '{% url "ventas_por_tiempo" %}',
+                url: '{% url "ingresos_por_sucursal_tiempo" %}',
                 data: formData,
                 dataType: 'json',
                 success: function (data) {
@@ -113,12 +121,8 @@
         function actualizarGrafico(data) {
             console.log("Datos recibidos:", data);
 
-            // Definir los meses del año de forma hardcodeada
-            var meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-
             // Verificar si hay datos para mostrar
-            if (data.ventas_mensuales.length === 0 || data.ventas_mensuales.every(v => v === 0)) {
+            if (data.ingresos_mensuales.length === 0 || data.ingresos_mensuales.every(v => v === 0)) {
                 $('#noDataMessage').show();
                 $('.chart').hide();
             } else {
@@ -126,9 +130,8 @@
                 $('.chart').show();
 
                 // Asignar datos al gráfico
-                barChartVentas.data.labels = meses;
-                barChartVentas.data.datasets[0].data = data.ventas_mensuales.map(Number); // Convertir a números si es necesario
-                barChartVentas.update(); // Actualizar el gráfico
+                barChartIngresosSucursal.data.datasets[0].data = data.ingresos_mensuales.map(Number); // Convertir a números si es necesario
+                barChartIngresosSucursal.update(); // Actualizar el gráfico
             }
         }
 

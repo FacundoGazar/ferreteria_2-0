@@ -16,5 +16,6 @@ urlpatterns = [
     path('ingresos_por_sucursal/', ingresos_por_sucursal, name='ingresos_por_sucursal'),
     path('ingresos_por_tiempo/', ingresos_por_mes, name='ingresos_por_mes'),
     path('ventas_por_sucursal/', ventas_por_sucursal, name='ventas_por_sucursal'),
-    path('ventas_por_tiempo/', ventas_por_tiempo, name='ventas_por_tiempo'),
+    path('ventas_por_tiempo/', ventas_por_mes, name='ventas_por_tiempo'),
+    path('ingresos_por_sucursal_tiempo/', ingresos_por_sucursal_tiempo, name='ingresos_por_sucursal_tiempo'),
 ]

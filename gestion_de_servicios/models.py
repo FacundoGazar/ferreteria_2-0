@@ -48,6 +48,7 @@ class Servicio(models.Model):
         ('aceptado', 'Aceptado'),
         ('rechazado', 'Rechazado'),
         ('publicado', 'Publicado'),
+        ('eliminado', 'Eliminado'),
     )
     id = models.AutoField(primary_key=True)
     cliente = models.ForeignKey(User, on_delete=models.CASCADE)

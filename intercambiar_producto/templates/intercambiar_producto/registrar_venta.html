@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "homepage/base.html" %}
 {% block content %}
 <div class="container mt-5">
     <h1>Registrar Venta</h1>
@@ -12,7 +12,7 @@
             <label for="sucursal">Sucursal</label>
             <select class="form-control" id="sucursal" name="sucursal" required>
                 {% for sucursal in sucursales %}
-                <option value="{{ sucursal.id }}">{{ sucursal.nombre }}</option>
+                <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
                 {% endfor %}
             </select>
         </div>

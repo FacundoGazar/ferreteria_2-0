@@ -1,0 +1,71 @@
+{% extends "homepage/base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingresos por Tiempo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            width: 45%;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chart-container">
+        <h2>Ingresos por Tiempo</h2>
+        <canvas id="barChartIngresos"></canvas>
+    </div>
+
+    <script>
+        // Datos de ejemplo para ingresos por tiempo
+        var fechas = ["Enero", "Febrero", "Marzo", "Abril"];
+        var ingresosPorTiempo = [1000, 1500, 2000, 2500];
+
+        var barCtxIngresos = document.getElementById('barChartIngresos').getContext('2d');
+        var barChartIngresos = new Chart(barCtxIngresos, {
+            type: 'bar',
+            data: {
+                labels: fechas,
+                datasets: [{
+                    label: 'Ingresos',
+                    data: ingresosPorTiempo,
+                    backgroundColor: '#36a2eb'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(context.raw);
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
+{% endblock %}

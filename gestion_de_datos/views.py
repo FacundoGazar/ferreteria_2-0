@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import io
 import base64
+import json
+
 from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -9,6 +11,8 @@ from intercambiar_producto.models import Intercambio,Venta
 import pandas as pd
 from iniciar_sesion import *
 from django.contrib import messages
+from django.db.models import Sum
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -519,6 +523,8 @@ def estadisticas_intercambios_por_categoria_sucursal_view(request):
 def estadisticas_generales_view(request):
     return render(request, "gestion_de_datos/estadisticas_generales.html")
 
+
+# Tango
 def ventas_dashboard_view(request):
     total_ventas = Venta.objects.count()
     total_trueques = Intercambio.objects.count()
@@ -534,3 +540,75 @@ def ventas_dashboard_view(request):
         'relacion_trueques_ventas': relacion_trueques_ventas,
     }
     return render(request, 'gestion_de_datos/ventas_dashboard.html', context)
+
+def ingresos_por_sucursal(request):
+    if request.method == 'POST':
+        fecha_inicio = request.POST.get('fecha_inicio')
+        fecha_fin = request.POST.get('fecha_fin')
+
+        if fecha_inicio and fecha_fin:
+            # Convertir fechas de string a objetos datetime
+            fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+            fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
+
+            # Obtener todas las sucursales
+            sucursales = Sucursal.objects.all()
+
+            # Inicializar listas para almacenar los datos de ingresos por sucursal
+            sucursales_nombres = []
+            ingresos_por_sucursal = []
+
+            # Calcular ingresos por cada sucursal entre las fechas seleccionadas
+            for sucursal in sucursales:
+                ingresos = Venta.objects.filter(sucursal=sucursal, fecha__range=[fecha_inicio, fecha_fin]).aggregate(Sum('monto_total'))['monto_total__sum']
+                ingresos = float(ingresos) if ingresos else 0.0
+                sucursales_nombres.append(sucursal.nombre)
+                ingresos_por_sucursal.append(ingresos)
+
+            # Convertir listas a JSON para pasar a la plantilla
+            data = {
+                'sucursales': sucursales_nombres,
+                'ingresos_por_sucursal': ingresos_por_sucursal,
+            }
+            return JsonResponse(data)
+        else:
+            # Si no se seleccionaron fechas, mostrar mensaje de error
+            message = "Por favor, seleccione un período de tiempo."
+            return render(request, 'gestion_de_datos/chart_ingresos_por_sucursal.html', {'message': message})
+
+    # Si es GET o no hay datos, renderizar la página con mensaje predeterminado
+    message = "Por favor, seleccione un período de tiempo."
+    return render(request, 'gestion_de_datos/chart_ingresos_por_sucursal.html', {'message': message})
+    
+def ingresos_por_tiempo(request):
+    # Datos de ejemplo
+    fechas = ["Enero", "Febrero", "Marzo", "Abril"]
+    ingresos_por_tiempo = [1000, 1500, 2000, 2500]
+    
+    context = {
+        'fechas': fechas,
+        'ingresos_por_tiempo': ingresos_por_tiempo,
+    }
+    return render(request, 'gestion_de_datos/chart_ingresos_por_tiempo.html', context)
+
+def ventas_por_sucursal(request):
+    # Datos de ejemplo
+    sucursales = ["Sucursal A", "Sucursal B", "Sucursal C"]
+    ventas_por_sucursal = [150, 100, 50]
+    
+    context = {
+        'sucursales': sucursales,
+        'ventas_por_sucursal': ventas_por_sucursal,
+    }
+    return render(request, 'gestion_de_datos/chart_ventas_por_sucursal.html', context)
+
+def ventas_por_tiempo(request):
+    # Datos de ejemplo
+    fechas = ["Enero", "Febrero", "Marzo", "Abril"]
+    ventas_por_tiempo = [20, 30, 40, 50]
+    
+    context = {
+        'fechas': fechas,
+        'ventas_por_tiempo': ventas_por_tiempo,
+    }
+    return render(request, 'gestion_de_datos/chart_ventas_por_tiempo.html', context)

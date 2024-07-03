@@ -13,4 +13,8 @@ urlpatterns = [
     path("intercambios_categoria/", estadisticas_intercambios_por_categoria_view, name='intercambios_categoria'),
     path("intercambios_categoria_sucursal/", estadisticas_intercambios_por_categoria_sucursal_view, name='intercambios_categoria_sucursal'),
     path("ventas_dashboard/", ventas_dashboard_view, name='ventas_dashboard'),
+    path('ingresos_por_sucursal/', ingresos_por_sucursal, name='ingresos_por_sucursal'),
+    path('ingresos_por_tiempo/', ingresos_por_tiempo, name='ingresos_por_tiempo'),
+    path('ventas_por_sucursal/', ventas_por_sucursal, name='ventas_por_sucursal'),
+    path('ventas_por_tiempo/', ventas_por_tiempo, name='ventas_por_tiempo'),
 ]

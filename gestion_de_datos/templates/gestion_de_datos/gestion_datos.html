@@ -96,19 +96,29 @@
                             <a class="dropdown-item" href="{% url 'estadisticas_generales' %}">Ver estadísticas
                                 generales</a>
                         </div>
-
-
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-lg dropdown-toggle" type="button"
+                            id="verEstadisticasDropdown" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            Ver estadísticas ventas por intercambio
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="verEstadisticasDropdown">
+                            <a class="dropdown-item" href="{% url 'ingresos_por_sucursal' %}">Ingresos por
+                                sucursal</a>
+                            <a class="dropdown-item" href="{% url 'ingresos_por_tiempo' %}">Ingresos en el tiempo</a>
+                            <a class="dropdown-item" href="{% url 'ventas_por_sucursal' %}">Cantidad de ventas
+                                pro sucursal</a>
+                            <a class="dropdown-item" href="{% url 'ventas_por_tiempo' %}">Cantidad de ventas en el
+                                tiempo</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="button-container text-center mt-4">
-    <a class="btn btn-primary btn-large" href="{% url 'ventas_dashboard' %}">Ingresos via trueques</a>
-</div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-{% endblock %}
+    {% endblock %}

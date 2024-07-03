@@ -1,0 +1,71 @@
+{% extends "homepage/base.html" %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cantidad de Ventas en el Tiempo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            width: 45%;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chart-container">
+        <h2>Cantidad de Ventas en el Tiempo</h2>
+        <canvas id="barChartVentas"></canvas>
+    </div>
+
+    <script>
+        // Datos de ejemplo para cantidad de ventas en el tiempo
+        var fechas = ["Enero", "Febrero", "Marzo", "Abril"];
+        var ventasPorTiempo = [20, 30, 40, 50];
+
+        var barCtxVentas = document.getElementById('barChartVentas').getContext('2d');
+        var barChartVentas = new Chart(barCtxVentas, {
+            type: 'bar',
+            data: {
+                labels: fechas,
+                datasets: [{
+                    label: 'Cantidad de Ventas',
+                    data: ventasPorTiempo,
+                    backgroundColor: '#ff9f40'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += new Intl.NumberFormat('es-ES').format(context.raw);
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
+{% endblock %}

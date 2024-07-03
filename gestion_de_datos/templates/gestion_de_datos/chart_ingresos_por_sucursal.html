@@ -1,0 +1,118 @@
+{% extends "homepage/base.html" %}
+{% block content %}
+<div class="chart-container">
+    <h2 style="text-align: center;">Ingresos por Sucursal</h2>
+
+    <!-- Formulario para selección de fechas -->
+    <form method="post" id="filtroFechasForm" style="text-align: center;">
+        {% csrf_token %}
+        <label for="fecha_inicio">Fecha de inicio:</label>
+        <input type="text" id="fecha_inicio" name="fecha_inicio" class="form-control datepicker" required>
+        <br>
+        <label for="fecha_fin">Fecha de fin:</label>
+        <input type="text" id="fecha_fin" name="fecha_fin" class="form-control datepicker" required>
+        <br>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </form>
+
+    <!-- Mensaje de selección de fechas -->
+    {% if message %}
+    <p>{{ message }}</p>
+    {% else %}
+    <p style="text-align: center;">Por favor, seleccione un período de tiempo.</p>
+    {% endif %}
+
+    <!-- Gráfico de ingresos por sucursal -->
+    <div class="chart" style="margin: 0 auto; text-align: center;">
+        <canvas id="pieChartIngresos"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<style>
+    .chart-container {
+        width: 80%;
+        margin: 20px auto;
+    }
+
+    .chart {
+        width: 80%;
+        /* Ancho del gráfico */
+        margin: 0 auto;
+        /* Centrar horizontalmente */
+        text-align: center;
+        /* Alinear contenido al centro */
+    }
+</style>
+
+<script>
+    $(function () {
+        $(".datepicker").datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+
+        var sucursales = ["Sucursal A", "Sucursal B", "Sucursal C"];
+        var ingresosPorSucursal = [3000, 2000, 1000];
+
+        var pieCtxIngresos = document.getElementById('pieChartIngresos').getContext('2d');
+        var pieChartIngresos = new Chart(pieCtxIngresos, {
+            type: 'pie',
+            data: {
+                labels: sucursales,
+                datasets: [{
+                    label: 'Ingresos',
+                    data: ingresosPorSucursal,
+                    backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(context.raw);
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        $('#filtroFechasForm').on('submit', function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            $.ajax({
+                type: 'POST',
+                url: '{% url "ingresos_por_sucursal" %}',
+                data: formData,
+                dataType: 'json',
+                success: function (data) {
+                    actualizarGrafico(data);
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            });
+        });
+
+        function actualizarGrafico(data) {
+            pieChartIngresos.data.labels = data.sucursales;
+            pieChartIngresos.data.datasets[0].data = data.ingresos_por_sucursal;
+            pieChartIngresos.update();
+        }
+    });
+</script>
+{% endblock %}

@@ -172,6 +172,8 @@ def pagar_publicacion_view(request, slug):
                 messages.error(request, "Esta tarjeta no se encuentra registrada en el sistema.")
                 return redirect('pagar_publicacion', slug=slug)        
             
+            tarjeta.saldo = tarjeta.saldo - montoAux
+            
             pagoAux = PagoServicio(
                 cliente=request.user,
                 monto=montoAux,

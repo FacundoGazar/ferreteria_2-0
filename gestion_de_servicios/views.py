@@ -114,12 +114,13 @@ def ver_imagen_view(request, slug):
 @soy_cliente
 def pagar_publicacion_view(request, slug):
     servicio = Servicio.objects.get(slug=slug)
+    aux = ConfiguracionServicio.objects.get(id=1)
+    montoAux = aux.costo_publicacion
     if request.method == 'POST':
         numero_tarjeta = request.POST.get('numero_tarjeta')
         nombre_dueño = request.POST.get('nombre_dueño')
         fecha_vencimiento = request.POST.get('fecha_vencimiento')
         codigo_seguridad = request.POST.get('codigo_seguridad')
-        monto = 100  # Despues sacar
         
         if not all([numero_tarjeta, nombre_dueño, fecha_vencimiento, codigo_seguridad]):
             messages.error(request, "Todos los campos son obligatorios.")
@@ -156,22 +157,24 @@ def pagar_publicacion_view(request, slug):
                 if (tarjeta.cvv != codigo_seguridad):
                     messages.error(request, "El codigo ingresado no coincide con el codigo de seguridad de la tarjeta.")
                     return redirect('pagar_publicacion', slug=slug)
-                if (tarjeta.saldo < monto):
+                if (tarjeta.saldo < montoAux):
                     messages.error(request, "El saldo de la tarjeta es insuficiente.")
                     return redirect('pagar_publicacion', slug=slug)
             else :
                 messages.error(request, "Esta tarjeta no se encuentra registrada en el sistema.")
                 return redirect('pagar_publicacion', slug=slug)        
             
-            pago = PagoServicio(
+            pagoAux = PagoServicio(
                 cliente=request.user,
-                monto=monto,
+                monto=montoAux,
                 fecha=datetime.now().date(),  
                 tarjeta=tarjeta
             )
+            pagoAux.save()
             servicio.estado = 'publicado'
+            servicio.pago = pagoAux
             servicio.save()
-            pago.save()
+            
 
             messages.success(request, "Pago realizado con éxito.")
             return redirect('listar_solicitudes')  
@@ -180,6 +183,7 @@ def pagar_publicacion_view(request, slug):
             return redirect('pagar_publicacion', slug=slug)
     context = {
         'servicio': servicio,
+        'monto': montoAux,
     }
     return render(request, "gestion_de_servicios/pagar_publicacion.html", context)
 

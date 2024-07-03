@@ -1,0 +1,127 @@
+{% extends "homepage/base.html" %}
+{% block content %}
+
+<div class="chart-container">
+    <h2 style="text-align: center;">Productos Más Vendidos - Selección de Rango de Fechas</h2>
+
+    <!-- Formulario para selección de rango de fechas -->
+    <form method="post" id="filtroFechasForm" style="text-align: center;">
+        {% csrf_token %}
+        <label for="fecha_inicio">Fecha Inicio:</label>
+        <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" required>
+        <br>
+        <label for="fecha_fin">Fecha Fin:</label>
+        <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" required>
+        <br>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </form>
+
+    <!-- Contenedor para el mensaje -->
+    <div id="noDataMessage" style="text-align: center; display: none;">
+        <p>No hay datos para mostrar.</p>
+    </div>
+
+    <!-- Gráfico de productos más vendidos -->
+    <div class="chart" style="margin: 0 auto; text-align: center;">
+        <canvas id="barChartProductos"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<style>
+    .chart-container {
+        width: 80%;
+        margin: 20px auto;
+    }
+
+    .chart {
+        width: 80%;
+        margin: 0 auto;
+        text-align: center;
+    }
+</style>
+
+<script>
+    $(function () {
+        var barCtxProductos = document.getElementById('barChartProductos').getContext('2d');
+        var barChartProductos = new Chart(barCtxProductos, {
+            type: 'bar',
+            data: {
+                labels: [],  // Etiquetas de productos de ejemplo
+                datasets: [{
+                    label: 'Cantidad Vendida',
+                    data: [],  // Cantidades de ejemplo
+                    backgroundColor: '#36a2eb'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.raw.toLocaleString();  // Mostrar cantidad con separadores de miles
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0  // Mostrar números enteros en el eje Y
+                        }
+                    }
+                }
+            }
+        });
+
+        $('#filtroFechasForm').on('submit', function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            $.ajax({
+                type: 'POST',
+                url: '{% url "productos_mas_vendidos" %}',  // Asegúrate de que esta URL apunte a la vista correcta
+                data: formData,
+                dataType: 'json',
+                success: function (data) {
+                    actualizarGrafico(data);
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            });
+        });
+
+        function actualizarGrafico(data) {
+            console.log("Datos recibidos:", data);
+
+            // Verificar si hay datos para mostrar
+            if (data.productos.length === 0) {
+                $('#noDataMessage').show();
+                $('.chart').hide();
+            } else {
+                $('#noDataMessage').hide();
+                $('.chart').show();
+
+                // Asignar datos al gráfico
+                barChartProductos.data.labels = data.productos.map(p => p.nombre);
+                barChartProductos.data.datasets[0].data = data.productos.map(p => p.cantidad_vendida);
+                barChartProductos.update(); // Actualizar el gráfico
+            }
+        }
+
+    });
+</script>
+{% endblock %}

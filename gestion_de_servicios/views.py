@@ -11,6 +11,8 @@ from iniciar_sesion.decoradores import *
 from django.db.models import Q
 from .models import ConfiguracionServicio
 from .forms import ConfiguracionServicioForm
+from django.shortcuts import get_object_or_404
+
 
 # Create your views here.
 @soy_cliente
@@ -99,13 +101,19 @@ def verificar_formato_imagen(imagen):
     
 @soy_cliente
 def ver_imagen_view(request, slug):
-    servicio = Servicio.objects.get(slug=slug)
+    servicio = get_object_or_404(Servicio, slug=slug)
+    
     if request.method == "POST":
         accion = request.POST.get('accion')
         if accion == 'cancelar':
             servicio.delete()
-            messages.success(request, "Publicacion de servicio cancelada con éxito")
+            messages.success(request, "Publicación de servicio cancelada con éxito")
             return redirect("listar_solicitudes")
+        elif accion == 'eliminar':
+            servicio.delete()
+            messages.success(request, "Servicio eliminado con éxito")
+            return redirect("listar_solicitudes")  
+        
     context = {
         'servicio': servicio,
     }
@@ -252,7 +260,22 @@ def mandar_motivo_view(request, slug):
 
 def servicios_publicados_view(request):
     servicios_publicados = Servicio.objects.filter(estado='publicado')
-    return render(request, 'gestion_de_servicios/servicios_publicados.html', {'servicios': servicios_publicados})
+    
+    nombre = request.GET.get('nombre')
+    ciudad = request.GET.get('ciudad')
+    ciudades_disponibles = servicios_publicados.order_by('ciudad').values_list('ciudad', flat=True).distinct()
+    if nombre:
+        servicios_publicados = servicios_publicados.filter(descripcion__icontains=nombre)
+
+    if ciudad:
+        servicios_publicados = servicios_publicados.filter(ciudad=ciudad)
+
+    # Obtener todas las ciudades disponibles en los servicios publicados
+    print(ciudades_disponibles)
+    return render(request, 'gestion_de_servicios/servicios_publicados.html', {
+        'servicios': servicios_publicados,
+        'ciudades': ciudades_disponibles,
+    })
 
 def configuracion_servicio(request):
     configuracion = ConfiguracionServicio.get_solo_instance()
@@ -265,3 +288,17 @@ def configuracion_servicio(request):
         form = ConfiguracionServicioForm(instance=configuracion)
     
     return render(request, 'gestion_de_servicios/config.html', {'form': form})
+
+
+def eliminar_servicio(request, servicio_id):
+    servicio = get_object_or_404(Servicio, id=servicio_id)
+    
+    if request.method == 'POST' and request.POST.get('accion') == 'eliminar':
+        # Eliminar el servicio de la base de datos
+        servicio.delete()
+        
+        # Redirigir a una página de confirmación o a donde sea necesario
+        return redirect('gestion_de_servicios/mis_servicios.html')  # Cambia 'pagina_de_confirmacion' por la URL adecuada
+    
+    # Si no es una solicitud POST o la acción no es 'eliminar', maneja el error o redirige a otro lugar
+    return redirect('gestion_de_servicios/mis_servicios.html')  # Cambia 'pagina_de_error' por la URL adecuada

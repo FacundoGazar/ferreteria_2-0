@@ -33,15 +33,23 @@ def agregar_sucursal_view (request):
     
 @super_user 
 def listar_sucursales_view(request):
+    # Obtener todas las sucursales
     queryset = Sucursal.objects.all()
-    
+
+    # Obtener ciudades únicas
+    ciudades = Sucursal.objects.values_list('ciudad', flat=True).distinct()
+
+    # Filtrar por ciudad si se recibe el parámetro en GET
+    ciudad_seleccionada = request.GET.get('ciudad')
+    if ciudad_seleccionada:
+        queryset = queryset.filter(ciudad=ciudad_seleccionada)
+
     context = {
-        "lista": queryset
+        "lista": queryset,
+        "ciudades": ciudades  # Pasa las ciudades como contexto
     }
 
     return render(request, "gestion_de_sucursales/listar_sucursales.html", context)
-
-
 
 @super_user 
 def eliminar_sucursal_view (request):

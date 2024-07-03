@@ -3,20 +3,20 @@
 {% block content %}
 <div class="container">
     <h2>Servicios Publicados</h2>
-    <form class="mb-3" method="GET" action="#">
+    <form class="mb-3" method="GET" action="{% url 'servicios_publicados' %}">
         <div class="row">
             <div class="col-md-6">
                 <label for="nombre">Buscar por nombre:</label>
-                <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Nombre del servicio">
+                <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Nombre del servicio"
+                    value="{{ request.GET.nombre|default_if_none:'' }}">
             </div>
             <div class="col-md-6">
                 <label for="ciudad">Seleccionar ciudad:</label>
                 <select id="ciudad" name="ciudad" class="form-control">
                     <option value="">Todas las ciudades</option>
-                    <option value="1">Ciudad 1</option>
-                    <option value="2">Ciudad 2</option>
-                    <option value="3">Ciudad 3</option>
-                    <!-- Agrega más opciones según tus necesidades -->
+                    {% for city in ciudades %}
+                    <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
                 </select>
             </div>
         </div>

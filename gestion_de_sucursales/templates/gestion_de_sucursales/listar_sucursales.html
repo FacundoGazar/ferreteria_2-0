@@ -14,6 +14,16 @@
     </header>
     <main>
         {% block content %}
+        <form method="GET" action="#">
+            <label for="ciudad">Filtrar por ciudad:</label>
+            <select id="ciudad" name="ciudad" class="form-control">
+                <option value="">Todas las ciudades</option>
+                {% for ciudad in ciudades %}
+                <option value="{{ ciudad }}">{{ ciudad }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary mt-2">Filtrar</button>
+        </form>
         {% if lista %}
         <table class="table table-striped mx-auto table-info" style="width: 300px;">
             <thead>

@@ -1,0 +1,16 @@
+{% extends "homepage/base.html" %}
+{% block content %}
+
+<div class="container">
+    <h2 style="text-align: center;">Relación Intercambio/Venta Global</h2>
+
+    <!-- Contenedor para el mensaje -->
+    <div id="resultado" style="text-align: center; margin-top: 20px;">
+        <p>A la fecha de hoy se realizaron {{ total_ventas_asociadas }} venta(s) y {{ total_intercambios }}
+            intercambio(s).</p>
+        <p>Esto es un ratio de: {{ ratio|floatformat:2 }} ventas por cada trueque, generandose asi ingresos a tus
+            sucursales</p>
+    </div>
+</div>
+
+{% endblock %}

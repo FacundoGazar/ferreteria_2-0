@@ -521,22 +521,6 @@ def estadisticas_generales_view(request):
 
 
 # Tango
-def ventas_dashboard_view(request):
-    total_ventas = Venta.objects.count()
-    total_trueques = Intercambio.objects.count()
-    
-    if total_trueques > 0:
-        relacion_trueques_ventas = total_ventas / total_trueques
-    else:
-        relacion_trueques_ventas = None  
-
-    context = {
-        'total_ventas': total_ventas,
-        'total_trueques': total_trueques,
-        'relacion_trueques_ventas': relacion_trueques_ventas,
-    }
-    return render(request, 'gestion_de_datos/ventas_dashboard.html', context)
-
 def ingresos_por_sucursal(request):
     if request.method == 'POST':
         fecha_inicio = request.POST.get('fecha_inicio')
@@ -803,3 +787,61 @@ def ingresos_por_sucursal_tiempo(request):
     today = datetime.today()
     current_year = today.year
     return render(request, 'gestion_de_datos/chart_ingresos_sucursales_tiempo.html', {'sucursales': sucursales, 'years': range(current_year, current_year - 11, -1)})
+
+def productos_mas_vendidos(request):
+    if request.method == 'POST':
+        fecha_inicio = request.POST.get('fecha_inicio')
+        fecha_fin = request.POST.get('fecha_fin')
+
+        if fecha_inicio and fecha_fin:
+            try:
+                # Convertir fechas de string a objetos datetime
+                fecha_inicio = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+                fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d')
+
+                # Obtener los productos más vendidos en el rango de fechas
+                productos_mas_vendidos = Venta.objects.filter(fecha__range=[fecha_inicio, fecha_fin]) \
+                                                     .values('productos__nombre') \
+                                                     .annotate(cantidad_vendida=Count('productos')) \
+                                                     .order_by('-cantidad_vendida')[:5]
+
+                productos = []
+                for producto in productos_mas_vendidos:
+                    productos.append({
+                        'nombre': producto['productos__nombre'],
+                        'cantidad_vendida': producto['cantidad_vendida']
+                    })
+
+                data = {
+                    'productos': productos
+                }
+
+                return JsonResponse(data)
+
+            except ValueError:
+                return JsonResponse({'error': 'Las fechas ingresadas no son válidas.'}, status=400)
+        else:
+            return JsonResponse({'error': 'Por favor, seleccione un rango de fechas válido.'}, status=400)
+
+    # Si la solicitud es GET, renderizar la plantilla
+    return render(request, 'gestion_de_datos/chart_productos_mas_vendidos.html')
+
+def relacion_intercambio_venta(request):
+    # Obtener el total de intercambios en la base de datos
+    total_intercambios = Intercambio.objects.count()
+
+    # Obtener el total de ventas en la base de datos
+    total_ventas_asociadas = Venta.objects.count()
+
+    if total_intercambios == 0:
+        ratio = 0
+    else:
+        ratio = total_ventas_asociadas / total_intercambios
+
+    context = {
+        'total_intercambios': total_intercambios,
+        'total_ventas_asociadas': total_ventas_asociadas,
+        'ratio': ratio
+    }
+
+    return render(request, 'gestion_de_datos/chart_intercambio_venta.html', context)

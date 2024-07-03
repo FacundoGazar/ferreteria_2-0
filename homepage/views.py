@@ -25,7 +25,7 @@ def tu_vista(request):
     productos_catalogo = ProductoCatalogo.objects.all()
 
     contexto = {
-        'lista_productos': lista_productos
+        'lista_productos': lista_productos,
         'productos_catalogo': productos_catalogo
     }
 

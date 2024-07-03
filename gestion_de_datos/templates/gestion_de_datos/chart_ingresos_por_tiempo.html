@@ -1,40 +1,65 @@
 {% extends "homepage/base.html" %}
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingresos por Tiempo</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .chart-container {
-            width: 45%;
-            margin: 20px auto;
-        }
-    </style>
-</head>
+<div class="chart-container">
+    <h2 style="text-align: center;">Ingresos por Mes - Selección de Año</h2>
 
-<body>
-    <div class="chart-container">
-        <h2>Ingresos por Tiempo</h2>
-        <canvas id="barChartIngresos"></canvas>
+    <!-- Formulario para selección de año -->
+    <form method="post" id="filtroAnioForm" style="text-align: center;">
+        {% csrf_token %}
+        <label for="anio">Seleccione un año:</label>
+        <select id="anio" name="anio" class="form-control" required>
+            {% for year in years %}
+            <option value="{{ year }}">{{ year }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </form>
+
+    <!-- Contenedor para el mensaje -->
+    <div id="noDataMessage" style="text-align: center; display: none;">
+        <p>No hay datos para mostrar.</p>
     </div>
 
-    <script>
-        // Datos de ejemplo para ingresos por tiempo
-        var fechas = ["Enero", "Febrero", "Marzo", "Abril"];
-        var ingresosPorTiempo = [1000, 1500, 2000, 2500];
+    <!-- Gráfico de ingresos por mes -->
+    <div class="chart" style="margin: 0 auto; text-align: center;">
+        <canvas id="barChartIngresos"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<style>
+    .chart-container {
+        width: 80%;
+        margin: 20px auto;
+    }
+
+    .chart {
+        width: 80%;
+        margin: 0 auto;
+        text-align: center;
+    }
+</style>
+
+<script>
+    $(function () {
+        var today = new Date();
+        var currentYear = today.getFullYear();
+
+        $("#anio").val(currentYear);  // Establecer el año actual como valor por defecto
 
         var barCtxIngresos = document.getElementById('barChartIngresos').getContext('2d');
         var barChartIngresos = new Chart(barCtxIngresos, {
             type: 'bar',
             data: {
-                labels: fechas,
+                labels: ['Enero', 'Febrero', 'Marzo'],  // Nombres de meses de ejemplo
                 datasets: [{
-                    label: 'Ingresos',
-                    data: ingresosPorTiempo,
+                    label: 'Ingresos por Mes',
+                    data: [1000, 2000, 3000],  // Ingresos de ejemplo
                     backgroundColor: '#36a2eb'
                 }]
             },
@@ -47,11 +72,11 @@
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                let label = context.dataset.label || '';
+                                let label = context.label || '';
                                 if (label) {
                                     label += ': ';
                                 }
-                                label += new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'USD' }).format(context.raw);
+                                label += context.raw.toLocaleString();  // Mostrar cantidad con separadores de miles
                                 return label;
                             }
                         }
@@ -59,13 +84,44 @@
                 },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0  // Mostrar números enteros en el eje Y
+                        }
                     }
                 }
             }
         });
-    </script>
-</body>
 
-</html>
+        $('#filtroAnioForm').on('submit', function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            $.ajax({
+                type: 'POST',
+                url: '{% url "ingresos_por_mes" %}',
+                data: formData,
+                dataType: 'json',
+                success: function (data) {
+                    actualizarGrafico(data);
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            });
+        });
+
+        function actualizarGrafico(data) {
+            if (data.meses.length === 0 || data.ingresos_mensuales.every(v => v === 0)) {
+                $('#noDataMessage').show();
+                $('.chart').hide();
+            } else {
+                $('#noDataMessage').hide();
+                $('.chart').show();
+                barChartIngresos.data.labels = data.meses;
+                barChartIngresos.data.datasets[0].data = data.ingresos_mensuales;
+                barChartIngresos.update();
+            }
+        }
+    });
+</script>
 {% endblock %}

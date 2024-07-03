@@ -1,7 +1,7 @@
 {% extends "homepage/base.html" %}
 
 {% block content %}
-<h2>Intercambios en la sucursal {{ sucursal.nombre }} para hoy</h2>
+<h2>Intercambios en la sucursal {{ sucursal.nombre }}</h2>
 
 <form method="get" action="{% url 'intercambios_por_sucursal_emp' %}">
     <label for="id_fecha">Seleccionar Fecha:</label>

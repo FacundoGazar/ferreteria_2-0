@@ -2,6 +2,7 @@ from django.shortcuts import render
 from gestion_de_sucursales.models import Sucursal
 from mis_productos.models import Producto
 from intercambiar_producto.models import Intercambio
+from catalogo.models import ProductoCatalogo 
 # Create your views here.
 
 def homepage_view(request):
@@ -21,9 +22,11 @@ def tu_vista(request):
         productos_excluir.update(productos)
 
     lista_productos = lista_productos.exclude(id__in=productos_excluir)
+    productos_catalogo = ProductoCatalogo.objects.all()
 
     contexto = {
         'lista_productos': lista_productos
+        'productos_catalogo': productos_catalogo
     }
 
     return render(request, "homepage/homepage.html", contexto)

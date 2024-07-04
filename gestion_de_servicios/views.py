@@ -106,11 +106,15 @@ def ver_imagen_view(request, slug):
     if request.method == "POST":
         accion = request.POST.get('accion')
         if accion == 'cancelar':
-            servicio.delete()
+            servicio.estado = 'cancelado'
+            servicio.visible = False
+            servicio.save()
             messages.success(request, "Publicación de servicio cancelada con éxito")
             return redirect("listar_solicitudes")
         elif accion == 'eliminar':
-            servicio.delete()
+            servicio.estado = 'eliminado'
+            servicio.visible = False
+            servicio.save()
             messages.success(request, "Servicio eliminado con éxito")
             return redirect("listar_solicitudes")  
         
@@ -215,6 +219,7 @@ def eliminar_servicio_view(request, slug):
             messages.error(request, "Completa la casilla de texto, el motivo no puede estar vacio")
         else:
             servicio.estado = 'eliminado'
+            servicio.visible = False
             servicio.save()
             cliente = servicio.cliente
             subject = 'Eliminacion de Servicio'

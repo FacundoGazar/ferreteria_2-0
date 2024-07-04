@@ -47,7 +47,7 @@
         {% elif servicio.estado == 'aceptado' %} Aceptado, ya podes pagarlo para publicarlo
         {% elif servicio.estado == 'rechazado' %} Rechazado, revisa tu correo para saber el motivo
         {% elif servicio.estado == 'publicado' %} Tu servicio ya esta siendo ofertado en nuestro sitio!
-        {% elif servicio.estado == 'eliminado' %} Tu servicio fue eliminado de nuestro sitio! {% endif %}</h8>
+        {% elif servicio.estado == 'eliminado' %} Tu servicio fue eliminado de nuestro sitio! Revisa tu correo para saber el motivo {% endif %}</h8>
     </div>
 
     {% if servicio.estado == 'aceptado' %}

@@ -44,11 +44,13 @@ class PagoServicio(models.Model):
     
 class Servicio(models.Model):
     ESTADOS = (
+        ('cancelado', 'Cancelado'),
         ('pendiente', 'Pendiente'),   
         ('aceptado', 'Aceptado'),
         ('rechazado', 'Rechazado'),
         ('publicado', 'Publicado'),
         ('eliminado', 'Eliminado'),
+        ('vencido', 'Vencido'),
     )
     id = models.AutoField(primary_key=True)
     cliente = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -231,6 +231,7 @@ def detalle_intercambio(request, solicitud_id):
 def intercambios_por_sucursal_view(request):
     try:
         empleado = PerfilEmpleado.objects.get(usuario=request.user)
+        catalogo = ProductoCatalogo.objects.filter(visible=True)
         sucursal = empleado.sucursal
         # Obtener la fecha del formulario si está presente, de lo contrario usar la fecha actual
         fecha_seleccionada = request.GET.get('fecha')
@@ -250,7 +251,8 @@ def intercambios_por_sucursal_view(request):
         return render(request, 'intercambiar_producto/intercambios_por_sucursal.html', {
             'sucursal': sucursal,
             'intercambios': intercambios,
-            'fecha_seleccionada': fecha_seleccionada
+            'fecha_seleccionada': fecha_seleccionada,
+            'catalogo': catalogo
         })
     except PerfilEmpleado.DoesNotExist:
         messages.error(request, "El usuario logueado no tiene un perfil de empleado asociado.")
@@ -301,7 +303,7 @@ def sin_venta_view(request, intercambio_id):
 @soy_staff
 def registrar_venta_view(request, intercambio_id):
     intercambio = get_object_or_404(Intercambio, id=intercambio_id)
-    productos = ProductoCatalogo.objects.all()
+    productos = ProductoCatalogo.objects.filter(visible=True)
 
     if request.method == 'POST':
         productos_vendidos = request.POST.getlist('producto')

@@ -4,7 +4,7 @@ from .models import Servicio
 from .models import ConfiguracionServicio
 
 class ConfiguracionServicioForm(forms.ModelForm):
-    costo_publicacion = forms.DecimalField(min_value=0, label='Costo de Publicación')
+    costo_publicacion = forms.DecimalField(min_value=1, label='Costo de Publicación')
     duracion_publicacion_dias = forms.IntegerField(min_value=1, label='Duración de Publicación (días)')
 
     class Meta:

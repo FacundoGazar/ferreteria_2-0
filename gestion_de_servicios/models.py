@@ -61,10 +61,11 @@ class Servicio(models.Model):
     slug = models.SlugField(null=True, blank=True)    
     pago = models.ForeignKey(PagoServicio, on_delete=models.CASCADE, null=True, blank=True)
     fechaFin = models.DateField(null=True, blank=True)
-    visible = models.BooleanField(default=True)  
+    visible = models.BooleanField(default=True)
+    #maximos_dias = models.IntegerField(null=True)  
 
     def save(self, *args, **kwargs):
-        self.fechaFin = timezone.now().date() + timedelta(days=30)
+        self.fechaFin = timezone.now().date() + timedelta(days=30) #ESTO BORRAR CUNADO USE LOS DIAS
         self.slug = slugify(str(self.id) + "-" + str(self.imagen))
         return super().save(*args , **kwargs)
 

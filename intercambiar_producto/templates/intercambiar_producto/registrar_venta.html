@@ -2,34 +2,67 @@
 {% block content %}
 <div class="container mt-5">
     <h1>Registrar Venta</h1>
-    <form method="post">
+    <form method="post" id="ventaForm">
         {% csrf_token %}
         <div class="form-group">
             <label for="monto_total">Monto Total</label>
-            <input type="number" class="form-control" id="monto_total" name="monto_total" step="0.01" required>
+            <input type="number" class="form-control" id="monto_total" name="monto_total" step="0.01" min="1" required>
         </div>
         <div class="form-group">
-            <label for="sucursal">Sucursal</label>
-            <select class="form-control" id="sucursal" name="sucursal" required>
-                {% for sucursal in sucursales %}
-                <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="producto">Productos</label>
+            <label>Productos</label>
             {% for producto in productos %}
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="{{ producto.id }}" id="producto{{ producto.id }}"
-                    name="producto">
+                <input class="form-check-input producto-checkbox" type="checkbox" value="{{ producto.id }}"
+                    id="producto{{ producto.id }}" name="producto">
                 <label class="form-check-label" for="producto{{ producto.id }}">
                     {{ producto.nombre }}
                 </label>
-                <input type="number" class="form-control mt-2" name="cantidad" placeholder="Cantidad" min="1">
+                <input type="number" class="form-control mt-2 cantidad-input" name="cantidad-{{ producto.id }}"
+                    placeholder="Cantidad" min="1" style="display: none;">
             </div>
             {% endfor %}
         </div>
         <button type="submit" class="btn btn-primary">Registrar Venta</button>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.querySelectorAll('.producto-checkbox');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const cantidadInput = this.closest('.form-check').querySelector('.cantidad-input');
+                if (this.checked) {
+                    cantidadInput.style.display = 'block';
+                    cantidadInput.required = true;
+                } else {
+                    cantidadInput.style.display = 'none';
+                    cantidadInput.required = false;
+                    cantidadInput.value = '';  // Limpiar el valor del input
+                }
+            });
+        });
+
+        const form = document.getElementById('ventaForm');
+        form.addEventListener('submit', function (event) {
+            const checkboxes = document.querySelectorAll('.producto-checkbox');
+            let validForm = false;
+
+            checkboxes.forEach(checkbox => {
+                const cantidadInput = checkbox.closest('.form-check').querySelector('.cantidad-input');
+                if (checkbox.checked && cantidadInput.value.trim() === '') {
+                    validForm = false;
+                    cantidadInput.reportValidity();
+                } else {
+                    validForm = true;
+                }
+            });
+
+            if (!validForm) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
 {% endblock %}

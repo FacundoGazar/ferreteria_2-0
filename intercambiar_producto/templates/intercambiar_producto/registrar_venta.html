@@ -6,15 +6,7 @@
         {% csrf_token %}
         <div class="form-group">
             <label for="monto_total">Monto Total</label>
-            <input type="number" class="form-control" id="monto_total" name="monto_total" step="0.01" required>
-        </div>
-        <div class="form-group">
-            <label for="sucursal">Sucursal</label>
-            <select class="form-control" id="sucursal" name="sucursal" required>
-                {% for sucursal in sucursales %}
-                <option value="{{ sucursal.nombre }}">{{ sucursal.nombre }}</option>
-                {% endfor %}
-            </select>
+            <input type="number" class="form-control" id="monto_total" name="monto_total" step="0.01" min="1" required>
         </div>
         <div class="form-group">
             <label for="producto">Productos</label>

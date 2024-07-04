@@ -307,14 +307,21 @@ def registrar_venta_view(request, intercambio_id):
         productos_vendidos = request.POST.getlist('producto')
         cantidades_vendidas = request.POST.getlist('cantidad')
         monto_total = request.POST.get('monto_total')
-        sucursal_nombre = request.POST.get('sucursal')  # Obtener el nombre de la sucursal seleccionada
-
+        
+        # Verificar si hay productos seleccionados
+        if not productos_vendidos:
+            messages.error(request, "Debes seleccionar al menos un producto.")
+            return render(request, 'intercambiar_producto/registrar_venta.html', {'productos': productos, 'intercambio': intercambio})
+        
         try:
-            # Buscar la instancia de Sucursal por nombre
-            sucursal = get_object_or_404(Sucursal, nombre=sucursal_nombre)
+            perfil_empleado = PerfilEmpleado.objects.get(usuario=request.user)
+            sucursal = perfil_empleado.sucursal
+        except PerfilEmpleado.DoesNotExist:
+            messages.error(request, "No se encontró un perfil de empleado asociado a su cuenta.")
+            return redirect('intercambios_por_sucursal')
         except Sucursal.DoesNotExist:
-            messages.error(request, f"No se encontró ninguna sucursal con el nombre '{sucursal_nombre}'.")
-            return redirect('intercambios_por_sucursal')  # Redirecciona a una página de error adecuada
+            messages.error(request, "No se encontró una sucursal asociada a su perfil de empleado.")
+            return redirect('intercambios_por_sucursal')
 
         # Crear y guardar la venta con la sucursal
         venta = Venta.objects.create(monto_total=monto_total, sucursal=sucursal)
@@ -329,3 +336,4 @@ def registrar_venta_view(request, intercambio_id):
 
     sucursales = Sucursal.objects.all()  # Obtener todas las sucursales para el formulario
     return render(request, 'intercambiar_producto/registrar_venta.html', {'productos': productos, 'intercambio': intercambio, 'sucursales': sucursales})
+    

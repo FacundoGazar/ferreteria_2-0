@@ -12,7 +12,8 @@ from django.db.models import Q
 from .models import ConfiguracionServicio
 from .forms import ConfiguracionServicioForm
 from django.shortcuts import get_object_or_404
-
+#from django.utils import timezone
+#from datetime import timedelta
 
 # Create your views here.
 @soy_cliente
@@ -54,6 +55,7 @@ def subir_servicio_view(request):
         if form.is_valid():          
             servicio = form.save(commit=False)
             servicio.cliente = request.user
+            # servicio.maximo_dias = configuracion_servicio.duracion_publicacion_dias 
             servicio.save()
             
             if are_images_equal(servicio.id):
@@ -188,6 +190,7 @@ def pagar_publicacion_view(request, slug):
             pagoAux.save()
             servicio.estado = 'publicado'
             servicio.pago = pagoAux
+            #servicio.fechaFin = timezone.now().date() + timedelta(servicio.maximos_dias)
             servicio.save()
             
 

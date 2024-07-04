@@ -172,6 +172,9 @@ def pagar_publicacion_view(request, slug):
                 messages.error(request, "Esta tarjeta no se encuentra registrada en el sistema.")
                 return redirect('pagar_publicacion', slug=slug)        
             
+            tarjeta.saldo = tarjeta.saldo - montoAux
+            tarjeta.save()
+            
             pagoAux = PagoServicio(
                 cliente=request.user,
                 monto=montoAux,
@@ -206,9 +209,25 @@ def listar_solicitudes_clientes_view(request):
 @super_user 
 def eliminar_servicio_view(request, slug):
     servicio = Servicio.objects.get(slug=slug)
-    servicio.visible = False
-    servicio.save()
-    return redirect('listar_solicitudes_clientes')
+    if request.method == "POST":
+        motivo = request.POST.get('motivo')
+        if not motivo.strip():
+            messages.error(request, "Completa la casilla de texto, el motivo no puede estar vacio")
+        else:
+            servicio.estado = 'eliminado'
+            servicio.save()
+            cliente = servicio.cliente
+            subject = 'Eliminacion de Servicio'
+            message = f'Hola {cliente.username},\n\nTu publicacion de servicio ha sido eliminada, este es el motivo:\n\n{motivo}\n\n'
+            from_email = 'noreply@ferreplus.com'
+            to_email = [cliente.email]
+            send_mail(subject, message, from_email, to_email)
+            messages.success(request, "El servicio ha sido eliminado.")
+            return redirect("listar_solicitudes_clientes")
+    context = {
+        'servicio': servicio
+    }
+    return render(request, "gestion_de_servicios/mandar_motivo.html", context)
 
 @super_user 
 def ver_historial_view(request):    

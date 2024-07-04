@@ -15,7 +15,7 @@
         <li class="nav-item">
           {% if not request.user.is_superuser and request.user.is_staff %}
           <form class="mb-3 me-md-3" method="GET" action="{% url 'intercambios_por_sucursal_emp' %}">
-            <button class="btn btn-primary" type="submit">Test</button>
+            <button class="btn btn-primary" type="submit">Intercambios</button>
           </form>
           {% endif %}
         </li>

@@ -93,11 +93,12 @@
                             Ver estadísticas generales
                         </button>
                         <div class="dropdown-menu" aria-labelledby="estadisticasGeneralesDropdown">
-                            <a class="dropdown-item" href="{% url 'estadisticas_generales' %}">Ver estadísticas
-                                generales</a>
+                            <a class="dropdown-item" href="{% url 'ingresos_totales_en_el_tiempo' %}">Ingresos totales en el tiempo</a>
+                            <a class="dropdown-item" href="{% url 'relacion_intercambio_venta' %}">Relacion entre
+                                intercambios y ventas</a>
                         </div>
                     </div>
-                    <div class="dropdown">
+                    <div class="dropdown mt-3">
                         <button class="btn btn-primary btn-lg dropdown-toggle" type="button"
                             id="verEstadisticasDropdown" data-toggle="dropdown" aria-haspopup="true"
                             aria-expanded="false">
@@ -115,8 +116,8 @@
                                 sucursal/tiempo</a>
                             <a class="dropdown-item" href="{% url 'productos_mas_vendidos' %}">Productos mas
                                 vendidos</a>
-                            <a class="dropdown-item" href="{% url 'relacion_intercambio_venta' %}">Relacion entre
-                                intercambios y ventas</a>
+                            <a class="dropdown-item" href="{% url 'productos_vendidos_por_sucursales' %}">Productos vendidos en las sucursales</a>
+                            <a class="dropdown-item" href="{% url 'ventas_totales_en_las_sucursales' %}">Ventas totales en las sucursales</a>
                         </div>
                     </div>
                 </div>
